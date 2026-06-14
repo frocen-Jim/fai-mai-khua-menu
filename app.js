@@ -1,0 +1,1843 @@
+// ================================
+// จุดที่ 1: แก้ข้อมูลร้านจริงตรงนี้
+// phone ใส่เครื่องหมาย + ได้ แต่ whatsapp ต้องใช้รหัสประเทศและตัด 0 หน้าออก เช่น 02099469995 = 8562099469995
+// ================================
+const restaurant = {
+  name: "ໄຟໄໝ້ຄົວ",
+  googleMapName: "ຮ້ານ ໄຟໄໝ້ຄົວ",
+  phone: "+8562099469995",
+  whatsapp: "8562099469995",
+  openHours: "10:30 - 22:00",
+  location: "Vientiane, Laos",
+  storeLat: 17.9822450,
+  storeLng: 102.6284250,
+  storeMapsUrl: "https://www.google.com/maps/search/?api=1&query=%E0%BA%AE%E0%BB%89%E0%BA%B2%E0%BA%99%20%E0%BB%84%E0%BA%9F%E0%BB%84%E0%BB%9D%E0%BB%89%E0%BA%84%E0%BA%BB%E0%BA%A7",
+  deliveryNote: "ค่าส่งคิดตามระยะทาง / ร้านจะยืนยันอีกครั้ง"
+};
+
+// ================================
+// จุดที่ 2: แก้เมนู ราคา และรูปอาหารจริงตรงนี้
+// image ใช้ได้ 2 แบบ:
+// 1) รูปในโฟลเดอร์ images เช่น image: "images/krapao.jpg"
+// 2) ลิงก์รูปออนไลน์ เช่น image: "https://..."
+// id ห้ามซ้ำกัน และ price ไม่ต้องใส่ comma เช่น 60000
+// theme คือสี animation ของเมนูแนะนำ ถ้ายังไม่ถนัด ปล่อยไว้แบบเดิมได้
+// ================================
+
+const currencyOptions = {
+  LAK: {
+    label: "Kip",
+    suffix: "Kip",
+    rateFromKip: 1,
+    decimals: 0
+  },
+  THB: {
+    label: "Baht",
+    suffix: "THB",
+    rateFromKip: 1 / 620,
+    decimals: 0
+  },
+  USD: {
+    label: "USD",
+    suffix: "USD",
+    rateFromKip: 1 / 21500,
+    decimals: 2
+  }
+};
+
+// หมายเหตุ: ราคาในระบบตั้งต้นเป็น Kip.
+// THB / USD เป็นราคาแสดงโดยประมาณเท่านั้น สามารถแก้ rateFromKip ได้ในไฟล์ app.js.
+
+const menuItems = [
+  {
+    id: 1,
+    name: "ข้าวกะเพราหมู + ไข่ดาว",
+    category: "ข้าวไฟแรง",
+    price: 60000,
+    description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
+    image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=900&q=80",
+    tag: "ขายดี",
+    theme: { accent: "#ffb636", fire: "#e8431f", glow: "rgba(232,67,31,.30)", deep: "#130806" }
+  },
+  {
+    id: 2,
+    name: "ข้าวไก่เทอริยากิ",
+    category: "ข้าวไฟแรง",
+    price: 55000,
+    description: "ไก่นุ่ม ซอสเทอริยากิ หอมหวานเค็มกำลังดี",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+    tag: "ญี่ปุ่น",
+    theme: { accent: "#f6c85f", fire: "#2dc071", glow: "rgba(45,192,113,.28)", deep: "#06140d" }
+  },
+  {
+    id: 3,
+    name: "ข้าวหน้าไก่มิโสะ",
+    category: "ข้าวไฟแรง",
+    price: 58000,
+    description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
+    image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=900&q=80",
+    tag: "สุขภาพ",
+    theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
+  },
+  {
+    id: 4,
+    name: "เนื้อเสือร้องไห้ New Zealand",
+    category: "เมนูพิเศษ",
+    price: 95000,
+    description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
+    image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=900&q=80",
+    tag: "พรีเมียม",
+    theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
+  },
+  {
+    id: 5,
+    name: "ข้าวหน้าแซลมอนย่าง",
+    category: "เมนูพิเศษ",
+    price: 110000,
+    description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
+    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=900&q=80",
+    tag: "แนะนำ",
+    theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
+  },
+  {
+    id: 6,
+    name: "สลัดไก่อบ",
+    category: "สุขภาพ",
+    price: 65000,
+    description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
+    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80",
+    tag: "คลีน",
+    theme: { accent: "#b7ef8a", fire: "#2dc071", glow: "rgba(45,192,113,.25)", deep: "#071407" }
+  },
+  {
+    id: 7,
+    name: "Caesar Salad",
+    category: "สุขภาพ",
+    price: 70000,
+    description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
+    image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=900&q=80",
+    tag: "สดใหม่",
+    theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
+  },
+  {
+    id: 8,
+    name: "S’more Brownie Cookie",
+    category: "ของหวาน",
+    price: 35000,
+    description: "คุกกี้บราวนี่เข้มข้น มาร์ชเมลโลว์ และบิสกิตกรอบ",
+    image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",
+    tag: "ของหวาน",
+    theme: { accent: "#f5c7a9", fire: "#8b5e34", glow: "rgba(139,94,52,.28)", deep: "#130c08" }
+  },
+  {
+    id: 9,
+    name: "ชาเย็นไฟไหม้",
+    category: "เครื่องดื่ม",
+    price: 20000,
+    description: "ชาเย็นหอม หวานมันกำลังดี ดับเผ็ดหลังจานไฟแรง",
+    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=900&q=80",
+    tag: "เย็น",
+    theme: { accent: "#ffd166", fire: "#f77f00", glow: "rgba(247,127,0,.25)", deep: "#130b03" }
+  }
+];
+
+const state = {
+  category: "ทั้งหมด",
+  search: "",
+  cart: {},
+  featuredIndex: 0,
+  soundEnabled: true,
+  audioContext: null,
+  locationConfirmed: false,
+  map: null,
+  marker: null,
+  selectedLatLng: null,
+  mapMode: "street",
+  mapLayers: [],
+  storeMarker: null,
+  userMarker: null,
+  userAccuracyCircle: null,
+  userWatchId: null,
+  bestGpsPosition: null,
+  gpsImproveTimer: null,
+  placeSearchTimer: null,
+  placeSearchController: null,
+  lastPlaceQuery: "",
+  selectedCurrency: "LAK",
+  mapLoadingPromise: null,
+  mapAssetsLoaded: false,
+  mapRequested: false
+};
+
+function money(value) {
+  const currency = currencyOptions[state?.selectedCurrency || "LAK"] || currencyOptions.LAK;
+  const converted = Number(value || 0) * currency.rateFromKip;
+  const formatted = new Intl.NumberFormat("lo-LA", {
+    minimumFractionDigits: currency.decimals,
+    maximumFractionDigits: currency.decimals
+  }).format(converted);
+  return `${formatted} ${currency.suffix}`;
+}
+const $ = (selector) => document.querySelector(selector);
+const LEAFLET_ASSET_TIMEOUT_MS = 6500;
+const SEARCH_TIMEOUT_MS = 7500;
+const LEAFLET_ASSET_SOURCES = [
+  {
+    css: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+    js: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  },
+  {
+    css: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css",
+    js: "https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+  }
+];
+
+function optimizedImageUrl(src, width = 520, quality = 62) {
+  if (!/^https?:\/\//i.test(src || "")) return src;
+
+  try {
+    const url = new URL(src);
+    if (url.hostname === "images.unsplash.com") {
+      url.searchParams.set("auto", "format");
+      url.searchParams.set("fit", "crop");
+      url.searchParams.set("w", String(width));
+      url.searchParams.set("q", String(quality));
+    }
+    return url.toString();
+  } catch (error) {
+    return src;
+  }
+}
+
+function setMapPreviewState(mode) {
+  const preview = $("#mapPreview");
+  if (!preview) return;
+
+  preview.classList.toggle("is-loading", mode === "loading");
+  preview.classList.toggle("has-map", mode === "ready");
+}
+
+function appendLeafletCss(href) {
+  if (document.querySelector(`link[data-leaflet-css-url="${href}"]`)) return;
+
+  const css = document.createElement("link");
+  css.rel = "stylesheet";
+  css.href = href;
+  css.dataset.leafletCss = "true";
+  css.dataset.leafletCssUrl = href;
+  document.head.appendChild(css);
+}
+
+function loadScriptWithTimeout(src, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    if (window.L) {
+      resolve();
+      return;
+    }
+
+    const script = document.createElement("script");
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      script.remove();
+      reject(new Error(`Timed out loading ${src}`));
+    }, timeoutMs);
+
+    script.src = src;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve();
+    };
+    script.onerror = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      script.remove();
+      reject(new Error(`Failed loading ${src}`));
+    };
+
+    document.body.appendChild(script);
+  });
+}
+
+function fetchWithTimeout(url, options = {}, timeoutMs = SEARCH_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const parentSignal = options.signal;
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  if (parentSignal) {
+    if (parentSignal.aborted) {
+      controller.abort();
+    } else {
+      parentSignal.addEventListener("abort", () => controller.abort(), { once: true });
+    }
+  }
+
+  return fetch(url, {
+    ...options,
+    signal: controller.signal
+  }).finally(() => clearTimeout(timer));
+}
+
+function initRestaurantInfo() {
+  $("#restaurantName").textContent = restaurant.name;
+  $("#footerName").textContent = restaurant.name;
+  $("#openHours").textContent = restaurant.openHours;
+  $("#locationText").textContent = restaurant.location;
+  $("#callBtn").href = `tel:${restaurant.phone}`;
+}
+
+function featuredItems() {
+  return menuItems.filter(item => [1, 4, 5, 8].includes(item.id));
+}
+
+function applyHeroTheme(item) {
+  const root = document.documentElement;
+  root.style.setProperty("--accent", item.theme?.accent || "#ffb636");
+  root.style.setProperty("--fire", item.theme?.fire || "#e8431f");
+  root.style.setProperty("--hero-glow", item.theme?.glow || "rgba(232,67,31,.30)");
+  root.style.setProperty("--deep", item.theme?.deep || "#120806");
+}
+
+function renderHeroDish(item) {
+  const image = $("#heroImage");
+  image.classList.add("is-changing");
+  setTimeout(() => {
+    image.src = optimizedImageUrl(item.image, 560, 65);
+    image.alt = item.name;
+    $("#heroDishName").textContent = item.name;
+    $("#heroDishDesc").textContent = item.description;
+    $("#heroDishPrice").textContent = money(item.price);
+    $("#heroAddBtn").dataset.id = item.id;
+    applyHeroTheme(item);
+    image.classList.remove("is-changing");
+  }, 260);
+}
+
+function startHeroSlider() {
+  const items = featuredItems();
+  if (!items.length) return;
+  renderHeroDish(items[0]);
+  setInterval(() => {
+    if (document.hidden) return;
+    state.featuredIndex = (state.featuredIndex + 1) % items.length;
+    renderHeroDish(items[state.featuredIndex]);
+  }, 7000);
+}
+
+function renderTabs() {
+  const categories = ["ทั้งหมด", ...new Set(menuItems.map(item => item.category))];
+  $("#categoryTabs").innerHTML = categories.map(category => `
+    <button class="tab ${state.category === category ? "active" : ""}" data-category="${category}">${category}</button>
+  `).join("");
+
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      state.category = tab.dataset.category;
+      renderTabs();
+      renderMenu();
+    });
+  });
+}
+
+function filteredItems() {
+  const keyword = state.search.trim().toLowerCase();
+  return menuItems.filter(item => {
+    const matchCategory = state.category === "ทั้งหมด" || item.category === state.category;
+    const matchSearch = !keyword || [item.name, item.category, item.description].join(" ").toLowerCase().includes(keyword);
+    return matchCategory && matchSearch;
+  });
+}
+
+function renderMenu() {
+  const items = filteredItems();
+  if (!items.length) {
+    $("#menuGrid").innerHTML = `<div class="order-items empty">ไม่พบเมนูที่ค้นหา</div>`;
+    return;
+  }
+
+  $("#menuGrid").innerHTML = items.map((item, index) => {
+    const imageSrc = optimizedImageUrl(item.image, index < 2 ? 520 : 420, index < 2 ? 62 : 58);
+    const loading = index < 2 ? "eager" : "lazy";
+
+    return `
+      <article class="menu-card" style="transition-delay:${Math.min(index * 55, 330)}ms">
+        <button type="button" class="menu-image image-add-trigger" data-id="${item.id}" aria-label="เลือก ${item.name}">
+          <img src="${imageSrc}" alt="${item.name}" width="520" height="300" loading="${loading}" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />
+          <span class="badge">${item.tag}</span>
+        </button>
+        <div class="menu-body">
+          <h3>${item.name}</h3>
+          <p class="desc">${item.description}</p>
+          <div class="card-bottom">
+            <span class="price">${money(item.price)}</span>
+            <span class="tap-note">แตะรูปเพื่อเลือก</span>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  document.querySelectorAll(".image-add-trigger").forEach(trigger => {
+    trigger.addEventListener("click", (event) => addToCart(Number(trigger.dataset.id), event.currentTarget));
+  });
+
+  document.querySelectorAll(".menu-image img").forEach((image) => {
+    image.addEventListener("error", () => {
+      const holder = image.closest(".menu-image");
+      if (holder) holder.classList.add("image-failed");
+      image.remove();
+    }, { once: true });
+  });
+  revealMenuCards();
+}
+
+function addToCart(id, sourceButton) {
+  state.cart[id] = (state.cart[id] || 0) + 1;
+  renderCart();
+  igniteAddEffect(sourceButton);
+  playFireSound();
+}
+
+function igniteAddEffect(sourceButton) {
+  if (!sourceButton) return;
+
+  const rect = sourceButton.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+
+  sourceButton.classList.add("is-igniting", "is-photo-igniting");
+  const sourceCard = sourceButton.closest(".menu-card");
+  if (sourceCard) sourceCard.classList.add("card-burn");
+
+  const imageRing = document.createElement("span");
+  imageRing.className = "image-fire-ring";
+
+  for (let index = 0; index < 10; index += 1) {
+    const edgeFlame = document.createElement("i");
+    edgeFlame.style.setProperty("--flame-left", `${6 + index * 9.7}%`);
+    edgeFlame.style.setProperty("--flame-delay", `${index * 34}ms`);
+    edgeFlame.style.setProperty("--flame-height", `${52 + (index % 4) * 16}px`);
+    imageRing.appendChild(edgeFlame);
+  }
+
+  sourceButton.appendChild(imageRing);
+
+  setTimeout(() => {
+    sourceButton.classList.remove("is-igniting", "is-photo-igniting");
+    if (sourceCard) sourceCard.classList.remove("card-burn");
+    imageRing.remove();
+  }, 1350);
+
+  // Brutal real fire-style click effect: no text, no emoji, no sticker.
+  const fire = document.createElement("div");
+  fire.className = "real-fire-click fire-click-strong";
+  fire.style.setProperty("--left", `${centerX}px`);
+  fire.style.setProperty("--top", `${centerY}px`);
+
+  ["flame-a", "flame-b", "flame-c", "flame-d", "flame-e", "flame-f", "flame-g"].forEach((className) => {
+    const flame = document.createElement("span");
+    flame.className = className;
+    fire.appendChild(flame);
+  });
+
+  for (let index = 0; index < 30; index += 1) {
+    const spark = document.createElement("i");
+    const angle = (-168 + index * 11.6) * Math.PI / 180;
+    const distance = 46 + (index % 7) * 16;
+    spark.style.setProperty("--x", `${Math.cos(angle) * distance}px`);
+    spark.style.setProperty("--y", `${Math.sin(angle) * distance - 48}px`);
+    spark.style.setProperty("--delay", `${index * 10}ms`);
+    spark.style.setProperty("--spark-size", `${3 + (index % 4)}px`);
+    fire.appendChild(spark);
+  }
+
+  document.body.appendChild(fire);
+  setTimeout(() => fire.remove(), 1350);
+
+  const orderPanel = document.querySelector("#order");
+  if (orderPanel) {
+    orderPanel.classList.remove("is-ignited");
+    void orderPanel.offsetWidth;
+    orderPanel.classList.add("is-ignited");
+  }
+}
+
+
+function playFireSound() {
+  if (!state.soundEnabled) return;
+
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+
+  if (!state.audioContext) {
+    state.audioContext = new AudioContext();
+  }
+
+  const ctx = state.audioContext;
+  if (ctx.state === "suspended") {
+    ctx.resume();
+  }
+
+  const now = ctx.currentTime;
+
+  // Fire whoosh noise: generated in browser, no audio file needed.
+  const noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.74), ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < data.length; i += 1) {
+    const t = i / data.length;
+    const attack = Math.min(1, t / 0.08);
+    const decay = Math.pow(1 - t, 1.8);
+    const body = (Math.random() * 2 - 1) * attack * decay;
+    const rough = (Math.random() * 2 - 1) * Math.pow(1 - t, 3.2);
+    data[i] = body * 0.72 + rough * 0.28;
+  }
+
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+
+  const lowpass = ctx.createBiquadFilter();
+  lowpass.type = "lowpass";
+  lowpass.frequency.setValueAtTime(560, now);
+  lowpass.frequency.exponentialRampToValueAtTime(2900, now + 0.12);
+  lowpass.frequency.exponentialRampToValueAtTime(680, now + 0.72);
+
+  const highpass = ctx.createBiquadFilter();
+  highpass.type = "highpass";
+  highpass.frequency.setValueAtTime(80, now);
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.34, now + 0.032);
+  gain.gain.exponentialRampToValueAtTime(0.11, now + 0.22);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.74);
+
+  noise.connect(highpass);
+  highpass.connect(lowpass);
+  lowpass.connect(gain);
+  gain.connect(ctx.destination);
+  noise.start(now);
+  noise.stop(now + 0.74);
+
+  // Low heat thump.
+  const thump = ctx.createOscillator();
+  const thumpGain = ctx.createGain();
+  thump.type = "sine";
+  thump.frequency.setValueAtTime(92, now);
+  thump.frequency.exponentialRampToValueAtTime(42, now + 0.26);
+  thumpGain.gain.setValueAtTime(0.0001, now);
+  thumpGain.gain.exponentialRampToValueAtTime(0.14, now + 0.018);
+  thumpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+  thump.connect(thumpGain);
+  thumpGain.connect(ctx.destination);
+  thump.start(now);
+  thump.stop(now + 0.29);
+
+  // Crackling sparks.
+  for (let i = 0; i < 8; i += 1) {
+    const sparkTime = now + 0.035 + Math.random() * 0.38;
+    const spark = ctx.createOscillator();
+    const sparkGain = ctx.createGain();
+    const sparkFilter = ctx.createBiquadFilter();
+
+    spark.type = "triangle";
+    spark.frequency.setValueAtTime(1500 + Math.random() * 2900, sparkTime);
+    spark.frequency.exponentialRampToValueAtTime(480 + Math.random() * 850, sparkTime + 0.05);
+
+    sparkFilter.type = "bandpass";
+    sparkFilter.frequency.setValueAtTime(1150 + Math.random() * 2100, sparkTime);
+    sparkFilter.Q.setValueAtTime(7, sparkTime);
+
+    sparkGain.gain.setValueAtTime(0.0001, sparkTime);
+    sparkGain.gain.exponentialRampToValueAtTime(0.052 + Math.random() * 0.052, sparkTime + 0.006);
+    sparkGain.gain.exponentialRampToValueAtTime(0.0001, sparkTime + 0.058);
+
+    spark.connect(sparkFilter);
+    sparkFilter.connect(sparkGain);
+    sparkGain.connect(ctx.destination);
+    spark.start(sparkTime);
+    spark.stop(sparkTime + 0.065);
+  }
+}
+
+function initSoundToggle() {
+  const button = document.querySelector("#soundToggle");
+  if (!button) return;
+
+  button.addEventListener("click", () => {
+    state.soundEnabled = !state.soundEnabled;
+    button.textContent = state.soundEnabled ? "Sound: On" : "Sound: Off";
+    button.setAttribute("aria-pressed", String(state.soundEnabled));
+
+    if (state.soundEnabled) {
+      playFireSound();
+    }
+  });
+}
+
+function updateQty(id, change) {
+  state.cart[id] = (state.cart[id] || 0) + change;
+  if (state.cart[id] <= 0) delete state.cart[id];
+  renderCart();
+}
+
+
+function getCustomerInfo() {
+  return {
+    customerName: $("#customerName")?.value.trim() || "",
+    customerPhone: $("#customerPhone")?.value.trim() || "",
+    orderType: document.querySelector('input[name="orderType"]:checked')?.value || "",
+    tableText: $("#tableInput")?.value.trim() || "",
+    deliveryAddress: $("#deliveryAddress")?.value.trim() || "",
+    mapLink: $("#mapLink")?.value.trim() || "",
+    customerNote: $("#customerNote")?.value.trim() || ""
+  };
+}
+
+function validateOrderForm() {
+  const info = getCustomerInfo();
+  const ids = Object.keys(state.cart);
+  const missing = [];
+
+  if (!ids.length) missing.push("เลือกรายการอาหารอย่างน้อย 1 รายการ");
+  if (!info.customerName) missing.push("กรอกชื่อลูกค้า");
+  if (!info.customerPhone) missing.push("กรอกเบอร์โทรติดต่อ");
+  if (info.customerPhone && info.customerPhone.replace(/\D/g, "").length < 8) {
+    missing.push("ตรวจสอบเบอร์โทรให้ถูกต้อง");
+  }
+  if (!info.orderType) missing.push("เลือกรูปแบบรับอาหาร");
+
+  if (info.orderType === "นั่งทานที่ร้าน") {
+    if (!info.tableText) missing.push("กรอกเลขโต๊ะ");
+  }
+
+  if (info.orderType === "รับเองหน้าร้าน") {
+    if (!info.tableText) missing.push("กรอกชื่อ/จุดรับอาหารหน้าร้าน");
+  }
+
+  if (info.orderType === "จัดส่งเดลิเวอรี") {
+    if (!info.deliveryAddress) missing.push("กรอกสถานที่จัดส่ง / ที่อยู่");
+    if (!info.mapLink) missing.push("ใส่ Location หรือกดใช้ตำแหน่งปัจจุบัน");
+    if (info.mapLink && !state.locationConfirmed) missing.push("กดปุ่มยืนยันตำแหน่งนี้หลังตรวจสอบหมุดในแผนที่");
+  }
+
+  return {
+    isValid: missing.length === 0,
+    missing,
+    info
+  };
+}
+
+function updateValidationBox(validation) {
+  const box = $("#orderValidation");
+  const button = $("#sendOrderBtn");
+  if (!box || !button) return;
+
+  if (validation.isValid) {
+    box.className = "validation-box is-ready";
+    box.innerHTML = "ข้อมูลครบแล้ว สามารถกดยืนยันออเดอร์ได้";
+    button.classList.remove("is-disabled");
+    button.setAttribute("aria-disabled", "false");
+    button.textContent = "ยืนยันออเดอร์ / ส่งเข้า WhatsApp ร้าน";
+  } else {
+    box.className = "validation-box";
+    box.innerHTML = `
+      <strong>กรอกข้อมูลให้ครบก่อนยืนยันออเดอร์</strong>
+      <ul>${validation.missing.map(item => `<li>${item}</li>`).join("")}</ul>
+    `;
+    button.classList.add("is-disabled");
+    button.setAttribute("aria-disabled", "true");
+    button.textContent = "กรอกข้อมูลให้ครบก่อนยืนยันออเดอร์";
+  }
+}
+
+function renderCart() {
+  const ids = Object.keys(state.cart).map(Number);
+  const orderItems = $("#orderItems");
+
+  if (!ids.length) {
+    orderItems.className = "order-items empty";
+    orderItems.textContent = "ยังไม่มีรายการที่เลือก";
+    $("#totalPrice").textContent = money(0);
+    $("#sendOrderBtn").href = "#";
+    updateValidationBox(validateOrderForm());
+    return;
+  }
+
+  orderItems.className = "order-items";
+  let total = 0;
+  orderItems.innerHTML = ids.map(id => {
+    const item = menuItems.find(menu => menu.id === id);
+    const qty = state.cart[id];
+    const subtotal = item.price * qty;
+    total += subtotal;
+    return `
+      <div class="order-row">
+        <strong>${item.name}</strong>
+        <div class="qty-controls">
+          <button data-action="minus" data-id="${id}">−</button>
+          <span>${qty}</span>
+          <button data-action="plus" data-id="${id}">+</button>
+        </div>
+        <span>${money(subtotal)}</span>
+      </div>
+    `;
+  }).join("");
+
+  $("#totalPrice").textContent = money(total);
+
+  document.querySelectorAll(".qty-controls button").forEach(button => {
+    button.addEventListener("click", (event) => {
+      const change = button.dataset.action === "plus" ? 1 : -1;
+      updateQty(Number(button.dataset.id), change);
+      if (change > 0) igniteAddEffect(event.currentTarget);
+    });
+  });
+
+  const validation = validateOrderForm();
+  updateValidationBox(validation);
+
+  if (validation.isValid) {
+    const text = buildOrderText(total);
+    $("#sendOrderBtn").href = `https://wa.me/${restaurant.whatsapp}?text=${encodeURIComponent(text)}`;
+  } else {
+    $("#sendOrderBtn").href = "#";
+  }
+}
+
+function buildOrderText(total) {
+  const info = getCustomerInfo();
+
+  const lines = [
+    `สวัสดีครับ/ค่ะ ต้องการสั่งอาหารจาก ${restaurant.name}`,
+    "",
+    "ข้อมูลลูกค้า",
+    `ชื่อ: ${info.customerName}`,
+    `เบอร์โทร: ${info.customerPhone}`,
+    `รูปแบบรับอาหาร: ${info.orderType}`,
+    `เลขโต๊ะ/จุดรับอาหาร: ${info.tableText}`,
+    info.deliveryAddress ? `สถานที่จัดส่ง: ${info.deliveryAddress}` : "สถานที่จัดส่ง: -",
+    info.mapLink ? `Location: ${info.mapLink}` : "Location: -",
+    info.customerNote ? `หมายเหตุ: ${info.customerNote}` : "หมายเหตุ: -",
+    "",
+    "รายการอาหาร",
+    ...Object.keys(state.cart).map(id => {
+      const item = menuItems.find(menu => menu.id === Number(id));
+      return `- ${item.name} x ${state.cart[id]} = ${money(item.price * state.cart[id])}`;
+    }),
+    "",
+    `รวมโดยประมาณ: ${money(total)}`,
+    state.selectedCurrency !== "LAK" ? `ราคาอ้างอิง Kip: ${new Intl.NumberFormat("lo-LA").format(total)} Kip` : null,
+    `หมายเหตุจากร้าน: ${restaurant.deliveryNote}`
+  ];
+  return lines.filter(Boolean).join("\n");
+}
+
+
+
+
+
+function setLocationConfirmed(isConfirmed) {
+  state.locationConfirmed = Boolean(isConfirmed);
+
+  const confirmBtn = $("#confirmLocationBtn");
+  const status = $("#locationStatus");
+
+  if (confirmBtn) {
+    if (state.locationConfirmed) {
+      confirmBtn.classList.add("is-confirmed");
+      confirmBtn.classList.remove("is-disabled");
+      confirmBtn.setAttribute("aria-disabled", "false");
+      confirmBtn.textContent = "ยืนยันตำแหน่งแล้ว";
+    } else {
+      confirmBtn.classList.remove("is-confirmed");
+      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+    }
+  }
+
+  if (state.locationConfirmed && status) {
+    status.textContent = "ยืนยัน Location แล้ว ลูกค้าสามารถกดยืนยันออเดอร์ได้เมื่อข้อมูลครบ";
+  }
+
+  renderCart();
+}
+
+
+
+function loadLeafletAssets() {
+  if (window.L) {
+    state.mapAssetsLoaded = true;
+    return Promise.resolve();
+  }
+
+  if (state.mapLoadingPromise) return state.mapLoadingPromise;
+
+  const status = $("#locationStatus");
+  if (status) status.textContent = "กำลังโหลดแผนที่ กรุณารอสักครู่...";
+
+  state.mapLoadingPromise = (async () => {
+    let lastError = null;
+
+    for (const source of LEAFLET_ASSET_SOURCES) {
+      appendLeafletCss(source.css);
+
+      try {
+        await loadScriptWithTimeout(source.js, LEAFLET_ASSET_TIMEOUT_MS);
+        if (window.L) {
+          state.mapAssetsLoaded = true;
+          return;
+        }
+      } catch (error) {
+        lastError = error;
+      }
+    }
+
+    throw lastError || new Error("Leaflet failed to load");
+  })().catch((error) => {
+    state.mapLoadingPromise = null;
+    throw error;
+  });
+
+  return state.mapLoadingPromise;
+}
+
+async function ensureDeliveryMap() {
+  state.mapRequested = true;
+
+  if (state.map) {
+    setMapPreviewState("ready");
+    return state.map;
+  }
+
+  const fallback = $("#mapFallback");
+  setMapPreviewState("loading");
+  if (fallback) {
+    fallback.style.display = "grid";
+    fallback.textContent = "กำลังโหลดแผนที่...";
+  }
+
+  try {
+    await loadLeafletAssets();
+    initDeliveryMap();
+    setMapPreviewState("ready");
+
+    // Leaflet sometimes needs a resize after appearing in a responsive layout.
+    setTimeout(() => state.map?.invalidateSize?.(), 120);
+
+    return state.map;
+  } catch (error) {
+    if (fallback) {
+      fallback.style.display = "grid";
+      fallback.textContent = "โหลดแผนที่ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต หรือวางลิงก์ Google Maps เอง";
+    }
+    setMapPreviewState("fallback");
+    const status = $("#locationStatus");
+    if (status) {
+      const hasLocationLink = Boolean($("#mapLink")?.value.trim());
+      status.textContent = hasLocationLink
+        ? "แผนที่โหลดไม่สำเร็จ แต่ระบบมีลิงก์ Location แล้ว สามารถกดยืนยันตำแหน่งได้หากลิงก์ถูกต้อง"
+        : "โหลดแผนที่ไม่สำเร็จ แต่ยังสามารถวางลิงก์ Google Maps เองได้";
+    }
+    return null;
+  }
+}
+
+function setMapMode(mode) {
+  if (!state.map || !window.L) {
+    state.mapMode = mode;
+    return;
+  }
+
+  state.mapLayers.forEach(layer => state.map.removeLayer(layer));
+  state.mapLayers = [];
+  state.mapMode = mode;
+
+  if (mode === "street") {
+    const street = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap",
+      updateWhenIdle: true,
+      keepBuffer: 4
+    }).addTo(state.map);
+
+    state.mapLayers.push(street);
+  } else {
+    const satellite = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 19,
+      attribution: "Tiles &copy; Esri",
+      updateWhenIdle: true,
+      keepBuffer: 4,
+      crossOrigin: true
+    }).addTo(state.map);
+
+    const places = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 19,
+      opacity: 0.50,
+      crossOrigin: true
+    }).addTo(state.map);
+
+    const roads = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 19,
+      opacity: 0.50,
+      crossOrigin: true
+    }).addTo(state.map);
+
+    state.mapLayers.push(satellite, places, roads);
+  }
+
+  document.querySelectorAll(".map-mode-btn").forEach(button => {
+    const active = button.dataset.mapMode === mode;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+
+  const status = $("#locationStatus");
+  if (status && state.selectedLatLng && !state.locationConfirmed) {
+    status.textContent = mode === "satellite"
+      ? "เปลี่ยนเป็นภาพดาวเทียมแล้ว ดูบ้าน/อาคารให้ชัด แล้วกดยืนยันตำแหน่งนี้"
+      : "เปลี่ยนเป็นแผนที่ถนนแล้ว ดูชื่อถนน/สถานที่ แล้วกดยืนยันตำแหน่งนี้";
+  }
+}
+
+
+function addStoreLogoMarker() {
+  if (!state.map || !window.L) return;
+
+  const storeIcon = L.divIcon({
+    className: "store-logo-marker",
+    html: `
+      <div class="store-logo-pin">
+        <img src="images/logo-fai-mai-khua-small.png" alt="ຮ້ານ ໄຟໄໝ້ຄົວ" />
+        <span>ໄຟໄໝ້ຄົວ</span>
+      </div>
+    `,
+    iconSize: [86, 92],
+    iconAnchor: [43, 82],
+    popupAnchor: [0, -78]
+  });
+
+  state.storeMarker = L.marker([restaurant.storeLat, restaurant.storeLng], {
+    icon: storeIcon,
+    interactive: true,
+    keyboard: false,
+    zIndexOffset: 650
+  }).addTo(state.map);
+
+  state.storeMarker.bindPopup(`
+    <strong>${restaurant.googleMapName}</strong><br>
+    ตำแหน่งร้านบน Google Maps<br>
+    <a href="${restaurant.storeMapsUrl}" target="_blank" rel="noopener">ค้นหาชื่อร้านใน Google Maps</a><br>
+    <a href="https://www.google.com/maps?q=${restaurant.storeLat},${restaurant.storeLng}" target="_blank" rel="noopener">เปิดพิกัดร้าน</a>
+  `);
+
+  L.circle([restaurant.storeLat, restaurant.storeLng], {
+    radius: 60,
+    color: "#ffb636",
+    weight: 1,
+    opacity: 0.55,
+    fillColor: "#e8431f",
+    fillOpacity: 0.10,
+    interactive: false
+  }).addTo(state.map);
+}
+
+function initDeliveryMap() {
+  const mapElement = $("#deliveryMap");
+  const fallback = $("#mapFallback");
+  if (!mapElement) return;
+
+  if (!window.L) {
+    if (fallback) {
+      fallback.style.display = "grid";
+      fallback.textContent = "แผนที่จะโหลดเมื่อเริ่มใช้งาน Location";
+    }
+    return;
+  }
+
+  const defaultLatLng = [restaurant.storeLat, restaurant.storeLng];
+  const savedLat = Number(state.selectedLatLng?.latitude);
+  const savedLng = Number(state.selectedLatLng?.longitude);
+  const hasSavedLatLng = Number.isFinite(savedLat) && Number.isFinite(savedLng);
+  const initialLatLng = hasSavedLatLng ? [savedLat, savedLng] : defaultLatLng;
+  state.map = L.map(mapElement, {
+    zoomControl: true,
+    scrollWheelZoom: false,
+    dragging: true,
+    touchZoom: true,
+    tapTolerance: 16,
+    tap: true,
+    zoomAnimation: true,
+    fadeAnimation: true,
+    markerZoomAnimation: true,
+    inertia: true,
+    inertiaDeceleration: 2600,
+    inertiaMaxSpeed: 1400
+  }).setView(initialLatLng, hasSavedLatLng ? 17 : 15);
+
+  setMapMode(state.mapMode || "street");
+
+  const firePinIcon = L.divIcon({
+    className: "fire-map-pin",
+    html: "<span></span>",
+    iconSize: [34, 46],
+    iconAnchor: [17, 42]
+  });
+
+  state.marker = L.marker(initialLatLng, {
+    draggable: true,
+    autoPan: true,
+    icon: firePinIcon
+  }).addTo(state.map);
+
+  addStoreLogoMarker();
+
+  if (fallback) fallback.style.display = "none";
+  setMapPreviewState("ready");
+
+  state.marker.on("dragstart", () => setLocationConfirmed(false));
+  state.marker.on("dragend", () => {
+    const position = state.marker.getLatLng();
+    setSelectedLocation(position.lat, position.lng, "เลื่อนหมุดแล้ว ถ้าจุดส่งถูกต้องให้กด “ยืนยันตำแหน่งนี้”");
+  });
+
+  state.map.on("click", (event) => {
+    setLocationConfirmed(false);
+    setSelectedLocation(event.latlng.lat, event.latlng.lng, "หมุดวิ่งไปตำแหน่งที่เลือกแล้ว ถ้าจุดส่งถูกต้องให้กด “ยืนยันตำแหน่งนี้”");
+  });
+
+  if (hasSavedLatLng) {
+    const wasLocationConfirmed = state.locationConfirmed;
+    setSelectedLocation(initialLatLng[0], initialLatLng[1], "เปิดแผนที่ตาม Location ที่เลือกไว้แล้ว ตรวจสอบหมุดก่อนกดยืนยันตำแหน่ง");
+    if (wasLocationConfirmed) setLocationConfirmed(true);
+  } else {
+    state.selectedLatLng = null;
+    state.locationConfirmed = false;
+
+    const confirmBtn = $("#confirmLocationBtn");
+    if (confirmBtn) {
+      confirmBtn.classList.add("is-disabled");
+      confirmBtn.classList.remove("is-confirmed");
+      confirmBtn.setAttribute("aria-disabled", "true");
+      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+    }
+
+    const status = $("#locationStatus");
+    if (status) {
+      status.textContent = "แผนที่พร้อมแล้ว โลโก้ร้านคือจุดร้าน ຮ້ານ ໄຟໄໝ້ຄົວ ให้ลูกค้าแตะบนแผนที่ ลากหมุด ใช้ตำแหน่งปัจจุบัน หรือค้นหาจุดส่งก่อนกดยืนยันตำแหน่ง";
+    }
+
+    renderCart();
+  }
+}
+
+
+function moveMarkerSmoothly(targetLat, targetLng) {
+  if (!state.marker) return;
+
+  const current = state.marker.getLatLng();
+  const startLat = current.lat;
+  const startLng = current.lng;
+  const endLat = Number(targetLat);
+  const endLng = Number(targetLng);
+  const duration = 460;
+  const startTime = performance.now();
+
+  function easeOutCubic(t) {
+    return 1 - Math.pow(1 - t, 3);
+  }
+
+  function animate(time) {
+    const progress = Math.min((time - startTime) / duration, 1);
+    const eased = easeOutCubic(progress);
+    const lat = startLat + (endLat - startLat) * eased;
+    const lng = startLng + (endLng - startLng) * eased;
+
+    state.marker.setLatLng([lat, lng]);
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      state.marker.setLatLng([endLat, endLng]);
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
+function setSelectedLocation(latitude, longitude, message) {
+  const numericLat = Number(latitude);
+  const numericLng = Number(longitude);
+
+  if (!Number.isFinite(numericLat) || !Number.isFinite(numericLng) || Math.abs(numericLat) > 90 || Math.abs(numericLng) > 180) {
+    const status = $("#locationStatus");
+    if (status) status.textContent = "พิกัดไม่ถูกต้อง กรุณาเลือกตำแหน่งใหม่ หรือวางลิงก์ Google Maps ที่ถูกต้อง";
+    return;
+  }
+
+  const lat = numericLat.toFixed(7);
+  const lng = numericLng.toFixed(7);
+  const link = `https://www.google.com/maps?q=${lat},${lng}`;
+
+  state.selectedLatLng = { latitude: lat, longitude: lng };
+  state.locationConfirmed = false;
+
+  const mapInput = $("#mapLink");
+  if (mapInput) mapInput.value = link;
+
+  const confirmBtn = $("#confirmLocationBtn");
+  if (confirmBtn) {
+    confirmBtn.classList.remove("is-disabled", "is-confirmed");
+    confirmBtn.setAttribute("aria-disabled", "false");
+    confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+  }
+
+  if (state.marker && state.map) {
+    moveMarkerSmoothly(lat, lng);
+    const targetZoom = Math.max(state.map.getZoom(), 17);
+    state.map.flyTo([lat, lng], targetZoom, {
+      animate: true,
+      duration: 0.62,
+      easeLinearity: 0.18
+    });
+  }
+
+  const status = $("#locationStatus");
+  if (status && message) status.textContent = message;
+
+  renderCart();
+}
+
+function updateMapPreview(link) {
+  const value = (link || "").trim();
+
+  if (!value) {
+    state.locationConfirmed = false;
+    state.selectedLatLng = null;
+
+    const confirmBtn = $("#confirmLocationBtn");
+    if (confirmBtn) {
+      confirmBtn.classList.add("is-disabled");
+      confirmBtn.classList.remove("is-confirmed");
+      confirmBtn.setAttribute("aria-disabled", "true");
+      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+    }
+    return;
+  }
+
+  const coords = extractCoordinates(value);
+  if (coords) {
+    ensureDeliveryMap().then(() => {
+      setSelectedLocation(coords.latitude, coords.longitude, "พบพิกัดจากลิงก์แล้ว ตรวจสอบหมุดแล้วกด “ยืนยันตำแหน่งนี้”");
+    });
+  } else {
+    state.locationConfirmed = false;
+    const confirmBtn = $("#confirmLocationBtn");
+    if (confirmBtn) {
+      confirmBtn.classList.remove("is-disabled", "is-confirmed");
+      confirmBtn.setAttribute("aria-disabled", "false");
+      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+    }
+    const status = $("#locationStatus");
+    if (status) status.textContent = "วางลิงก์ Google Maps แล้ว ถ้าลิงก์ถูกต้องให้กด “ยืนยันตำแหน่งนี้”";
+    renderCart();
+  }
+}
+
+function extractCoordinates(value) {
+  const text = String(value || "");
+  const buildCoords = (latitude, longitude) => {
+    const lat = Number(latitude);
+    const lng = Number(longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+    return { latitude: lat, longitude: lng };
+  };
+
+  let match = text.match(/q=(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+  if (match) return buildCoords(match[1], match[2]);
+
+  match = text.match(/@(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+  if (match) return buildCoords(match[1], match[2]);
+
+  match = text.match(/(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/);
+  if (match) return buildCoords(match[1], match[2]);
+
+  return null;
+}
+
+
+
+
+function updateGpsAccuracyPanel(accuracy, status = "checking") {
+  const panel = $("#gpsAccuracyPanel");
+  const text = $("#gpsAccuracyText");
+  if (!panel || !text) return;
+
+  panel.classList.remove("is-good", "is-medium", "is-bad", "is-checking");
+
+  if (!accuracy) {
+    panel.classList.add("is-checking");
+    text.textContent = status === "checking" ? "กำลังจับตำแหน่ง..." : "ยังไม่มีข้อมูลความแม่นยำ";
+    return;
+  }
+
+  const rounded = Math.round(accuracy);
+  text.textContent = `คลาดเคลื่อนประมาณ ${rounded} เมตร`;
+
+  if (rounded <= 25) {
+    panel.classList.add("is-good");
+  } else if (rounded <= 80) {
+    panel.classList.add("is-medium");
+  } else {
+    panel.classList.add("is-bad");
+  }
+}
+
+function getAccuracyMessage(accuracy) {
+  if (!accuracy) return "ระบบไม่ทราบค่าความแม่นยำ กรุณาตรวจสอบหมุดก่อนยืนยัน";
+  const rounded = Math.round(accuracy);
+  if (rounded <= 25) {
+    return `ตำแหน่งค่อนข้างแม่น คลาดเคลื่อนประมาณ ${rounded} เมตร`;
+  }
+  if (rounded <= 80) {
+    return `ตำแหน่งพอใช้ได้ แต่ยังอาจคลาดเคลื่อนประมาณ ${rounded} เมตร กรุณาดูหมุดก่อนยืนยัน`;
+  }
+  return `ตำแหน่งจากเครื่องนี้คลาดเคลื่อนสูงประมาณ ${rounded} เมตร ห้ามยืนยันจนกว่าจะลากหมุดไฟไปจุดส่งจริง`;
+}
+
+function updateUserLiveLocation(latitude, longitude, accuracy) {
+  if (!state.map || !window.L) return;
+
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+
+  const userIcon = L.divIcon({
+    className: "live-user-marker",
+    html: `<span></span><b>คุณอยู่ตรงนี้</b>`,
+    iconSize: [96, 54],
+    iconAnchor: [48, 28]
+  });
+
+  if (!state.userMarker) {
+    state.userMarker = L.marker([lat, lng], {
+      icon: userIcon,
+      interactive: false,
+      zIndexOffset: 900
+    }).addTo(state.map);
+  } else {
+    state.userMarker.setLatLng([lat, lng]);
+  }
+
+  if (!state.userAccuracyCircle) {
+    state.userAccuracyCircle = L.circle([lat, lng], {
+      radius: Math.max(accuracy || 25, 18),
+      color: "#55c7ff",
+      weight: 1,
+      opacity: 0.64,
+      fillColor: "#55c7ff",
+      fillOpacity: 0.10,
+      interactive: false
+    }).addTo(state.map);
+  } else {
+    state.userAccuracyCircle.setLatLng([lat, lng]);
+    state.userAccuracyCircle.setRadius(Math.max(accuracy || 25, 18));
+  }
+}
+
+function startLiveUserLocation() {
+  if (!navigator.geolocation || state.userWatchId !== null) return;
+
+  state.userWatchId = navigator.geolocation.watchPosition(
+    (position) => {
+      const { latitude, longitude, accuracy } = position.coords;
+      updateUserLiveLocation(latitude, longitude, accuracy);
+      updateGpsAccuracyPanel(accuracy, "done");
+    },
+    () => {
+      // Keep the order flow working even if live tracking is blocked.
+    },
+    { enableHighAccuracy: true, timeout: 18000, maximumAge: 5000 }
+  );
+}
+
+
+function getGooglePlacesApiKey() {
+  return window.FAI_MAI_KHUA_CONFIG?.googleMapsApiKey?.trim() || "";
+}
+
+function shouldUseGooglePlaces() {
+  const provider = window.FAI_MAI_KHUA_CONFIG?.searchProvider || "auto";
+  const key = getGooglePlacesApiKey();
+  return (provider === "google" || provider === "auto") && Boolean(key);
+}
+
+function updateSearchProviderStatus() {
+  const status = $("#searchProviderStatus");
+  if (!status) return;
+
+  if (shouldUseGooglePlaces()) {
+    status.className = "place-provider-status is-google";
+    status.textContent = "กำลังใช้ฐานข้อมูล Google Maps / Google Places";
+  } else {
+    status.className = "place-provider-status is-fallback";
+    status.textContent = "ยังไม่ได้ใส่ Google API key: ตอนนี้ใช้ระบบค้นหาสำรองก่อน";
+  }
+}
+
+async function searchPlace(options = {}) {
+  const { auto = false } = options;
+  const input = $("#placeSearchInput");
+  const resultsBox = $("#placeResults");
+  const status = $("#locationStatus");
+  const query = input?.value.trim() || "";
+
+  updateSearchProviderStatus();
+
+  if (!resultsBox) return;
+
+  if (query.length < 2) {
+    resultsBox.className = "place-results is-empty";
+    resultsBox.innerHTML = auto ? "พิมพ์อย่างน้อย 2 ตัวอักษร เพื่อให้ระบบแนะนำสถานที่" : "กรุณาพิมพ์ชื่อสถานที่ก่อนค้นหา";
+    return;
+  }
+
+  if (state.placeSearchController) {
+    state.placeSearchController.abort();
+  }
+
+  state.placeSearchController = new AbortController();
+
+  resultsBox.className = "place-results is-loading";
+  resultsBox.innerHTML = shouldUseGooglePlaces()
+    ? "กำลังค้นหาจาก Google Maps..."
+    : "กำลังค้นหาสถานที่จากระบบสำรอง...";
+
+  try {
+    const places = shouldUseGooglePlaces()
+      ? await searchGooglePlaces(query, state.placeSearchController.signal)
+      : await searchOpenStreetMapPlaces(query, state.placeSearchController.signal);
+
+    state.lastPlaceQuery = query;
+    renderPlaceResults(places, query, auto);
+  } catch (error) {
+    if (error.name === "AbortError") return;
+
+    // If Google has an issue, fall back to OpenStreetMap so the customer can still order.
+    if (shouldUseGooglePlaces()) {
+      try {
+        const fallbackPlaces = await searchOpenStreetMapPlaces(query);
+        renderPlaceResults(fallbackPlaces, query, auto, true);
+        if (status) status.textContent = "Google Places ขัดข้องชั่วคราว ระบบแสดงผลค้นหาสำรองให้ก่อน";
+        return;
+      } catch (fallbackError) {
+        // Continue to generic error below.
+      }
+    }
+
+    resultsBox.className = "place-results is-empty";
+    resultsBox.innerHTML = "ค้นหาสถานที่ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต หรือใช้ตำแหน่งปัจจุบัน";
+    if (status) status.textContent = "ระบบค้นหาสถานที่ขัดข้อง กรุณากดใช้ตำแหน่งปัจจุบัน หรือวางลิงก์ Google Maps เอง";
+  }
+}
+
+async function searchGooglePlaces(query, signal) {
+  const key = getGooglePlacesApiKey();
+  if (!key) return [];
+
+  const response = await fetchWithTimeout("https://places.googleapis.com/v1/places:autocomplete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": key
+    },
+    body: JSON.stringify({
+      input: query,
+      languageCode: "lo",
+      regionCode: "LA",
+      locationBias: {
+        circle: {
+          center: {
+            latitude: restaurant.storeLat,
+            longitude: restaurant.storeLng
+          },
+          radius: 45000
+        }
+      }
+    }),
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error("Google Places autocomplete failed");
+  }
+
+  const data = await response.json();
+  const suggestions = data.suggestions || [];
+
+  return suggestions
+    .map(item => item.placePrediction)
+    .filter(Boolean)
+    .map(place => ({
+      provider: "google",
+      placeId: place.placeId,
+      short_name: place.structuredFormat?.mainText?.text || place.text?.text || "Google Maps result",
+      display_name: place.text?.text || place.structuredFormat?.mainText?.text || "Google Maps result",
+      lat: "",
+      lon: ""
+    }));
+}
+
+async function getGooglePlaceDetails(placeId) {
+  const key = getGooglePlacesApiKey();
+  const response = await fetchWithTimeout(`https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?languageCode=lo&regionCode=LA`, {
+    headers: {
+      "X-Goog-Api-Key": key,
+      "X-Goog-FieldMask": "id,displayName,formattedAddress,location,googleMapsUri"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("Google Place details failed");
+  }
+
+  const data = await response.json();
+  return {
+    lat: data.location?.latitude,
+    lon: data.location?.longitude,
+    title: data.displayName?.text || data.formattedAddress || "Google Maps place",
+    address: data.formattedAddress || data.googleMapsUri || "",
+    googleMapsUri: data.googleMapsUri || ""
+  };
+}
+
+async function searchOpenStreetMapPlaces(query, signal) {
+  const queries = [
+    `${query}, Laos`,
+    `${query}, Vientiane, Laos`
+  ];
+
+  const allResults = [];
+
+  for (const searchQuery of queries) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=8&addressdetails=1&dedupe=1&countrycodes=la&q=${encodeURIComponent(searchQuery)}`;
+    try {
+      const response = await fetchWithTimeout(url, {
+        headers: { "Accept": "application/json" },
+        signal
+      });
+
+      if (!response.ok) continue;
+
+      const data = await response.json();
+      allResults.push(...data.map(place => ({
+        provider: "osm",
+        placeId: "",
+        short_name: place.display_name.split(",").slice(0, 2).join(","),
+        display_name: place.display_name,
+        lat: place.lat,
+        lon: place.lon
+      })));
+    } catch (error) {
+      if (signal?.aborted) throw error;
+    }
+  }
+
+  const seen = new Set();
+  return allResults.filter(place => {
+    const key = `${Number(place.lat).toFixed(5)},${Number(place.lon).toFixed(5)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).slice(0, 8);
+}
+
+function renderPlaceResults(places, query, auto = false, usedFallback = false) {
+  const resultsBox = $("#placeResults");
+  const status = $("#locationStatus");
+  if (!resultsBox) return;
+
+  if (!places.length) {
+    resultsBox.className = "place-results is-empty";
+    resultsBox.innerHTML = auto
+      ? `ยังไม่พบ “${query}” ลองพิมพ์ชื่อให้ละเอียดขึ้น เช่น ชื่อหมู่บ้าน + เมือง`
+      : "ไม่พบสถานที่ ลองพิมพ์ชื่อให้ละเอียดขึ้น เช่น ชื่อหมู่บ้าน + เมือง";
+    if (status) status.textContent = "ค้นหาไม่เจอ กรุณาลองพิมพ์ชื่อสถานที่ใหม่ หรือใช้ตำแหน่งปัจจุบัน";
+    return;
+  }
+
+  const providerTitle = usedFallback
+    ? "สถานที่แนะนำจากระบบสำรอง"
+    : (places[0]?.provider === "google" ? "สถานที่แนะนำจาก Google Maps" : "สถานที่แนะนำ");
+
+  resultsBox.className = "place-results";
+  resultsBox.innerHTML = `
+    <div class="suggestion-title">${providerTitle}</div>
+    ${places.map((place) => {
+      return `
+        <button type="button" class="place-result" data-provider="${place.provider}" data-place-id="${place.placeId || ""}" data-lat="${place.lat || ""}" data-lng="${place.lon || ""}">
+          <strong>${highlightMatch(place.short_name || place.display_name, query)}</strong>
+          <span>${highlightMatch(place.display_name, query)}</span>
+          <em>${place.provider === "google" ? "Google Maps" : "Map fallback"}</em>
+        </button>
+      `;
+    }).join("")}
+  `;
+
+  resultsBox.querySelectorAll(".place-result").forEach(button => {
+    button.addEventListener("click", async () => {
+      await selectPlaceResult(button, resultsBox);
+    });
+  });
+}
+
+async function selectPlaceResult(button, resultsBox) {
+  const provider = button.dataset.provider;
+  let lat = button.dataset.lat;
+  let lng = button.dataset.lng;
+  let title = button.querySelector("strong")?.textContent || "สถานที่ที่เลือก";
+
+  button.classList.add("is-loading");
+
+  try {
+    if (provider === "google") {
+      const details = await getGooglePlaceDetails(button.dataset.placeId);
+      lat = details.lat;
+      lng = details.lon;
+      title = details.title;
+    }
+
+    if (!lat || !lng) throw new Error("No coordinates");
+
+    await ensureDeliveryMap();
+    setSelectedLocation(lat, lng, `เลือกสถานที่ “${title}” แล้ว ถ้าหมุดตรงกับจุดส่งจริงให้กด “ยืนยันตำแหน่งนี้”`);
+
+    resultsBox.querySelectorAll(".place-result").forEach(item => item.classList.remove("is-selected"));
+    button.classList.add("is-selected");
+
+    const input = $("#placeSearchInput");
+    if (input) input.value = title;
+
+    document.querySelector("#mapPreview")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  } catch (error) {
+    const status = $("#locationStatus");
+    if (status) status.textContent = "ดึงพิกัดสถานที่ไม่สำเร็จ กรุณาเลือกผลลัพธ์อื่น หรือลากหมุดเอง";
+  } finally {
+    button.classList.remove("is-loading");
+  }
+}
+
+function highlightMatch(text, query) {
+  const safeText = escapeHtml(String(text || ""));
+  const q = String(query || "").trim();
+  if (!q) return safeText;
+
+  const escapedQuery = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(`(${escapedQuery})`, "ig");
+  return safeText.replace(regex, "<mark>$1</mark>");
+}
+
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function schedulePlaceAutocomplete() {
+  const input = $("#placeSearchInput");
+  const resultsBox = $("#placeResults");
+  const query = input?.value.trim() || "";
+
+  if (state.placeSearchTimer) clearTimeout(state.placeSearchTimer);
+
+  if (query.length < 2) {
+    if (resultsBox) {
+      resultsBox.className = "place-results is-empty";
+      resultsBox.innerHTML = query.length ? "พิมพ์เพิ่มอีกนิด ระบบจะแนะนำสถานที่ให้เลือก" : "";
+    }
+    return;
+  }
+
+  if (resultsBox) {
+    resultsBox.className = "place-results is-loading";
+    resultsBox.innerHTML = shouldUseGooglePlaces() ? "กำลังเตรียมค้นหาจาก Google Maps..." : "กำลังรอข้อความให้ครบ...";
+  }
+
+  state.placeSearchTimer = setTimeout(() => {
+    searchPlace({ auto: true });
+  }, 520);
+}
+
+async function useCurrentLocation() {
+  const status = $("#locationStatus");
+  const mapReadyPromise = ensureDeliveryMap().catch(() => null);
+
+  if (!navigator.geolocation) {
+    if (status) status.textContent = "เครื่องนี้ไม่รองรับการดึงตำแหน่ง กรุณาวางลิงก์ Google Maps เอง";
+    updateGpsAccuracyPanel(null, "failed");
+    return;
+  }
+
+  if (status) status.textContent = "กำลังจับตำแหน่งให้แม่นขึ้น... กรุณารอสักครู่และเปิด GPS/Wi‑Fi";
+  updateGpsAccuracyPanel(null, "checking");
+
+  state.bestGpsPosition = null;
+
+  let sampleCount = 0;
+  let finished = false;
+
+  function acceptPosition(position) {
+    const { latitude, longitude, accuracy } = position.coords;
+    sampleCount += 1;
+
+    updateUserLiveLocation(latitude, longitude, accuracy);
+    updateGpsAccuracyPanel(accuracy, "checking");
+
+    if (!state.bestGpsPosition || (accuracy || 99999) < (state.bestGpsPosition.coords.accuracy || 99999)) {
+      state.bestGpsPosition = position;
+    }
+
+    const best = state.bestGpsPosition;
+    const bestAccuracy = best?.coords?.accuracy;
+    const bestMessage = getAccuracyMessage(bestAccuracy);
+
+    if (status && !finished) {
+      status.textContent = `กำลังปรับตำแหน่ง... ได้ข้อมูล ${sampleCount} ครั้ง / ดีที่สุดตอนนี้: ${bestMessage}`;
+    }
+
+    if (!finished && accuracy && accuracy <= 20) {
+      finishBestGps();
+    }
+  }
+
+  function finishBestGps() {
+    if (finished) return;
+    finished = true;
+
+    if (state.gpsImproveTimer) {
+      clearTimeout(state.gpsImproveTimer);
+      state.gpsImproveTimer = null;
+    }
+
+    const best = state.bestGpsPosition;
+    if (!best) {
+      if (status) status.textContent = "ยังจับตำแหน่งไม่ได้ กรุณาลองอีกครั้ง หรือวางลิงก์ Google Maps เอง";
+      updateGpsAccuracyPanel(null, "failed");
+      return;
+    }
+
+    const { latitude, longitude, accuracy } = best.coords;
+    const lat = Number(latitude).toFixed(7);
+    const lng = Number(longitude).toFixed(7);
+
+    updateUserLiveLocation(latitude, longitude, accuracy);
+    updateGpsAccuracyPanel(accuracy, "done");
+
+    const message = getAccuracyMessage(accuracy);
+    setSelectedLocation(lat, lng, `${message} หมุดสีฟ้าคือตำแหน่งลูกค้าปัจจุบัน ส่วนหมุดไฟคือจุดส่ง หากไม่ตรงให้ลากหมุดไฟไปตำแหน่งจริงก่อนกด “ยืนยันตำแหน่งนี้”`);
+
+    mapReadyPromise.then(() => {
+      if (state.map) {
+        setSelectedLocation(lat, lng, `${message} หมุดสีฟ้าคือตำแหน่งลูกค้าปัจจุบัน ส่วนหมุดไฟคือจุดส่ง หากไม่ตรงให้ลากหมุดไฟไปตำแหน่งจริงก่อนกด “ยืนยันตำแหน่งนี้”`);
+      }
+    });
+    startLiveUserLocation();
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => acceptPosition(position),
+    (error) => {
+      let message = "ไม่สามารถดึงตำแหน่งได้ กรุณาเปิด Location หรือวางลิงก์ Google Maps เอง";
+      if (error.code === error.PERMISSION_DENIED) {
+        message = "ลูกค้ายังไม่ได้อนุญาต Location กรุณากดอนุญาต หรือวางลิงก์ Google Maps เอง";
+      }
+      if (error.code === error.POSITION_UNAVAILABLE) {
+        message = "เครื่องไม่สามารถหาตำแหน่งได้ตอนนี้ กรุณาเปิด GPS/Wi‑Fi หรือวางลิงก์ Google Maps เอง";
+      }
+      if (error.code === error.TIMEOUT) {
+        message = "ใช้เวลาหาตำแหน่งนานเกินไป กรุณาลองอีกครั้ง หรือวางลิงก์ Google Maps เอง";
+      }
+      if (status) status.textContent = message;
+      updateGpsAccuracyPanel(null, "failed");
+    },
+    { enableHighAccuracy: true, timeout: 18000, maximumAge: 0 }
+  );
+
+  const tempWatchId = navigator.geolocation.watchPosition(
+    (position) => acceptPosition(position),
+    () => {},
+    { enableHighAccuracy: true, timeout: 18000, maximumAge: 0 }
+  );
+
+  state.gpsImproveTimer = setTimeout(() => {
+    navigator.geolocation.clearWatch(tempWatchId);
+    finishBestGps();
+  }, 8500);
+}
+
+function setupReveal() {
+  if (!("IntersectionObserver" in window)) {
+    document.querySelectorAll(".reveal").forEach(el => el.classList.add("is-visible"));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+}
+
+function revealMenuCards() {
+  requestAnimationFrame(() => {
+    document.querySelectorAll(".menu-card").forEach(card => card.classList.add("is-visible"));
+  });
+}
+
+$("#searchInput").addEventListener("input", (event) => {
+  state.search = event.target.value;
+  renderMenu();
+});
+
+$("#clearBtn").addEventListener("click", () => {
+  state.cart = {};
+  renderCart();
+});
+
+$("#heroAddBtn").addEventListener("click", (event) => {
+  const id = Number(event.currentTarget.dataset.id);
+  if (id) addToCart(id, event.currentTarget);
+});
+
+$("#sendOrderBtn").addEventListener("click", (event) => {
+  const validation = validateOrderForm();
+  updateValidationBox(validation);
+  if (!validation.isValid) {
+    event.preventDefault();
+    document.querySelector("#customer")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+});
+
+["#customerName", "#customerPhone", "#tableInput", "#deliveryAddress", "#customerNote"].forEach(selector => {
+  const element = $(selector);
+  if (element) element.addEventListener("input", () => renderCart());
+});
+
+const mapInput = $("#mapLink");
+if (mapInput) {
+  mapInput.addEventListener("input", () => {
+    updateMapPreview(mapInput.value);
+    renderCart();
+  });
+}
+
+document.querySelectorAll('input[name="orderType"]').forEach(input => {
+  input.addEventListener("change", () => {
+    if (input.checked && input.value === "จัดส่งเดลิเวอรี") {
+      ensureDeliveryMap();
+    }
+    renderCart();
+  });
+});
+
+
+const placeSearchButton = $("#placeSearchBtn");
+if (placeSearchButton) placeSearchButton.addEventListener("click", searchPlace);
+
+const placeSearchInput = $("#placeSearchInput");
+if (placeSearchInput) {
+  placeSearchInput.addEventListener("focus", () => ensureDeliveryMap());
+  placeSearchInput.addEventListener("input", schedulePlaceAutocomplete);
+  placeSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      searchPlace();
+    }
+  });
+}
+
+
+document.querySelectorAll(".map-mode-btn").forEach(button => {
+  button.addEventListener("click", async () => {
+    const mode = button.dataset.mapMode || "satellite";
+    setMapMode(mode);
+    await ensureDeliveryMap();
+    setMapMode(mode);
+  });
+});
+
+const locationButton = $("#useLocationBtn");
+if (locationButton) locationButton.addEventListener("click", useCurrentLocation);
+
+const confirmLocationButton = $("#confirmLocationBtn");
+if (confirmLocationButton) {
+  confirmLocationButton.addEventListener("click", () => {
+    const mapInput = $("#mapLink");
+    if (!mapInput?.value.trim()) return;
+    setLocationConfirmed(true);
+  });
+}
+
+const clearLocationButton = $("#clearLocationBtn");
+if (clearLocationButton) {
+  clearLocationButton.addEventListener("click", () => {
+    const mapInput = $("#mapLink");
+    if (mapInput) mapInput.value = "";
+    const placeInput = $("#placeSearchInput");
+    const placeResults = $("#placeResults");
+    if (placeInput) placeInput.value = "";
+    if (placeResults) {
+      placeResults.className = "place-results";
+      placeResults.innerHTML = "";
+    }
+    setLocationConfirmed(false);
+    updateMapPreview("");
+    const status = $("#locationStatus");
+    if (status) status.textContent = "ล้าง Location แล้ว กรุณากดใช้ตำแหน่งปัจจุบัน หรือวางลิงก์ Google Maps ใหม่";
+    renderCart();
+  });
+}
+
+updateMapPreview($("#mapLink")?.value || "");
+
+
+document.querySelectorAll(".currency-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    state.selectedCurrency = button.dataset.currency || "LAK";
+    document.querySelectorAll(".currency-btn").forEach(btn => {
+      const active = btn.dataset.currency === state.selectedCurrency;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+    renderMenu();
+    renderCart();
+  });
+});
+
+initRestaurantInfo();
+initSoundToggle();
+renderTabs();
+renderMenu();
+renderCart();
+setupReveal();
+startHeroSlider();
+
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js").catch(() => {
+      // Service worker is optional. The website still works if registration fails.
+    });
+  });
+}

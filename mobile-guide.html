@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="lo">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mobile Guide - ໄຟໄໝ້ຄົວ</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; line-height: 1.7; background: #100806; color: #fff6e8; }
+    .card { max-width: 760px; margin: auto; border: 1px solid rgba(255,214,138,.22); border-radius: 22px; padding: 22px; background: rgba(255,255,255,.06); }
+    h1 { color: #ffb636; }
+    code { background: rgba(255,255,255,.08); border-radius: 12px; padding: 3px 7px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Mobile Guide - ໄຟໄໝ້ຄົວ</h1>
+    <p>ไฟล์นี้คือคู่มือสั้น ๆ สำหรับเปิดเว็บบน iPhone และ Android</p>
+    <h2>สำคัญ</h2>
+    <p>ถ้าจะให้ลูกค้าทุกคนเปิดได้ ต้องนำโฟลเดอร์เว็บนี้ไปวางบน Hosting ที่มี HTTPS ก่อน เช่น Netlify, Vercel, Cloudflare Pages หรือ hosting ของร้าน</p>
+    <h2>Drag & Drop ขึ้นออนไลน์</h2>
+    <p>ให้ลากโฟลเดอร์ที่มีไฟล์ <code>index.html</code>, <code>app.js</code>, <code>styles.css</code>, <code>manifest.json</code>, <code>service-worker.js</code> และโฟลเดอร์ <code>images</code> อยู่ข้างในขึ้น Netlify Drop โดยตรง ไม่ต้องลากไฟล์ zip และไม่ควรลากโฟลเดอร์ชั้นนอกที่ไม่มี <code>index.html</code> อยู่ระดับแรก</p>
+    <h2>iPhone / iPad</h2>
+    <p>เปิดลิงก์เว็บใน Safari → กด Share → Add to Home Screen</p>
+    <h2>Android</h2>
+    <p>เปิดลิงก์เว็บใน Chrome → กดเมนู ⋮ → Add to Home screen หรือ Install app</p>
+    <h2>ทดสอบในวง Wi‑Fi เดียวกัน</h2>
+    <p>เปิดเว็บด้วย Live Server ในคอม แล้วใช้มือถือเข้าผ่าน IP ของคอม เช่น <code>http://192.168.1.10:5500</code></p>
+  </div>
+</body>
+</html>

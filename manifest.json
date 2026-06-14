@@ -1,0 +1,25 @@
+{
+  "name": "ໄຟໄໝ້ຄົວ QR Menu",
+  "short_name": "ໄຟໄໝ້ຄົວ",
+  "description": "QR menu and order page for Fai Mai Khua.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#100806",
+  "theme_color": "#e8431f",
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

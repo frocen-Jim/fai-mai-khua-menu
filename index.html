@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ໄຟໄໝ້ຄົວ | QR Menu</title>
+  <meta name="description" content="เมนูออนไลน์ร้านໄຟໄໝ້ຄົວ สแกน QR แล้วดูเมนูและส่งออเดอร์ได้ทันที" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//a.tile.openstreetmap.org">
+  <link rel="dns-prefetch" href="//b.tile.openstreetmap.org">
+  <link rel="dns-prefetch" href="//c.tile.openstreetmap.org">
+  <link rel="dns-prefetch" href="//server.arcgisonline.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;800;900&family=Noto+Sans+Thai:wght@400;600;700;800;900&family=Noto+Serif+Lao:wght@600;700;800;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/logo-fai-mai-khua-small.png" />
+  <link rel="stylesheet" href="styles.css?v=44" />
+
+  <meta name="theme-color" content="#e8431f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="ໄຟໄໝ້ຄົວ" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+</head>
+<body>
+  <div class="page-glow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="ember-field" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="flame-zone" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+
+  <header class="hero" id="top">
+    <nav class="topbar">
+      <a class="brand" href="#top" aria-label="กลับไปด้านบน">
+        <div class="brand-mark brand-logo">
+          <img src="images/logo-fai-mai-khua-small.png" width="96" height="96" decoding="async" alt="โลโก้ໄຟໄໝ້ຄົວ" />
+        </div>
+        <div>
+          <p class="eyebrow">QR FIRE MENU</p>
+          <h1 id="restaurantName">ໄຟໄໝ້ຄົວ</h1>
+        </div>
+      </a>
+      <div class="nav-pills" aria-label="เมนูนำทาง">
+        <a href="#signature">Signature</a>
+        <a href="#menu">Menu</a>
+        <a href="#customer">Customer</a>
+        <a href="#order">Order</a>
+      </div>
+      <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true">Sound: On</button>
+      <a class="call-btn shine" id="callBtn" href="tel:+8562099469995">ໂທ</a>
+    </nav>
+
+    <section class="hero-stage" id="signature">
+      <div class="hero-copy reveal-now">
+        <img class="hero-brand-logo" src="images/logo-fai-mai-khua-small.png" width="148" height="148" decoding="async" alt="โลโก้ໄຟໄໝ້ຄົວ" />
+        <div class="fire-kitchen-label"><span class="mini-flame-icon">🔥</span> เอกลักษณ์ครัวไฟแรง</div>
+        <p class="tagline">FIRE COOKED • FRESH SERVED</p>
+        <h2><span>ไฟไหม้</span><span>ครัว</span></h2>
+        <p class="hero-text">ครัวไฟแรง รสจัด วัตถุดิบจริงทุกจาน เลือกเมนู กรอกข้อมูล แล้วส่งออเดอร์เข้าร้านได้ทันที</p>
+        <div class="hero-actions">
+          <a href="#menu" class="primary-btn shine">ดูเมนูทั้งหมด</a>
+          <a href="#order" class="secondary-btn">รายการที่เลือก</a>
+        </div>
+        <div class="quick-stats" aria-label="จุดเด่นร้าน">
+          <div><strong>10:30</strong><span>เปิดร้าน</span></div>
+          <div><strong>FIRE</strong><span>ครัวไฟแรง</span></div>
+          <div><strong>KIP</strong><span>ราคาชัดเจน</span></div>
+        </div>
+      </div>
+
+      <div class="food-orbit" aria-hidden="true">
+        <div class="orbit-ring ring-one"></div>
+        <div class="orbit-ring ring-two"></div>
+        <img id="heroImage" class="hero-food" src="https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=560&q=65" width="560" height="560" decoding="async" fetchpriority="high" alt="เมนูแนะนำของร้าน" />
+        <span class="ingredient chili">✦</span>
+        <span class="ingredient leaf">◆</span>
+        <span class="ingredient flame">●</span>
+      </div>
+
+      <aside class="dish-panel reveal-now" aria-label="เมนูแนะนำ">
+        <div class="panel-flame-glow" aria-hidden="true"></div>
+        <p class="eyebrow">SIGNATURE DISH</p>
+        <h3 id="heroDishName">ข้าวกะเพราหมู + ไข่ดาว</h3>
+        <p id="heroDishDesc">กะเพราหมูรสจัด เสิร์ฟพร้อมข้าวหอมและไข่ดาว</p>
+        <div class="rating-line" aria-label="คะแนนความนิยม">
+          <span>🔥</span><span>🔥</span><span>🔥</span><span>🔥</span><span>🔥</span>
+        </div>
+        <div class="panel-bottom">
+          <strong id="heroDishPrice">60,000 Kip</strong>
+          <button id="heroAddBtn" class="add-btn">+ เพิ่ม</button>
+        </div>
+      </aside>
+    </section>
+  </header>
+
+  <main>
+    <section class="info-grid reveal" aria-label="ข้อมูลร้าน">
+      <div class="info-card">
+        <span>เวลาเปิด</span>
+        <strong id="openHours">10:30 - 22:00</strong>
+      </div>
+      <div class="info-card">
+        <span>ที่ตั้ง</span>
+        <strong id="locationText">Vientiane, Laos</strong>
+      </div>
+      <div class="info-card">
+        <span>บริการ</span>
+        <strong>นั่งทาน • รับกลับ • เดลิเวอรี</strong>
+      </div>
+    </section>
+
+    <section class="controls reveal" id="menu">
+      <div>
+        <p class="eyebrow">OUR FIRE MENU</p>
+        <h2>เมนูอาหาร</h2>
+        <div class="section-fire-line" aria-hidden="true"><span></span></div>
+      </div>
+      <input id="searchInput" type="search" placeholder="ค้นหา เช่น กะเพรา, เนื้อ, ข้าว" />
+    </section>
+
+    <div class="category-tabs reveal" id="categoryTabs"></div>
+    <section class="menu-grid" id="menuGrid" aria-live="polite"></section>
+
+    <section class="customer-panel reveal" id="customer">
+      <div class="order-header">
+        <div>
+          <p class="eyebrow">CUSTOMER</p>
+          <h2>ข้อมูลลูกค้า / จุดส่งอาหาร</h2>
+        </div>
+      </div>
+
+      <div class="customer-form">
+        <div class="field">
+          <label for="customerName">ชื่อลูกค้า <em>*</em></label>
+          <input id="customerName" class="table-input" type="text" placeholder="เช่น คุณจิมมี่" autocomplete="name" />
+        </div>
+
+        <div class="field">
+          <label for="customerPhone">เบอร์ໂທติดต่อ <em>*</em></label>
+          <input id="customerPhone" class="table-input" type="tel" placeholder="เช่น 020xxxxxxxx" autocomplete="tel" />
+        </div>
+
+        <div class="field wide">
+          <label>เลือกรูปแบบรับอาหาร <em>*</em></label>
+          <div class="choice-group" role="radiogroup" aria-label="เลือกรูปแบบรับอาหาร">
+            <label class="choice-card">
+              <input type="radio" name="orderType" value="นั่งทานที่ร้าน" checked />
+              <span>
+                <strong>นั่งทานที่ร้าน</strong>
+                <small>สำหรับลูกค้าที่อยู่ในร้าน</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="orderType" value="รับเองหน้าร้าน" />
+              <span>
+                <strong>รับเองหน้าร้าน</strong>
+                <small>สั่งไว้แล้วมารับเอง</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="orderType" value="จัดส่งเดลิเวอรี" />
+              <span>
+                <strong>จัดส่งเดลิเวอรี</strong>
+                <small>กรอกที่อยู่และ Location</small>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="tableInput">เลขโต๊ะ / จุดรับอาหาร <em>*</em></label>
+          <input id="tableInput" class="table-input" type="text" placeholder="เช่น โต๊ะ 3 / หน้าร้าน / ฝากไว้ รปภ." />
+        </div>
+
+        <div class="field wide">
+          <label for="deliveryAddress">สถานที่จัดส่ง / ที่อยู่ <em class="delivery-required">*</em></label>
+          <textarea id="deliveryAddress" class="table-input textarea-input" placeholder="เขียนที่อยู่ เช่น บ้านเลขที่, หมู่บ้าน, ถนน, ร้าน/ตึกใกล้เคียง"></textarea>
+        </div>
+
+        <div class="field wide location-field">
+          <label for="mapLink">Location / Google Maps <em class="delivery-required">*</em></label>
+          <div class="location-row">
+            <input id="mapLink" class="table-input" type="url" placeholder="ระบบจะใส่ลิงก์จากหมุดที่ลูกค้าปัก หรือวางลิงก์ Google Maps เอง" />
+            <button type="button" class="secondary-btn locate-btn" id="useLocationBtn">ใช้ตำแหน่งปัจจุบัน</button>
+          </div>
+
+          <div class="place-search-box">
+            <label for="placeSearchInput">ค้นหาสถานที่ / หมู่บ้าน / ร้านใกล้เคียง</label>
+            <div class="place-search-row">
+              <input id="placeSearchInput" class="table-input" type="search" placeholder="พิมพ์ชื่อสถานที่ ระบบจะแนะนำผลลัพธ์ให้เลือกอัตโนมัติ" />
+              <button type="button" class="secondary-btn locate-btn" id="placeSearchBtn">ค้นหา</button>
+            </div>
+            <p class="place-search-hint">พิมพ์อย่างน้อย 2 ตัวอักษร เช่น ชื่อหมู่บ้าน, ร้านใกล้บ้าน, ถนน หรือสถานที่สำคัญ แล้วเลือกรายการที่ใกล้ที่สุด</p>
+            <p id="searchProviderStatus" class="place-provider-status">ระบบค้นหาพร้อมใช้งาน</p>
+            <div id="placeResults" class="place-results" aria-live="polite"></div>
+          </div>
+
+          <div class="map-tools">
+            <button type="button" class="map-action confirm-location-btn is-disabled" id="confirmLocationBtn" aria-disabled="true">ยืนยันตำแหน่งนี้</button>
+            <button type="button" class="map-action" id="clearLocationBtn">ล้าง Location / เลือกใหม่</button>
+          </div>
+
+          <div class="map-mode-switch" role="group" aria-label="เลือกประเภทแผนที่">
+            <button type="button" class="map-mode-btn is-active" data-map-mode="street">แผนที่ถนน</button>
+            <button type="button" class="map-mode-btn" data-map-mode="satellite">ภาพดาวเทียม</button>
+          </div>
+
+          <div class="map-preview draggable-map" id="mapPreview">
+            <div id="deliveryMap" class="delivery-map"></div>
+            <div class="map-placeholder map-fallback" id="mapFallback">
+              กำลังโหลดแผนที่ดาวเทียม... ถ้าแผนที่ไม่ขึ้น กรุณาตรวจสอบอินเทอร์เน็ต หรือวางลิงก์ Google Maps เอง
+            </div>
+          </div>
+
+          <p class="location-help" id="locationStatus">เลือกเดลิเวอรีแล้วแผนที่จะโหลดขึ้นมา สามารถค้นหาสถานที่ กดใช้ตำแหน่งปัจจุบัน หรือสลับดูแผนที่ถนน/ภาพดาวเทียมได้</p>
+          <p class="location-help location-warning">โลโก้ร้านบนแผนที่คือจุดร้าน ຮ້ານ ໄຟໄໝ້ຄົວ ลูกค้าจะเห็นตำแหน่งตัวเองแบบ real-time หลังอนุญาต Location และยังสามารถปักหมุดจุดส่งของตัวเองหรือสั่งไปส่งให้คนอื่นได้</p>
+
+          <div class="gps-accuracy-panel" id="gpsAccuracyPanel">
+            <strong>GPS Accuracy</strong>
+            <span id="gpsAccuracyText">ยังไม่ได้ตรวจตำแหน่ง</span>
+            <small>ถ้าค่าคลาดเคลื่อนสูง ให้ลูกค้าลากหมุดไฟไปยังจุดส่งจริงก่อนกดยืนยัน</small>
+          </div>
+        </div>
+
+        <div class="field wide">
+          <label for="customerNote">หมายเหตุเพิ่มเติม</label>
+          <textarea id="customerNote" class="table-input textarea-input" placeholder="เช่น ไม่เผ็ด, แยกน้ำจิ้ม, ໂທก่อนถึง, ไม่มีช้อน"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="order-panel reveal" id="order">
+      <div class="order-header">
+        <div>
+          <p class="eyebrow">ORDER</p>
+          <h2>ORDER LIST</h2>
+        </div>
+        <button class="clear-btn" id="clearBtn">ล้างรายการ</button>
+      </div>
+      <div id="orderItems" class="order-items empty">ยังไม่มีรายการที่เลือก</div>
+      <div class="total-row">
+        <span>รวมโดยประมาณ</span>
+        <strong id="totalPrice">0 Kip</strong>
+      </div>
+      <div id="orderValidation" class="validation-box" aria-live="polite"></div>
+      <a id="sendOrderBtn" class="primary-btn full shine is-disabled" href="#" target="_blank" rel="noopener" aria-disabled="true">กรอกข้อมูลให้ครบก่อนยืนยันออเดอร์</a>
+      <p class="note">หมายเหตุ: ข้อมูลลูกค้าและรายการอาหารจะถูกส่งเข้า WhatsApp ร้าน ยังไม่ตัดสต็อกและยังไม่รับชำระเงินอัตโนมัติ</p>
+    </section>
+  </main>
+
+  <footer>
+    <img class="footer-logo" src="images/logo-fai-mai-khua-small.png" width="96" height="96" loading="lazy" decoding="async" alt="โลโก้ໄຟໄໝ້ຄົວ" />
+    <strong id="footerName">ໄຟໄໝ້ຄົວ</strong>
+    <p>Scan QR • View Menu • Order Faster</p>
+  </footer>
+  <script src="config.js?v=44"></script>
+  <script src="app.js?v=44"></script>
+</body>
+</html>

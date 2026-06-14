@@ -1,0 +1,9 @@
+GitHub Pages upload package for Fai Mai Khua QR Menu.
+
+Upload all files in this package to a public GitHub repository, then enable Pages:
+Settings > Pages > Deploy from a branch > main > /root > Save.
+
+Open the final link shown by GitHub Pages. It is usually:
+https://YOUR_USERNAME.github.io/REPOSITORY_NAME/
+
+If you later use a custom domain, add it in Settings > Pages > Custom domain.
