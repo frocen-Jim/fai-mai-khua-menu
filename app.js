@@ -182,6 +182,21 @@ const $ = (selector) => document.querySelector(selector);
 const LEAFLET_ASSET_TIMEOUT_MS = 6500;
 const SEARCH_TIMEOUT_MS = 7500;
 const CUSTOMER_MEMORY_KEY = 'faiMaiKhuaCustomerInfoV1';
+const CUSTOMER_MEMORY_TEXT_KEYS = [
+  "customerName",
+  "customerPhone",
+  "tableText",
+  "deliveryAddress",
+  "mapLink",
+  "customerNote"
+];
+const CUSTOMER_MEMORY_FIELD_SELECTORS = [
+  "#customerName",
+  "#customerPhone",
+  "#tableInput",
+  "#deliveryAddress",
+  "#customerNote"
+];
 const LEAFLET_ASSET_SOURCES = [
   {
     css: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
@@ -652,24 +667,51 @@ function readCustomerMemory() {
   }
 }
 
-function saveCustomerMemory() {
-  if (!canUseCustomerMemory()) return;
+function hasCustomerMemoryData(info) {
+  return CUSTOMER_MEMORY_TEXT_KEYS.some(key => Boolean(info[key]));
+}
+
+function saveCustomerMemory(options = {}) {
+  const { force = false, silent = false } = options;
+
+  if (!canUseCustomerMemory()) {
+    if (!silent) {
+      setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้เว็บจำข้อมูลอัตโนมัติ ถ้าใช้โหมดส่วนตัว/Incognito ข้อมูลอาจหาย");
+    }
+    return;
+  }
 
   try {
     const info = getCustomerInfo();
-    window.localStorage.setItem(CUSTOMER_MEMORY_KEY, JSON.stringify({
+    const previous = readCustomerMemory();
+
+    // Do not let a blank page load overwrite previously saved customer details.
+    if (!force && previous && !hasCustomerMemoryData(info)) return;
+
+    const snapshot = {
       ...info,
       locationConfirmed: Boolean(info.mapLink && state.locationConfirmed),
       selectedCurrency: state.selectedCurrency,
       savedAt: Date.now()
-    }));
-    setCustomerMemoryStatus("ระบบจำข้อมูลลูกค้าไว้ในเครื่องนี้แล้ว รอบหน้าจะเติมให้อัตโนมัติ");
+    };
+
+    window.localStorage.setItem(CUSTOMER_MEMORY_KEY, JSON.stringify(snapshot));
+    if (!silent) {
+      setCustomerMemoryStatus("ระบบจำข้อมูลลูกค้าไว้ใน browser นี้แล้ว รอบหน้าจะเติมให้อัตโนมัติ");
+    }
   } catch (error) {
-    setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้จำข้อมูลอัตโนมัติ");
+    if (!silent) {
+      setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้จำข้อมูลอัตโนมัติ");
+    }
   }
 }
 
 function restoreCustomerMemory() {
+  if (!canUseCustomerMemory()) {
+    setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้เว็บจำข้อมูลอัตโนมัติ ถ้าใช้โหมดส่วนตัว/Incognito ข้อมูลอาจหาย");
+    return;
+  }
+
   const saved = readCustomerMemory();
   if (!saved) {
     setCustomerMemoryStatus("ข้อมูลลูกค้าจะถูกจำไว้ใน browser นี้หลังจากเริ่มกรอก");
@@ -974,7 +1016,7 @@ function setLocationConfirmed(isConfirmed) {
     status.textContent = "ยืนยัน Location แล้ว ลูกค้าสามารถกดยืนยันออเดอร์ได้เมื่อข้อมูลครบ";
   }
 
-  saveCustomerMemory();
+  saveCustomerMemory({ force: true });
   renderCart();
 }
 
@@ -1944,7 +1986,7 @@ function handleSendOrderClick(event) {
     return;
   }
 
-  saveCustomerMemory();
+  saveCustomerMemory({ force: true });
 }
 
 $("#searchInput").addEventListener("input", (event) => {
@@ -1987,11 +2029,23 @@ window.addEventListener("keydown", (event) => {
   if (event.key === "Escape") setFloatingCartOpen(false);
 });
 
-["#customerName", "#customerPhone", "#tableInput", "#deliveryAddress", "#customerNote"].forEach(selector => {
+window.addEventListener("pagehide", () => saveCustomerMemory({ force: true, silent: true }));
+window.addEventListener("beforeunload", () => saveCustomerMemory({ force: true, silent: true }));
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    saveCustomerMemory({ force: true, silent: true });
+  }
+});
+
+CUSTOMER_MEMORY_FIELD_SELECTORS.forEach(selector => {
   const element = $(selector);
-  if (element) element.addEventListener("input", () => {
-    saveCustomerMemory();
-    renderCart();
+  if (!element) return;
+
+  ["input", "change", "blur"].forEach(eventName => {
+    element.addEventListener(eventName, () => {
+      saveCustomerMemory({ force: eventName !== "input" });
+      renderCart();
+    });
   });
 });
 
@@ -2003,8 +2057,14 @@ if (mapInput) {
   mapInput.addEventListener("input", () => {
     setLocationConfirmed(false);
     updateMapPreview(mapInput.value);
-    saveCustomerMemory();
+    saveCustomerMemory({ force: true });
     renderCart();
+  });
+  ["change", "blur"].forEach(eventName => {
+    mapInput.addEventListener(eventName, () => {
+      saveCustomerMemory({ force: true });
+      renderCart();
+    });
   });
 }
 
@@ -2013,7 +2073,7 @@ document.querySelectorAll('input[name="orderType"]').forEach(input => {
     if (input.checked && input.value === "จัดส่งเดลิเวอรี") {
       ensureDeliveryMap();
     }
-    saveCustomerMemory();
+    saveCustomerMemory({ force: true });
     renderCart();
   });
 });
@@ -2089,7 +2149,7 @@ document.querySelectorAll(".currency-btn").forEach(button => {
       btn.setAttribute("aria-pressed", String(active));
     });
     renderMenu();
-    saveCustomerMemory();
+    saveCustomerMemory({ force: true });
     renderCart();
   });
 });

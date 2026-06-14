@@ -16,7 +16,7 @@
   <link rel="dns-prefetch" href="//server.arcgisonline.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;800;900&family=Noto+Sans+Thai:wght@400;600;700;800;900&family=Noto+Serif+Lao:wght@600;700;800;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/logo-fai-mai-khua-small.png" />
-  <link rel="stylesheet" href="styles.css?v=48" />
+  <link rel="stylesheet" href="styles.css?v=49" />
 
   <meta name="theme-color" content="#e8431f" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -141,12 +141,12 @@
       <div class="customer-form">
         <div class="field">
           <label for="customerName">ชื่อลูกค้า <em>*</em></label>
-          <input id="customerName" class="table-input" type="text" placeholder="เช่น คุณจิมมี่" autocomplete="name" />
+          <input id="customerName" name="customer_name" class="table-input" type="text" placeholder="เช่น คุณจิมมี่" autocomplete="name" />
         </div>
 
         <div class="field">
           <label for="customerPhone">เบอร์ໂທติดต่อ <em>*</em></label>
-          <input id="customerPhone" class="table-input" type="tel" placeholder="เช่น 020xxxxxxxx" autocomplete="tel" />
+          <input id="customerPhone" name="customer_phone" class="table-input" type="tel" placeholder="เช่น 020xxxxxxxx" autocomplete="tel" />
         </div>
 
         <div class="field wide">
@@ -178,25 +178,25 @@
 
         <div class="field">
           <label for="tableInput">เลขโต๊ะ / จุดรับอาหาร <em>*</em></label>
-          <input id="tableInput" class="table-input" type="text" placeholder="เช่น โต๊ะ 3 / หน้าร้าน / ฝากไว้ รปภ." />
+          <input id="tableInput" name="table_or_pickup_point" class="table-input" type="text" placeholder="เช่น โต๊ะ 3 / หน้าร้าน / ฝากไว้ รปภ." autocomplete="off" />
         </div>
 
         <div class="field wide">
           <label for="deliveryAddress">สถานที่จัดส่ง / ที่อยู่ <em class="delivery-required">*</em></label>
-          <textarea id="deliveryAddress" class="table-input textarea-input" placeholder="เขียนที่อยู่ เช่น บ้านเลขที่, หมู่บ้าน, ถนน, ร้าน/ตึกใกล้เคียง"></textarea>
+          <textarea id="deliveryAddress" name="delivery_address" class="table-input textarea-input" placeholder="เขียนที่อยู่ เช่น บ้านเลขที่, หมู่บ้าน, ถนน, ร้าน/ตึกใกล้เคียง" autocomplete="street-address"></textarea>
         </div>
 
         <div class="field wide location-field">
           <label for="mapLink">Location / Google Maps <em class="delivery-required">*</em></label>
           <div class="location-row">
-            <input id="mapLink" class="table-input" type="url" placeholder="ระบบจะใส่ลิงก์จากหมุดที่ลูกค้าปัก หรือวางลิงก์ Google Maps เอง" />
+            <input id="mapLink" name="map_link" class="table-input" type="url" placeholder="ระบบจะใส่ลิงก์จากหมุดที่ลูกค้าปัก หรือวางลิงก์ Google Maps เอง" autocomplete="url" />
             <button type="button" class="secondary-btn locate-btn" id="useLocationBtn">ใช้ตำแหน่งปัจจุบัน</button>
           </div>
 
           <div class="place-search-box">
             <label for="placeSearchInput">ค้นหาสถานที่ / หมู่บ้าน / ร้านใกล้เคียง</label>
             <div class="place-search-row">
-              <input id="placeSearchInput" class="table-input" type="search" placeholder="พิมพ์ชื่อสถานที่ ระบบจะแนะนำผลลัพธ์ให้เลือกอัตโนมัติ" />
+              <input id="placeSearchInput" name="place_search" class="table-input" type="search" placeholder="พิมพ์ชื่อสถานที่ ระบบจะแนะนำผลลัพธ์ให้เลือกอัตโนมัติ" autocomplete="off" />
               <button type="button" class="secondary-btn locate-btn" id="placeSearchBtn">ค้นหา</button>
             </div>
             <p class="place-search-hint">พิมพ์อย่างน้อย 2 ตัวอักษร เช่น ชื่อหมู่บ้าน, ร้านใกล้บ้าน, ถนน หรือสถานที่สำคัญ แล้วเลือกรายการที่ใกล้ที่สุด</p>
@@ -233,7 +233,7 @@
 
         <div class="field wide">
           <label for="customerNote">หมายเหตุเพิ่มเติม</label>
-          <textarea id="customerNote" class="table-input textarea-input" placeholder="เช่น ไม่เผ็ด, แยกน้ำจิ้ม, ໂທก่อนถึง, ไม่มีช้อน"></textarea>
+          <textarea id="customerNote" name="customer_note" class="table-input textarea-input" placeholder="เช่น ไม่เผ็ด, แยกน้ำจิ้ม, ໂທก่อนถึง, ไม่มีช้อน" autocomplete="off"></textarea>
         </div>
       </div>
     </section>
@@ -300,7 +300,7 @@
     <strong id="footerName">ໄຟໄໝ້ຄົວ</strong>
     <p>Scan QR • View Menu • Order Faster</p>
   </footer>
-  <script src="config.js?v=48"></script>
-  <script src="app.js?v=48"></script>
+  <script src="config.js?v=49"></script>
+  <script src="app.js?v=49"></script>
 </body>
 </html>
