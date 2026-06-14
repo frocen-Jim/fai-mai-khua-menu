@@ -327,3 +327,10 @@ images/salmon.jpg
 
 ## v44 mobile safe
 Use this package if iPhone/Safari shows a black page. It keeps content visible and clears old service worker caches.
+
+
+## v46 remember customer
+This version remembers customer contact and delivery information in the visitor's browser using localStorage, so repeat customers do not need to type it again on the same device/browser.
+
+## v47 menu quantity badges
+This version shows the selected quantity directly on each menu image, so customers can see how many items they have added before sending the order.

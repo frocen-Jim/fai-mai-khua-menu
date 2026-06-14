@@ -7,3 +7,4 @@ Open the final link shown by GitHub Pages. It is usually:
 https://YOUR_USERNAME.github.io/REPOSITORY_NAME/
 
 If you later use a custom domain, add it in Settings > Pages > Custom domain.
+Version v46 adds browser memory for repeat customer details.

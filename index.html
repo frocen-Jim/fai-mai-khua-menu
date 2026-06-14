@@ -16,7 +16,7 @@
   <link rel="dns-prefetch" href="//server.arcgisonline.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;800;900&family=Noto+Sans+Thai:wght@400;600;700;800;900&family=Noto+Serif+Lao:wght@600;700;800;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/logo-fai-mai-khua-small.png" />
-  <link rel="stylesheet" href="styles.css?v=44" />
+  <link rel="stylesheet" href="styles.css?v=48" />
 
   <meta name="theme-color" content="#e8431f" />
   <meta name="mobile-web-app-capable" content="yes" />
@@ -129,11 +129,13 @@
     <section class="menu-grid" id="menuGrid" aria-live="polite"></section>
 
     <section class="customer-panel reveal" id="customer">
-      <div class="order-header">
+      <div class="order-header customer-memory-header">
         <div>
           <p class="eyebrow">CUSTOMER</p>
           <h2>ข้อมูลลูกค้า / จุดส่งอาหาร</h2>
+          <p id="savedCustomerStatus" class="saved-customer-status">ข้อมูลลูกค้าจะถูกจำไว้ใน browser นี้หลังจากเริ่มกรอก</p>
         </div>
+        <button type="button" class="clear-btn saved-customer-clear" id="clearSavedCustomerBtn">ล้างข้อมูลที่จำไว้</button>
       </div>
 
       <div class="customer-form">
@@ -255,12 +257,50 @@
     </section>
   </main>
 
+  <div class="floating-cart" id="floatingCart" aria-live="polite">
+    <button class="floating-cart-bar shine" id="floatingCartToggle" type="button" aria-expanded="false" aria-controls="floatingCartDrawer">
+      <span class="floating-cart-count" id="floatingCartCount">0</span>
+      <span class="floating-cart-copy">
+        <strong>ORDER</strong>
+        <small id="floatingCartSummary">ยังไม่มีรายการ</small>
+      </span>
+      <span class="floating-cart-total" id="floatingCartTotal">0 Kip</span>
+    </button>
+
+    <div class="floating-cart-drawer" id="floatingCartDrawer" hidden>
+      <button class="floating-cart-backdrop" id="floatingCartBackdrop" type="button" aria-label="ปิดรายการออเดอร์"></button>
+      <section class="floating-cart-sheet" aria-label="รายการอาหารที่เลือก">
+        <div class="floating-cart-head">
+          <div>
+            <p class="eyebrow">ORDER LIST</p>
+            <h2>รายการที่เลือก</h2>
+          </div>
+          <button class="cart-icon-btn" id="floatingCartClose" type="button" aria-label="ปิด">×</button>
+        </div>
+
+        <div id="floatingOrderItems" class="floating-order-items empty">ยังไม่มีรายการที่เลือก</div>
+
+        <div class="floating-total-row">
+          <span>รวมโดยประมาณ</span>
+          <strong id="floatingDrawerTotal">0 Kip</strong>
+        </div>
+
+        <div id="floatingValidation" class="validation-box" aria-live="polite"></div>
+
+        <div class="floating-cart-actions">
+          <button class="clear-btn" id="floatingClearBtn" type="button">ล้างรายการ</button>
+          <a id="floatingSendOrderBtn" class="primary-btn shine is-disabled" href="#" target="_blank" rel="noopener" aria-disabled="true">กรอกข้อมูลให้ครบก่อนส่ง</a>
+        </div>
+      </section>
+    </div>
+  </div>
+
   <footer>
     <img class="footer-logo" src="images/logo-fai-mai-khua-small.png" width="96" height="96" loading="lazy" decoding="async" alt="โลโก้ໄຟໄໝ້ຄົວ" />
     <strong id="footerName">ໄຟໄໝ້ຄົວ</strong>
     <p>Scan QR • View Menu • Order Faster</p>
   </footer>
-  <script src="config.js?v=44"></script>
-  <script src="app.js?v=44"></script>
+  <script src="config.js?v=48"></script>
+  <script src="app.js?v=48"></script>
 </body>
 </html>

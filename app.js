@@ -181,6 +181,7 @@ function money(value) {
 const $ = (selector) => document.querySelector(selector);
 const LEAFLET_ASSET_TIMEOUT_MS = 6500;
 const SEARCH_TIMEOUT_MS = 7500;
+const CUSTOMER_MEMORY_KEY = 'faiMaiKhuaCustomerInfoV1';
 const LEAFLET_ASSET_SOURCES = [
   {
     css: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
@@ -364,12 +365,16 @@ function renderMenu() {
   $("#menuGrid").innerHTML = items.map((item, index) => {
     const imageSrc = optimizedImageUrl(item.image, index < 2 ? 520 : 420, index < 2 ? 62 : 58);
     const loading = index < 2 ? "eager" : "lazy";
+    const quantity = state.cart[item.id] || 0;
+    const selectedClass = quantity ? " is-selected" : "";
+    const quantityClass = quantity ? " is-visible" : "";
 
     return `
       <article class="menu-card" style="transition-delay:${Math.min(index * 55, 330)}ms">
-        <button type="button" class="menu-image image-add-trigger" data-id="${item.id}" aria-label="เลือก ${item.name}">
+        <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="เลือก ${item.name}">
           <img src="${imageSrc}" alt="${item.name}" width="520" height="300" loading="${loading}" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />
           <span class="badge">${item.tag}</span>
+          <span class="menu-quantity-badge${quantityClass}" data-menu-qty="${item.id}" aria-label="จำนวนที่เลือก">${quantity}</span>
         </button>
         <div class="menu-body">
           <h3>${item.name}</h3>
@@ -395,10 +400,30 @@ function renderMenu() {
     }, { once: true });
   });
   revealMenuCards();
+  updateMenuQuantityBadges();
+}
+
+function updateMenuQuantityBadges() {
+  document.querySelectorAll(".image-add-trigger").forEach(trigger => {
+    const id = Number(trigger.dataset.id);
+    const quantity = state.cart[id] || 0;
+    const badge = trigger.querySelector(".menu-quantity-badge");
+
+    trigger.classList.toggle("is-selected", quantity > 0);
+    trigger.setAttribute("aria-label", quantity > 0
+      ? `เลือกเพิ่ม ${quantity} ชิ้นแล้ว`
+      : "เลือกเมนูนี้");
+
+    if (!badge) return;
+    badge.textContent = String(quantity);
+    badge.classList.toggle("is-visible", quantity > 0);
+    badge.setAttribute("aria-label", quantity > 0 ? `เลือกแล้ว ${quantity} ชิ้น` : "ยังไม่ได้เลือก");
+  });
 }
 
 function addToCart(id, sourceButton) {
   state.cart[id] = (state.cart[id] || 0) + 1;
+  updateMenuQuantityBadges();
   renderCart();
   igniteAddEffect(sourceButton);
   playFireSound();
@@ -583,6 +608,7 @@ function initSoundToggle() {
 function updateQty(id, change) {
   state.cart[id] = (state.cart[id] || 0) + change;
   if (state.cart[id] <= 0) delete state.cart[id];
+  updateMenuQuantityBadges();
   renderCart();
 }
 
@@ -597,6 +623,113 @@ function getCustomerInfo() {
     mapLink: $("#mapLink")?.value.trim() || "",
     customerNote: $("#customerNote")?.value.trim() || ""
   };
+}
+
+
+function canUseCustomerMemory() {
+  try {
+    const key = "__fai_mai_khua_storage_test__";
+    window.localStorage.setItem(key, "1");
+    window.localStorage.removeItem(key);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function setCustomerMemoryStatus(message) {
+  const status = $("#savedCustomerStatus");
+  if (status) status.textContent = message;
+}
+
+function readCustomerMemory() {
+  if (!canUseCustomerMemory()) return null;
+
+  try {
+    return JSON.parse(window.localStorage.getItem(CUSTOMER_MEMORY_KEY) || "null");
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveCustomerMemory() {
+  if (!canUseCustomerMemory()) return;
+
+  try {
+    const info = getCustomerInfo();
+    window.localStorage.setItem(CUSTOMER_MEMORY_KEY, JSON.stringify({
+      ...info,
+      locationConfirmed: Boolean(info.mapLink && state.locationConfirmed),
+      selectedCurrency: state.selectedCurrency,
+      savedAt: Date.now()
+    }));
+    setCustomerMemoryStatus("ระบบจำข้อมูลลูกค้าไว้ในเครื่องนี้แล้ว รอบหน้าจะเติมให้อัตโนมัติ");
+  } catch (error) {
+    setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้จำข้อมูลอัตโนมัติ");
+  }
+}
+
+function restoreCustomerMemory() {
+  const saved = readCustomerMemory();
+  if (!saved) {
+    setCustomerMemoryStatus("ข้อมูลลูกค้าจะถูกจำไว้ใน browser นี้หลังจากเริ่มกรอก");
+    return;
+  }
+
+  const textFields = {
+    customerName: "#customerName",
+    customerPhone: "#customerPhone",
+    tableText: "#tableInput",
+    deliveryAddress: "#deliveryAddress",
+    mapLink: "#mapLink",
+    customerNote: "#customerNote"
+  };
+
+  Object.entries(textFields).forEach(([key, selector]) => {
+    const element = $(selector);
+    if (element && typeof saved[key] === "string") element.value = saved[key];
+  });
+
+  if (saved.orderType) {
+    document.querySelectorAll('input[name="orderType"]').forEach(input => {
+      input.checked = input.value === saved.orderType;
+    });
+  }
+
+  if (saved.selectedCurrency && currencyOptions[saved.selectedCurrency]) {
+    state.selectedCurrency = saved.selectedCurrency;
+    document.querySelectorAll(".currency-btn").forEach(btn => {
+      const active = btn.dataset.currency === state.selectedCurrency;
+      btn.classList.toggle("is-active", active);
+      btn.setAttribute("aria-pressed", String(active));
+    });
+  }
+
+  if (saved.mapLink && saved.locationConfirmed) {
+    state.locationConfirmed = true;
+    setLocationConfirmed(true);
+  }
+
+  setCustomerMemoryStatus("เติมข้อมูลจากครั้งก่อนให้แล้ว สามารถแก้ไขได้ตามปกติ");
+}
+
+function clearCustomerMemory() {
+  if (canUseCustomerMemory()) {
+    window.localStorage.removeItem(CUSTOMER_MEMORY_KEY);
+  }
+
+  ["#customerName", "#customerPhone", "#tableInput", "#deliveryAddress", "#mapLink", "#customerNote"].forEach(selector => {
+    const element = $(selector);
+    if (element) element.value = "";
+  });
+
+  const defaultOrderType = document.querySelector('input[name="orderType"][value="นั่งทานที่ร้าน"]');
+  if (defaultOrderType) defaultOrderType.checked = true;
+
+  setLocationConfirmed(false);
+  updateMapPreview("");
+  setCustomerMemoryStatus("ล้างข้อมูลที่จำไว้แล้ว ลูกค้าสามารถกรอกใหม่ได้");
+  renderCart();
 }
 
 function validateOrderForm() {
@@ -656,58 +789,135 @@ function updateValidationBox(validation) {
   }
 }
 
-function renderCart() {
-  const ids = Object.keys(state.cart).map(Number);
-  const orderItems = $("#orderItems");
+function updateFloatingValidationBox(validation) {
+  const box = $("#floatingValidation");
+  const button = $("#floatingSendOrderBtn");
+  if (!box || !button) return;
 
-  if (!ids.length) {
-    orderItems.className = "order-items empty";
-    orderItems.textContent = "ยังไม่มีรายการที่เลือก";
-    $("#totalPrice").textContent = money(0);
-    $("#sendOrderBtn").href = "#";
-    updateValidationBox(validateOrderForm());
-    return;
+  if (validation.isValid) {
+    box.className = "validation-box is-ready";
+    box.innerHTML = "ข้อมูลครบแล้ว สามารถส่งออเดอร์ได้";
+    button.classList.remove("is-disabled");
+    button.setAttribute("aria-disabled", "false");
+    button.textContent = "ส่งออเดอร์เข้า WhatsApp";
+  } else {
+    box.className = "validation-box";
+    box.innerHTML = `
+      <strong>ยังส่งไม่ได้</strong>
+      <ul>${validation.missing.map(item => `<li>${item}</li>`).join("")}</ul>
+    `;
+    button.classList.add("is-disabled");
+    button.setAttribute("aria-disabled", "true");
+    button.textContent = "กรอกข้อมูลให้ครบก่อนส่ง";
   }
+}
 
-  orderItems.className = "order-items";
-  let total = 0;
-  orderItems.innerHTML = ids.map(id => {
+function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-controls") {
+  return ids.map(id => {
     const item = menuItems.find(menu => menu.id === id);
+    if (!item) return "";
+
     const qty = state.cart[id];
     const subtotal = item.price * qty;
-    total += subtotal;
     return `
-      <div class="order-row">
+      <div class="${rowClass}">
         <strong>${item.name}</strong>
-        <div class="qty-controls">
-          <button data-action="minus" data-id="${id}">−</button>
+        <div class="${controlsClass}">
+          <button data-action="minus" data-id="${id}" type="button">−</button>
           <span>${qty}</span>
-          <button data-action="plus" data-id="${id}">+</button>
+          <button data-action="plus" data-id="${id}" type="button">+</button>
         </div>
         <span>${money(subtotal)}</span>
       </div>
     `;
   }).join("");
+}
 
-  $("#totalPrice").textContent = money(total);
-
-  document.querySelectorAll(".qty-controls button").forEach(button => {
+function bindQuantityButtons(selector) {
+  document.querySelectorAll(selector).forEach(button => {
     button.addEventListener("click", (event) => {
       const change = button.dataset.action === "plus" ? 1 : -1;
       updateQty(Number(button.dataset.id), change);
       if (change > 0) igniteAddEffect(event.currentTarget);
     });
   });
+}
 
-  const validation = validateOrderForm();
-  updateValidationBox(validation);
+function cartTotal(ids) {
+  return ids.reduce((total, id) => {
+    const item = menuItems.find(menu => menu.id === id);
+    return total + (item ? item.price * state.cart[id] : 0);
+  }, 0);
+}
 
-  if (validation.isValid) {
-    const text = buildOrderText(total);
-    $("#sendOrderBtn").href = `https://wa.me/${restaurant.whatsapp}?text=${encodeURIComponent(text)}`;
-  } else {
-    $("#sendOrderBtn").href = "#";
+function cartCount(ids) {
+  return ids.reduce((total, id) => total + (state.cart[id] || 0), 0);
+}
+
+function orderHref(total, validation) {
+  if (!validation.isValid) return "#";
+  const text = buildOrderText(total);
+  return `https://wa.me/${restaurant.whatsapp}?text=${encodeURIComponent(text)}`;
+}
+
+function updateFloatingCart(ids, total, validation) {
+  const count = cartCount(ids);
+  const barCount = $("#floatingCartCount");
+  const summary = $("#floatingCartSummary");
+  const barTotal = $("#floatingCartTotal");
+  const drawerTotal = $("#floatingDrawerTotal");
+  const itemsBox = $("#floatingOrderItems");
+  const sendButton = $("#floatingSendOrderBtn");
+  const floatingCart = $("#floatingCart");
+
+  if (barCount) barCount.textContent = String(count);
+  if (summary) summary.textContent = count ? `${count} รายการในออเดอร์` : "ยังไม่มีรายการ";
+  if (barTotal) barTotal.textContent = money(total);
+  if (drawerTotal) drawerTotal.textContent = money(total);
+  if (floatingCart) floatingCart.classList.toggle("has-items", count > 0);
+
+  if (itemsBox) {
+    if (!ids.length) {
+      itemsBox.className = "floating-order-items empty";
+      itemsBox.textContent = "ยังไม่มีรายการที่เลือก";
+    } else {
+      itemsBox.className = "floating-order-items";
+      itemsBox.innerHTML = orderRowsTemplate(ids, "floating-order-row", "floating-qty-controls");
+      bindQuantityButtons(".floating-qty-controls button");
+    }
   }
+
+  updateFloatingValidationBox(validation);
+  if (sendButton) sendButton.href = orderHref(total, validation);
+}
+
+function renderCart() {
+  const ids = Object.keys(state.cart).map(Number);
+  const orderItems = $("#orderItems");
+  const total = cartTotal(ids);
+  const validation = validateOrderForm();
+
+  if (!ids.length) {
+    orderItems.className = "order-items empty";
+    orderItems.textContent = "ยังไม่มีรายการที่เลือก";
+    $("#totalPrice").textContent = money(0);
+    $("#sendOrderBtn").href = "#";
+    updateValidationBox(validation);
+    updateFloatingCart(ids, total, validation);
+    return;
+  }
+
+  orderItems.className = "order-items";
+  orderItems.innerHTML = orderRowsTemplate(ids);
+
+  $("#totalPrice").textContent = money(total);
+
+  bindQuantityButtons(".qty-controls button");
+
+  updateValidationBox(validation);
+  updateFloatingCart(ids, total, validation);
+
+  $("#sendOrderBtn").href = orderHref(total, validation);
 }
 
 function buildOrderText(total) {
@@ -764,6 +974,7 @@ function setLocationConfirmed(isConfirmed) {
     status.textContent = "ยืนยัน Location แล้ว ลูกค้าสามารถกดยืนยันออเดอร์ได้เมื่อข้อมูลครบ";
   }
 
+  saveCustomerMemory();
   renderCart();
 }
 
@@ -1705,14 +1916,44 @@ function revealMenuCards() {
   });
 }
 
+function setFloatingCartOpen(isOpen) {
+  const drawer = $("#floatingCartDrawer");
+  const toggle = $("#floatingCartToggle");
+  if (!drawer || !toggle) return;
+
+  drawer.hidden = !isOpen;
+  toggle.setAttribute("aria-expanded", String(isOpen));
+  document.body.classList.toggle("floating-cart-open", isOpen);
+}
+
+function clearCart() {
+  state.cart = {};
+  updateMenuQuantityBadges();
+  renderCart();
+}
+
+function handleSendOrderClick(event) {
+  const validation = validateOrderForm();
+  updateValidationBox(validation);
+  updateFloatingValidationBox(validation);
+
+  if (!validation.isValid) {
+    event.preventDefault();
+    setFloatingCartOpen(false);
+    document.querySelector("#customer")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  saveCustomerMemory();
+}
+
 $("#searchInput").addEventListener("input", (event) => {
   state.search = event.target.value;
   renderMenu();
 });
 
 $("#clearBtn").addEventListener("click", () => {
-  state.cart = {};
-  renderCart();
+  clearCart();
 });
 
 $("#heroAddBtn").addEventListener("click", (event) => {
@@ -1720,24 +1961,49 @@ $("#heroAddBtn").addEventListener("click", (event) => {
   if (id) addToCart(id, event.currentTarget);
 });
 
-$("#sendOrderBtn").addEventListener("click", (event) => {
-  const validation = validateOrderForm();
-  updateValidationBox(validation);
-  if (!validation.isValid) {
-    event.preventDefault();
-    document.querySelector("#customer")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
+$("#sendOrderBtn").addEventListener("click", handleSendOrderClick);
+
+const floatingCartToggle = $("#floatingCartToggle");
+if (floatingCartToggle) {
+  floatingCartToggle.addEventListener("click", () => {
+    const drawer = $("#floatingCartDrawer");
+    setFloatingCartOpen(Boolean(drawer?.hidden));
+  });
+}
+
+const floatingCartClose = $("#floatingCartClose");
+if (floatingCartClose) floatingCartClose.addEventListener("click", () => setFloatingCartOpen(false));
+
+const floatingCartBackdrop = $("#floatingCartBackdrop");
+if (floatingCartBackdrop) floatingCartBackdrop.addEventListener("click", () => setFloatingCartOpen(false));
+
+const floatingClearButton = $("#floatingClearBtn");
+if (floatingClearButton) floatingClearButton.addEventListener("click", clearCart);
+
+const floatingSendOrderButton = $("#floatingSendOrderBtn");
+if (floatingSendOrderButton) floatingSendOrderButton.addEventListener("click", handleSendOrderClick);
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setFloatingCartOpen(false);
 });
 
 ["#customerName", "#customerPhone", "#tableInput", "#deliveryAddress", "#customerNote"].forEach(selector => {
   const element = $(selector);
-  if (element) element.addEventListener("input", () => renderCart());
+  if (element) element.addEventListener("input", () => {
+    saveCustomerMemory();
+    renderCart();
+  });
 });
+
+const clearSavedCustomerButton = $("#clearSavedCustomerBtn");
+if (clearSavedCustomerButton) clearSavedCustomerButton.addEventListener("click", clearCustomerMemory);
 
 const mapInput = $("#mapLink");
 if (mapInput) {
   mapInput.addEventListener("input", () => {
+    setLocationConfirmed(false);
     updateMapPreview(mapInput.value);
+    saveCustomerMemory();
     renderCart();
   });
 }
@@ -1747,6 +2013,7 @@ document.querySelectorAll('input[name="orderType"]').forEach(input => {
     if (input.checked && input.value === "จัดส่งเดลิเวอรี") {
       ensureDeliveryMap();
     }
+    saveCustomerMemory();
     renderCart();
   });
 });
@@ -1809,6 +2076,7 @@ if (clearLocationButton) {
   });
 }
 
+restoreCustomerMemory();
 updateMapPreview($("#mapLink")?.value || "");
 
 
@@ -1821,6 +2089,7 @@ document.querySelectorAll(".currency-btn").forEach(button => {
       btn.setAttribute("aria-pressed", String(active));
     });
     renderMenu();
+    saveCustomerMemory();
     renderCart();
   });
 });
