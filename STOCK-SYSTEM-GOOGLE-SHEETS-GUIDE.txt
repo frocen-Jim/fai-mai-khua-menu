@@ -1,0 +1,76 @@
+คู่มือตั้งระบบ Stock + สรุปยอดขายรายวัน
+สำหรับเว็บ QR Menu ร้านໄຟໄໝ້ຄົວ
+
+ระบบนี้ทำให้:
+- ลูกค้ากดสั่งแล้วตัด stock อัตโนมัติ
+- ถ้าเมนูเหลือ 0 จะปิดขายบนหน้าเว็บอัตโนมัติ
+- ร้านดูยอดขายวันนี้ / จำนวนที่ขายได้ / stock คงเหลือได้
+- ลูกค้าดูหลังบ้านไม่ได้ เพราะ Google Sheet ไม่ได้แชร์ และหน้า admin ต้องใช้ Admin Token
+
+ขั้นตอนตั้งค่า
+
+1) สร้าง Apps Script หลังบ้าน
+- ไปที่ https://script.google.com
+- New project
+- ลบโค้ดเดิมใน Code.gs
+- เปิดไฟล์ google-apps-script-stock-backend.gs ในชุดไฟล์นี้
+- Copy โค้ดทั้งหมดไปวางใน Code.gs
+
+2) เปลี่ยนรหัส admin
+ใน Code.gs หา:
+ADMIN_TOKEN: "CHANGE_THIS_ADMIN_PASSWORD"
+
+เปลี่ยนเป็นรหัสของคุณ เช่น:
+ADMIN_TOKEN: "my-private-stock-2244"
+
+ห้ามส่งรหัสนี้ให้ลูกค้า
+
+3) Run setupStockSystem
+- กดปุ่ม Run
+- เลือก function: setupStockSystem
+- ระบบจะขอสิทธิ์ Google ให้กด Allow
+- ระบบจะสร้าง Google Sheet หลังบ้านให้ หรือใช้ Sheet ที่ผูกไว้
+
+4) Deploy Web App
+- กด Deploy > New deployment
+- เลือก type เป็น Web app
+- Execute as: Me
+- Who has access: Anyone
+- กด Deploy
+- Copy Web app URL ที่ลงท้าย /exec
+
+5) เอา URL ไปใส่ในเว็บ
+เปิดไฟล์ config.js แล้วใส่:
+
+stockApiUrl: "วาง Web app URL ตรงนี้",
+stockApiToken: "fai-mai-khua-order",
+
+ตัวอย่าง:
+stockApiUrl: "https://script.google.com/macros/s/xxxxxxxx/exec",
+
+6) อัปไฟล์เว็บขึ้น GitHub
+- อัปไฟล์ใน zip v50 ทั้งหมดทับ repo เดิม
+- เปิด https://frocen-jim.github.io/fai-mai-khua-menu/?v=51
+
+7) ตั้งจำนวน stock
+- เปิด Google Sheet หลังบ้าน
+- ไปแท็บ Stock
+- แก้ช่อง stockToday เป็นจำนวนที่ทำขายได้ในวันนี้
+- soldToday คือจำนวนที่ขายแล้ว ระบบจะเพิ่มให้อัตโนมัติ
+- active ถ้า FALSE จะปิดขายเมนูนั้นทันที
+
+8) ดูหลังบ้าน
+เปิด:
+https://frocen-jim.github.io/fai-mai-khua-menu/admin.html
+
+ใส่:
+- Apps Script Web App URL
+- Admin Token
+- วันที่
+
+แล้วกดโหลดสรุปวันนี้
+
+หมายเหตุสำคัญ
+- ระบบ stock จริงต้องมี Apps Script หลังบ้าน ถ้า stockApiUrl ว่าง เว็บจะยังขายแบบเดิมและไม่ตัด stock
+- ถ้าลูกค้ากดพร้อมกันหลายคน Apps Script จะใช้ LockService กัน stock ติดลบ
+- ถ้าเมนูหมดตอนลูกค้ากำลังกด ระบบจะแจ้งว่า stock ไม่พอและไม่ส่งออเดอร์

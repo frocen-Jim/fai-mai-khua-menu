@@ -166,7 +166,15 @@ const state = {
   selectedCurrency: "LAK",
   mapLoadingPromise: null,
   mapAssetsLoaded: false,
-  mapRequested: false
+  mapRequested: false,
+  stock: {
+    enabled: false,
+    loading: false,
+    error: "",
+    items: {},
+    lastLoadedAt: 0
+  },
+  orderSubmitting: false
 };
 
 function money(value) {
@@ -182,6 +190,8 @@ const $ = (selector) => document.querySelector(selector);
 const LEAFLET_ASSET_TIMEOUT_MS = 6500;
 const SEARCH_TIMEOUT_MS = 7500;
 const CUSTOMER_MEMORY_KEY = 'faiMaiKhuaCustomerInfoV1';
+const CUSTOMER_MEMORY_COOKIE = 'faiMaiKhuaCustomerInfoV1';
+const CUSTOMER_MEMORY_MAX_AGE_SECONDS = 60 * 60 * 24 * 180;
 const CUSTOMER_MEMORY_TEXT_KEYS = [
   "customerName",
   "customerPhone",
@@ -223,6 +233,210 @@ function optimizedImageUrl(src, width = 520, quality = 62) {
   } catch (error) {
     return src;
   }
+}
+
+function appConfig() {
+  return window.FAI_MAI_KHUA_CONFIG || {};
+}
+
+function stockApiUrl() {
+  return (appConfig().stockApiUrl || "").trim();
+}
+
+function stockApiToken() {
+  return appConfig().stockApiToken || "";
+}
+
+function isStockApiEnabled() {
+  return Boolean(stockApiUrl());
+}
+
+function stockUrlWithParams(params = {}) {
+  const url = new URL(stockApiUrl());
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      url.searchParams.set(key, value);
+    }
+  });
+  url.searchParams.set("t", String(Date.now()));
+  return url.toString();
+}
+
+function normalizeStockItems(rawItems) {
+  const items = {};
+  const source = rawItems || {};
+
+  if (Array.isArray(source)) {
+    source.forEach(item => {
+      const id = Number(item.id || item.itemId || item.menuId);
+      if (!id) return;
+      const remaining = Number(item.remaining ?? item.stock ?? item.qty ?? 0);
+      items[id] = {
+        remaining: Math.max(0, remaining),
+        soldToday: Number(item.soldToday || item.sold || 0),
+        available: item.available !== false && remaining > 0,
+        name: item.name || item.itemName || ""
+      };
+    });
+    return items;
+  }
+
+  Object.entries(source).forEach(([idKey, item]) => {
+    const id = Number(idKey);
+    if (!id || !item) return;
+    const remaining = Number(item.remaining ?? item.stock ?? item.qty ?? 0);
+    items[id] = {
+      remaining: Math.max(0, remaining),
+      soldToday: Number(item.soldToday || item.sold || 0),
+      available: item.available !== false && remaining > 0,
+      name: item.name || ""
+    };
+  });
+
+  return items;
+}
+
+function getStockItem(id) {
+  return state.stock.items?.[Number(id)] || null;
+}
+
+function getRemainingStock(id) {
+  if (!state.stock.enabled) return null;
+  const stock = getStockItem(id);
+  if (!stock) return null;
+  return Number(stock.remaining || 0);
+}
+
+function isItemSoldOut(id) {
+  if (!state.stock.enabled) return false;
+  const remaining = getRemainingStock(id);
+  if (remaining === null) return false;
+  return remaining <= 0 || getStockItem(id)?.available === false;
+}
+
+function availableToAdd(id) {
+  const remaining = getRemainingStock(id);
+  if (remaining === null) return Infinity;
+  return Math.max(0, remaining - (state.cart[id] || 0));
+}
+
+function updateStockStatus(message, tone = "muted") {
+  const status = $("#stockStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle("is-ready", tone === "ready");
+  status.classList.toggle("is-error", tone === "error");
+  status.classList.toggle("is-loading", tone === "loading");
+}
+
+async function loadLiveStock(options = {}) {
+  const { silent = false } = options;
+  if (!isStockApiEnabled()) {
+    state.stock.enabled = false;
+    state.stock.items = {};
+    updateStockStatus("Stock ยังไม่ได้เชื่อมหลังบ้าน ร้านสามารถขายได้ทุกเมนูตามปกติ");
+    return;
+  }
+
+  state.stock.enabled = true;
+  state.stock.loading = true;
+  state.stock.error = "";
+  if (!silent) updateStockStatus("กำลังโหลด stock ล่าสุดจากหลังบ้าน...", "loading");
+
+  try {
+    const response = await fetch(stockUrlWithParams({
+      action: "stock",
+      token: stockApiToken()
+    }), {
+      method: "GET",
+      cache: "no-store"
+    });
+    const result = await response.json();
+    if (!result.ok) throw new Error(result.message || "โหลด stock ไม่สำเร็จ");
+
+    state.stock.items = normalizeStockItems(result.items || result.stock);
+    state.stock.lastLoadedAt = Date.now();
+    updateStockStatus("Stock ออนไลน์: เมนูหมดจะปิดขายอัตโนมัติ", "ready");
+    renderMenu();
+    renderCart();
+  } catch (error) {
+    state.stock.error = error?.message || "โหลด stock ไม่สำเร็จ";
+    updateStockStatus("โหลด stock ไม่สำเร็จ ระบบยังแสดงเมนูเดิม กรุณาตรวจ URL หลังบ้าน", "error");
+  } finally {
+    state.stock.loading = false;
+  }
+}
+
+function stockValidationMessages() {
+  if (!state.stock.enabled) return [];
+
+  return Object.keys(state.cart).map(Number).reduce((messages, id) => {
+    const item = menuItems.find(menu => menu.id === id);
+    const remaining = getRemainingStock(id);
+    if (!item || remaining === null) return messages;
+
+    if (remaining <= 0) {
+      messages.push(`${item.name} ขายหมดแล้ว`);
+    } else if (state.cart[id] > remaining) {
+      messages.push(`${item.name} เหลือ ${remaining} ชุด กรุณาลดจำนวน`);
+    }
+
+    return messages;
+  }, []);
+}
+
+function orderPayload(total) {
+  return {
+    action: "submitOrder",
+    token: stockApiToken(),
+    customer: getCustomerInfo(),
+    order: {
+      totalKip: total,
+      displayTotal: money(total),
+      currency: state.selectedCurrency,
+      source: "github-pages-qr-menu",
+      orderText: buildOrderText(total)
+    },
+    items: Object.keys(state.cart).map(id => {
+      const item = menuItems.find(menu => menu.id === Number(id));
+      return {
+        id: Number(id),
+        name: item?.name || `Item ${id}`,
+        qty: state.cart[id],
+        priceKip: item?.price || 0,
+        subtotalKip: (item?.price || 0) * state.cart[id]
+      };
+    })
+  };
+}
+
+async function submitStockOrder(total) {
+  if (!isStockApiEnabled()) return { ok: true };
+
+  const response = await fetch(stockApiUrl(), {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(orderPayload(total))
+  });
+  const result = await response.json();
+  if (result.items || result.stock) {
+    state.stock.items = normalizeStockItems(result.items || result.stock);
+  }
+
+  if (!result.ok) {
+    renderMenu();
+    renderCart();
+    throw new Error(result.message || "Stock ไม่พอสำหรับออเดอร์นี้");
+  }
+
+  if (result.items || result.stock) {
+    renderMenu();
+    renderCart();
+  } else {
+    loadLiveStock({ silent: true });
+  }
+
+  return result;
 }
 
 function setMapPreviewState(mode) {
@@ -383,20 +597,32 @@ function renderMenu() {
     const quantity = state.cart[item.id] || 0;
     const selectedClass = quantity ? " is-selected" : "";
     const quantityClass = quantity ? " is-visible" : "";
+    const remaining = getRemainingStock(item.id);
+    const soldOut = isItemSoldOut(item.id);
+    const lowStock = remaining !== null && remaining > 0 && remaining <= 3;
+    const stockClass = soldOut ? " is-sold-out" : lowStock ? " is-low-stock" : "";
+    const stockText = soldOut
+      ? "ขายหมดแล้ว"
+      : remaining !== null
+        ? `เหลือ ${remaining} ชุด`
+        : "พร้อมขาย";
+    const tapText = soldOut ? "ปิดขายอัตโนมัติ" : "แตะรูปเพื่อเลือก";
+    const disabledAttr = soldOut ? " disabled aria-disabled=\"true\"" : "";
 
     return `
-      <article class="menu-card" style="transition-delay:${Math.min(index * 55, 330)}ms">
-        <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="เลือก ${item.name}">
+      <article class="menu-card${stockClass}" style="transition-delay:${Math.min(index * 55, 330)}ms">
+        <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="${soldOut ? `${item.name} ขายหมดแล้ว` : `เลือก ${item.name}`}"${disabledAttr}>
           <img src="${imageSrc}" alt="${item.name}" width="520" height="300" loading="${loading}" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />
           <span class="badge">${item.tag}</span>
+          <span class="stock-badge${stockClass}">${stockText}</span>
           <span class="menu-quantity-badge${quantityClass}" data-menu-qty="${item.id}" aria-label="จำนวนที่เลือก">${quantity}</span>
         </button>
         <div class="menu-body">
           <h3>${item.name}</h3>
           <p class="desc">${item.description}</p>
-          <div class="card-bottom">
+        <div class="card-bottom">
             <span class="price">${money(item.price)}</span>
-            <span class="tap-note">แตะรูปเพื่อเลือก</span>
+            <span class="tap-note">${tapText}</span>
           </div>
         </div>
       </article>
@@ -422,12 +648,15 @@ function updateMenuQuantityBadges() {
   document.querySelectorAll(".image-add-trigger").forEach(trigger => {
     const id = Number(trigger.dataset.id);
     const quantity = state.cart[id] || 0;
+    const soldOut = isItemSoldOut(id);
     const badge = trigger.querySelector(".menu-quantity-badge");
 
     trigger.classList.toggle("is-selected", quantity > 0);
+    trigger.disabled = soldOut;
+    trigger.setAttribute("aria-disabled", String(soldOut));
     trigger.setAttribute("aria-label", quantity > 0
       ? `เลือกเพิ่ม ${quantity} ชิ้นแล้ว`
-      : "เลือกเมนูนี้");
+      : soldOut ? "เมนูนี้ขายหมดแล้ว" : "เลือกเมนูนี้");
 
     if (!badge) return;
     badge.textContent = String(quantity);
@@ -437,6 +666,14 @@ function updateMenuQuantityBadges() {
 }
 
 function addToCart(id, sourceButton) {
+  if (isItemSoldOut(id) || availableToAdd(id) <= 0) {
+    const item = menuItems.find(menu => menu.id === id);
+    updateStockStatus(`${item?.name || "เมนูนี้"} ขายหมดแล้วหรือเหลือไม่พอ`, "error");
+    renderMenu();
+    renderCart();
+    return;
+  }
+
   state.cart[id] = (state.cart[id] || 0) + 1;
   updateMenuQuantityBadges();
   renderCart();
@@ -621,6 +858,13 @@ function initSoundToggle() {
 }
 
 function updateQty(id, change) {
+  if (change > 0 && availableToAdd(id) <= 0) {
+    const item = menuItems.find(menu => menu.id === id);
+    updateStockStatus(`${item?.name || "เมนูนี้"} เหลือไม่พอสำหรับเพิ่มแล้ว`, "error");
+    renderCart();
+    return;
+  }
+
   state.cart[id] = (state.cart[id] || 0) + change;
   if (state.cart[id] <= 0) delete state.cart[id];
   updateMenuQuantityBadges();
@@ -657,13 +901,50 @@ function setCustomerMemoryStatus(message) {
   if (status) status.textContent = message;
 }
 
-function readCustomerMemory() {
-  if (!canUseCustomerMemory()) return null;
-
+function writeCustomerMemoryCookie(snapshot) {
   try {
-    return JSON.parse(window.localStorage.getItem(CUSTOMER_MEMORY_KEY) || "null");
+    const encoded = encodeURIComponent(JSON.stringify(snapshot));
+    document.cookie = `${CUSTOMER_MEMORY_COOKIE}=${encoded}; max-age=${CUSTOMER_MEMORY_MAX_AGE_SECONDS}; path=/; SameSite=Lax`;
+  } catch (error) {
+    // Cookie backup is optional. localStorage remains the primary storage.
+  }
+}
+
+function readCustomerMemoryCookie() {
+  try {
+    const prefix = `${CUSTOMER_MEMORY_COOKIE}=`;
+    const value = document.cookie
+      .split(";")
+      .map(part => part.trim())
+      .find(part => part.startsWith(prefix));
+    if (!value) return null;
+    return JSON.parse(decodeURIComponent(value.slice(prefix.length)));
   } catch (error) {
     return null;
+  }
+}
+
+function clearCustomerMemoryCookie() {
+  try {
+    document.cookie = `${CUSTOMER_MEMORY_COOKIE}=; max-age=0; path=/; SameSite=Lax`;
+  } catch (error) {
+    // Ignore cookie cleanup failures.
+  }
+}
+
+function readCustomerMemory() {
+  const cookieMemory = readCustomerMemoryCookie();
+  if (!canUseCustomerMemory()) return cookieMemory;
+
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(CUSTOMER_MEMORY_KEY) || "null");
+    if (stored) return stored;
+    if (cookieMemory) {
+      window.localStorage.setItem(CUSTOMER_MEMORY_KEY, JSON.stringify(cookieMemory));
+    }
+    return cookieMemory;
+  } catch (error) {
+    return cookieMemory;
   }
 }
 
@@ -673,12 +954,12 @@ function hasCustomerMemoryData(info) {
 
 function saveCustomerMemory(options = {}) {
   const { force = false, silent = false } = options;
+  const storageAvailable = canUseCustomerMemory();
 
-  if (!canUseCustomerMemory()) {
+  if (!storageAvailable) {
     if (!silent) {
       setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้เว็บจำข้อมูลอัตโนมัติ ถ้าใช้โหมดส่วนตัว/Incognito ข้อมูลอาจหาย");
     }
-    return;
   }
 
   try {
@@ -686,6 +967,7 @@ function saveCustomerMemory(options = {}) {
     const previous = readCustomerMemory();
 
     // Do not let a blank page load overwrite previously saved customer details.
+    if (previous && hasCustomerMemoryData(previous) && !hasCustomerMemoryData(info)) return;
     if (!force && previous && !hasCustomerMemoryData(info)) return;
 
     const snapshot = {
@@ -695,7 +977,10 @@ function saveCustomerMemory(options = {}) {
       savedAt: Date.now()
     };
 
-    window.localStorage.setItem(CUSTOMER_MEMORY_KEY, JSON.stringify(snapshot));
+    if (storageAvailable) {
+      window.localStorage.setItem(CUSTOMER_MEMORY_KEY, JSON.stringify(snapshot));
+    }
+    writeCustomerMemoryCookie(snapshot);
     if (!silent) {
       setCustomerMemoryStatus("ระบบจำข้อมูลลูกค้าไว้ใน browser นี้แล้ว รอบหน้าจะเติมให้อัตโนมัติ");
     }
@@ -759,6 +1044,7 @@ function clearCustomerMemory() {
   if (canUseCustomerMemory()) {
     window.localStorage.removeItem(CUSTOMER_MEMORY_KEY);
   }
+  clearCustomerMemoryCookie();
 
   ["#customerName", "#customerPhone", "#tableInput", "#deliveryAddress", "#mapLink", "#customerNote"].forEach(selector => {
     const element = $(selector);
@@ -800,6 +1086,8 @@ function validateOrderForm() {
     if (!info.mapLink) missing.push("ใส่ Location หรือกดใช้ตำแหน่งปัจจุบัน");
     if (info.mapLink && !state.locationConfirmed) missing.push("กดปุ่มยืนยันตำแหน่งนี้หลังตรวจสอบหมุดในแผนที่");
   }
+
+  missing.push(...stockValidationMessages());
 
   return {
     isValid: missing.length === 0,
@@ -1974,19 +2262,57 @@ function clearCart() {
   renderCart();
 }
 
-function handleSendOrderClick(event) {
+function setOrderSubmitting(isSubmitting) {
+  state.orderSubmitting = isSubmitting;
+  [$("#sendOrderBtn"), $("#floatingSendOrderBtn")].forEach(button => {
+    if (!button) return;
+    button.classList.toggle("is-loading", isSubmitting);
+    button.setAttribute("aria-busy", String(isSubmitting));
+    if (isSubmitting) button.textContent = "กำลังตัด stock...";
+  });
+}
+
+function openWhatsappOrder(total) {
+  window.location.href = orderHref(total, { isValid: true });
+}
+
+async function handleSendOrderClick(event) {
+  event.preventDefault();
+  if (state.orderSubmitting) return;
+
   const validation = validateOrderForm();
   updateValidationBox(validation);
   updateFloatingValidationBox(validation);
 
   if (!validation.isValid) {
-    event.preventDefault();
     setFloatingCartOpen(false);
     document.querySelector("#customer")?.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
 
   saveCustomerMemory({ force: true });
+  const ids = Object.keys(state.cart).map(Number);
+  const total = cartTotal(ids);
+
+  try {
+    setOrderSubmitting(true);
+    await submitStockOrder(total);
+    saveCustomerMemory({ force: true, silent: true });
+    openWhatsappOrder(total);
+  } catch (error) {
+    const message = error?.message || "ส่งออเดอร์ไม่สำเร็จ กรุณาลองใหม่";
+    updateStockStatus(message, "error");
+    const failedValidation = {
+      isValid: false,
+      missing: [message],
+      info: getCustomerInfo()
+    };
+    updateValidationBox(failedValidation);
+    updateFloatingValidationBox(failedValidation);
+    setFloatingCartOpen(true);
+  } finally {
+    setOrderSubmitting(false);
+  }
 }
 
 $("#searchInput").addEventListener("input", (event) => {
@@ -2113,6 +2439,7 @@ if (confirmLocationButton) {
     const mapInput = $("#mapLink");
     if (!mapInput?.value.trim()) return;
     setLocationConfirmed(true);
+    saveCustomerMemory({ force: true });
   });
 }
 
@@ -2132,6 +2459,7 @@ if (clearLocationButton) {
     updateMapPreview("");
     const status = $("#locationStatus");
     if (status) status.textContent = "ล้าง Location แล้ว กรุณากดใช้ตำแหน่งปัจจุบัน หรือวางลิงก์ Google Maps ใหม่";
+    saveCustomerMemory({ force: true });
     renderCart();
   });
 }
@@ -2161,6 +2489,11 @@ renderMenu();
 renderCart();
 setupReveal();
 startHeroSlider();
+loadLiveStock();
+
+if (isStockApiEnabled()) {
+  window.setInterval(() => loadLiveStock({ silent: true }), Number(appConfig().stockRefreshMs || 45000));
+}
 
 
 if ("serviceWorker" in navigator) {
