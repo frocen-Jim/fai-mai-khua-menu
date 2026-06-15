@@ -15,7 +15,8 @@ const QR_MENU_CONFIG = {
 const SHEETS = {
   STOCK: "Stock",
   ORDERS: "Orders",
-  ORDER_ITEMS: "OrderItems"
+  ORDER_ITEMS: "OrderItems",
+  SETTINGS: "Settings"
 };
 
 const MENU_SEED = [
@@ -35,11 +36,14 @@ function setupStockSystem() {
   const stock = getOrCreateSheet_(ss, SHEETS.STOCK);
   const orders = getOrCreateSheet_(ss, SHEETS.ORDERS);
   const orderItems = getOrCreateSheet_(ss, SHEETS.ORDER_ITEMS);
+  const settings = getOrCreateSheet_(ss, SHEETS.SETTINGS);
   const today = businessDate_();
 
   setHeaders_(stock, ["itemId", "name", "stockToday", "soldToday", "active", "businessDate", "updatedAt"]);
   setHeaders_(orders, ["orderNo", "dateTime", "businessDate", "customerName", "customerPhone", "orderType", "tableText", "deliveryAddress", "mapLink", "customerNote", "totalKip", "displayTotal", "status", "source"]);
   setHeaders_(orderItems, ["orderNo", "dateTime", "businessDate", "itemId", "name", "qty", "priceKip", "subtotalKip"]);
+  setHeaders_(settings, ["key", "value", "updatedAt"]);
+  ensureSettings_(settings);
 
   if (stock.getLastRow() < 2) {
     const now = new Date();
@@ -57,6 +61,7 @@ function setupStockSystem() {
   stock.autoResizeColumns(1, 7);
   orders.autoResizeColumns(1, 14);
   orderItems.autoResizeColumns(1, 8);
+  settings.autoResizeColumns(1, 3);
 }
 
 function doGet(e) {
@@ -66,6 +71,7 @@ function doGet(e) {
     return json_({
       ok: true,
       businessDate: businessDate_(),
+      store: storeStatus_(),
       items: stockSnapshot_()
     });
   }
@@ -88,17 +94,24 @@ function doPost(e) {
     return json_({ ok: false, message: "ข้อมูล order ไม่ถูกต้อง" });
   }
 
-  if ((payload.token || "") !== QR_MENU_CONFIG.ORDER_TOKEN) {
-    return json_({ ok: false, message: "Order token ไม่ถูกต้อง" });
-  }
-
-  if ((payload.action || "") !== "submitOrder") {
+  const action = String(payload.action || "").toLowerCase();
+  if (action !== "submitorder" && action !== "updatestore") {
     return json_({ ok: false, message: "Unknown post action" });
   }
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
+    if (action === "updatestore") {
+      if ((payload.adminToken || "") !== QR_MENU_CONFIG.ADMIN_TOKEN) {
+        return json_({ ok: false, message: "Admin token ไม่ถูกต้อง" });
+      }
+      return json_(updateStoreStatus_(payload));
+    }
+
+    if ((payload.token || "") !== QR_MENU_CONFIG.ORDER_TOKEN) {
+      return json_({ ok: false, message: "Order token ไม่ถูกต้อง" });
+    }
     return json_(submitOrder_(payload));
   } finally {
     lock.releaseLock();
@@ -111,6 +124,16 @@ function submitOrder_(payload) {
 
   const ss = getSpreadsheet_();
   setupStockSystem();
+  const store = storeStatus_();
+  if (!store.isOpen) {
+    return {
+      ok: false,
+      message: store.message || "ร้านปิดรับออเดอร์ชั่วคราว",
+      store,
+      items: stockSnapshot_()
+    };
+  }
+
   const stockSheet = ss.getSheetByName(SHEETS.STOCK);
   ensureStockBusinessDate_(stockSheet);
   const stockMap = stockMap_();
@@ -188,6 +211,7 @@ function submitOrder_(payload) {
     ok: true,
     message: "ตัด stock และบันทึก order แล้ว",
     orderNo,
+    store: storeStatus_(),
     items: stockSnapshot_()
   };
 }
@@ -278,7 +302,9 @@ function adminSummary_(date) {
     date,
     orderCount,
     totalKip,
+    spreadsheetUrl: ss.getUrl(),
     items: Object.values(items).sort((a, b) => b.qty - a.qty),
+    store: storeStatus_(),
     stock: stockSnapshot_()
   };
 }
@@ -302,6 +328,75 @@ function ensureStockBusinessDate_(sheet) {
   });
 
   if (changed) SpreadsheetApp.flush();
+}
+
+function ensureSettings_(sheet) {
+  const existing = {};
+  const values = sheet.getDataRange().getValues();
+  for (let row = 1; row < values.length; row += 1) {
+    const key = String(values[row][0] || "");
+    if (key) existing[key] = true;
+  }
+
+  const now = new Date();
+  const defaults = [
+    ["storeOpen", "TRUE", now],
+    ["storeMessage", "ร้านเปิดรับออเดอร์แล้ว", now]
+  ];
+  defaults.forEach(row => {
+    if (!existing[row[0]]) sheet.appendRow(row);
+  });
+}
+
+function truthy_(value) {
+  const text = String(value).trim().toLowerCase();
+  return value === true || text === "true" || text === "yes" || text === "open" || text === "1";
+}
+
+function getSetting_(key, fallback) {
+  const sheet = getSpreadsheet_().getSheetByName(SHEETS.SETTINGS);
+  const values = sheet.getDataRange().getValues();
+  for (let row = 1; row < values.length; row += 1) {
+    if (String(values[row][0]) === key) return values[row][1];
+  }
+  return fallback;
+}
+
+function setSetting_(key, value) {
+  const sheet = getSpreadsheet_().getSheetByName(SHEETS.SETTINGS);
+  const values = sheet.getDataRange().getValues();
+  for (let row = 1; row < values.length; row += 1) {
+    if (String(values[row][0]) === key) {
+      sheet.getRange(row + 1, 2, 1, 2).setValues([[value, new Date()]]);
+      return;
+    }
+  }
+  sheet.appendRow([key, value, new Date()]);
+}
+
+function storeStatus_() {
+  setupStockSystem();
+  const isOpen = truthy_(getSetting_("storeOpen", "TRUE"));
+  const defaultMessage = isOpen ? "ร้านเปิดรับออเดอร์แล้ว" : "ร้านปิดรับออเดอร์ชั่วคราว";
+  return {
+    isOpen,
+    message: String(getSetting_("storeMessage", defaultMessage) || defaultMessage),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function updateStoreStatus_(payload) {
+  setupStockSystem();
+  const isOpen = payload.isOpen === true || String(payload.isOpen).toLowerCase() === "true";
+  const message = String(payload.message || (isOpen ? "ร้านเปิดรับออเดอร์แล้ว" : "ร้านปิดรับออเดอร์ชั่วคราว")).trim();
+  setSetting_("storeOpen", isOpen ? "TRUE" : "FALSE");
+  setSetting_("storeMessage", message);
+  SpreadsheetApp.flush();
+  return {
+    ok: true,
+    message: isOpen ? "เปิดร้านแล้ว" : "ปิดร้านแล้ว",
+    store: storeStatus_()
+  };
 }
 
 function businessDate_() {

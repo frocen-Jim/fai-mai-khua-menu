@@ -1,26 +1,26 @@
-คู่มือตั้งระบบ Stock + สรุปยอดขายรายวัน
-สำหรับเว็บ QR Menu ร้านໄຟໄໝ້ຄົວ
+คู่มือตั้งระบบ Stock + เปิด/ปิดร้าน + สรุปยอดขายรายวัน
+สำหรับเว็บ QR Menu ร้านไฟไหม้คัว
 
 ระบบนี้ทำให้:
 - ลูกค้ากดสั่งแล้วตัด stock อัตโนมัติ
-- ถ้าเมนูเหลือ 0 จะปิดขายบนหน้าเว็บอัตโนมัติ
-- ร้านดูยอดขายวันนี้ / จำนวนที่ขายได้ / stock คงเหลือได้
+- ถ้าเมนูเหลือ 0 จะปิดขายเมนูนั้นอัตโนมัติ
+- เจ้าของร้านเปิด/ปิดร้านจากหน้า admin ได้
+- ถ้าร้านปิด ลูกค้าจะดูเมนูได้ แต่ส่งออเดอร์ไม่ได้
+- ร้านดูยอดขายวันนี้ จำนวนออเดอร์ และ stock คงเหลือได้
 - ลูกค้าดูหลังบ้านไม่ได้ เพราะ Google Sheet ไม่ได้แชร์ และหน้า admin ต้องใช้ Admin Token
-
-ขั้นตอนตั้งค่า
 
 1) สร้าง Apps Script หลังบ้าน
 - ไปที่ https://script.google.com
-- New project
+- กด New project
 - ลบโค้ดเดิมใน Code.gs
-- เปิดไฟล์ google-apps-script-stock-backend.gs ในชุดไฟล์นี้
+- เปิดไฟล์ google-apps-script-stock-backend.gs จากชุดไฟล์นี้
 - Copy โค้ดทั้งหมดไปวางใน Code.gs
 
 2) เปลี่ยนรหัส admin
 ใน Code.gs หา:
 ADMIN_TOKEN: "CHANGE_THIS_ADMIN_PASSWORD"
 
-เปลี่ยนเป็นรหัสของคุณ เช่น:
+เปลี่ยนเป็นรหัสของร้าน เช่น:
 ADMIN_TOKEN: "my-private-stock-2244"
 
 ห้ามส่งรหัสนี้ให้ลูกค้า
@@ -28,8 +28,14 @@ ADMIN_TOKEN: "my-private-stock-2244"
 3) Run setupStockSystem
 - กดปุ่ม Run
 - เลือก function: setupStockSystem
-- ระบบจะขอสิทธิ์ Google ให้กด Allow
-- ระบบจะสร้าง Google Sheet หลังบ้านให้ หรือใช้ Sheet ที่ผูกไว้
+- Google จะขอสิทธิ์ ให้กด Allow
+- ระบบจะสร้าง Google Sheet หลังบ้านให้
+
+Sheet ที่ระบบสร้าง:
+- Stock = ตั้งจำนวนที่ขายได้ต่อวัน
+- Orders = บันทึกออเดอร์รวม
+- OrderItems = บันทึกเมนูที่ขายในแต่ละออเดอร์
+- Settings = เปิด/ปิดร้าน และข้อความที่ให้ลูกค้าเห็น
 
 4) Deploy Web App
 - กด Deploy > New deployment
@@ -49,28 +55,60 @@ stockApiToken: "fai-mai-khua-order",
 stockApiUrl: "https://script.google.com/macros/s/xxxxxxxx/exec",
 
 6) อัปไฟล์เว็บขึ้น GitHub
-- อัปไฟล์ใน zip v50 ทั้งหมดทับ repo เดิม
-- เปิด https://frocen-jim.github.io/fai-mai-khua-menu/?v=51
+- แตก zip v52
+- ลากไฟล์ข้างในทั้งหมดขึ้น repo เดิม
+- กด Commit changes
+- เปิด https://frocen-jim.github.io/fai-mai-khua-menu/?v=53
 
-7) ตั้งจำนวน stock
-- เปิด Google Sheet หลังบ้าน
-- ไปแท็บ Stock
-- แก้ช่อง stockToday เป็นจำนวนที่ทำขายได้ในวันนี้
-- soldToday คือจำนวนที่ขายแล้ว ระบบจะเพิ่มให้อัตโนมัติ
-- active ถ้า FALSE จะปิดขายเมนูนั้นทันที
+7) วิธีตั้ง stock ใน Google Sheet
+เปิด Google Sheet หลังบ้าน แล้วไปแท็บ Stock:
 
-8) ดูหลังบ้าน
+- itemId = เลขเมนู ห้ามแก้
+- name = ชื่อเมนู
+- stockToday = จำนวนที่ขายได้วันนี้ เช่น 20
+- soldToday = ระบบเพิ่มให้อัตโนมัติ ห้ามแก้ถ้าไม่จำเป็น
+- active = TRUE คือเปิดขาย / FALSE คือปิดขายเมนูนั้นทันที
+- businessDate = วันที่ระบบใช้ reset ยอดขายของวันใหม่
+
+ตัวอย่าง:
+ถ้าเมนูข้าวกะเพราขายได้แค่ 15 กล่องวันนี้ ให้ใส่ stockToday = 15
+ถ้าขายไปแล้ว 15 ระบบจะเหลือ 0 และหน้าเว็บจะขึ้นขายหมดอัตโนมัติ
+
+8) วิธีเปิด/ปิดร้านในหน้า admin
 เปิด:
 https://frocen-jim.github.io/fai-mai-khua-menu/admin.html
 
 ใส่:
 - Apps Script Web App URL
 - Admin Token
-- วันที่
 
-แล้วกดโหลดสรุปวันนี้
+จากนั้นกด "โหลดข้อมูลล่าสุด"
+
+หลังโหลดสำเร็จ หน้า admin จะมีปุ่ม:
+"เปิด Google Sheet หลังบ้านที่เชื่อมกับเว็บนี้"
+
+กดปุ่มนี้เพื่อเปิด Sheet ตัวจริงที่เว็บกำลังใช้ ไม่ต้องหาเองใน Google Drive
+
+ถ้าจะปิดร้าน:
+- ใส่ข้อความ เช่น "วันนี้ร้านปิดแล้ว เปิดอีกครั้งพรุ่งนี้ 10:30"
+- กด "ปิดร้าน"
+
+ถ้าจะเปิดร้าน:
+- ใส่ข้อความ เช่น "ร้านเปิดรับออเดอร์แล้ว"
+- กด "เปิดร้าน"
+
+เมื่อลูกค้าเปิดเว็บ:
+- ร้านเปิด = ลูกค้ากดสั่งได้ตามปกติ
+- ร้านปิด = ลูกค้าเห็นเมนูได้ แต่ปุ่มสั่งจะส่งไม่ได้
+
+9) ถ้าจะแก้ผ่าน Sheet โดยตรง
+ไปแท็บ Settings:
+- storeOpen = TRUE เปิดร้าน / FALSE ปิดร้าน
+- storeMessage = ข้อความที่ลูกค้าจะเห็น
+
+แนะนำให้ใช้หน้า admin เพราะง่ายกว่าและกันพิมพ์ผิด
 
 หมายเหตุสำคัญ
-- ระบบ stock จริงต้องมี Apps Script หลังบ้าน ถ้า stockApiUrl ว่าง เว็บจะยังขายแบบเดิมและไม่ตัด stock
-- ถ้าลูกค้ากดพร้อมกันหลายคน Apps Script จะใช้ LockService กัน stock ติดลบ
-- ถ้าเมนูหมดตอนลูกค้ากำลังกด ระบบจะแจ้งว่า stock ไม่พอและไม่ส่งออเดอร์
+- ถ้า stockApiUrl ว่าง ระบบ stock/open-close จะยังไม่ทำงาน เว็บจะขายแบบเดิม
+- หลังแก้ Apps Script ต้องกด Deploy > Manage deployments > Edit > New version > Deploy
+- ถ้าเมนูหมดตอนลูกค้ากำลังกด ระบบจะกัน stock ติดลบด้วย LockService

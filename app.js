@@ -174,6 +174,10 @@ const state = {
     items: {},
     lastLoadedAt: 0
   },
+  store: {
+    isOpen: true,
+    message: "ร้านเปิดรับออเดอร์แล้ว"
+  },
   orderSubmitting: false
 };
 
@@ -296,6 +300,19 @@ function normalizeStockItems(rawItems) {
   return items;
 }
 
+function normalizeStoreStatus(rawStore) {
+  const store = rawStore || {};
+  const isOpen = store.isOpen !== false;
+  return {
+    isOpen,
+    message: store.message || (isOpen ? "ร้านเปิดรับออเดอร์แล้ว" : "ร้านปิดรับออเดอร์ชั่วคราว")
+  };
+}
+
+function isStoreClosed() {
+  return state.stock.enabled && state.store?.isOpen === false;
+}
+
 function getStockItem(id) {
   return state.stock.items?.[Number(id)] || null;
 }
@@ -334,6 +351,7 @@ async function loadLiveStock(options = {}) {
   if (!isStockApiEnabled()) {
     state.stock.enabled = false;
     state.stock.items = {};
+    state.store = normalizeStoreStatus();
     updateStockStatus("Stock ยังไม่ได้เชื่อมหลังบ้าน ร้านสามารถขายได้ทุกเมนูตามปกติ");
     return;
   }
@@ -355,8 +373,13 @@ async function loadLiveStock(options = {}) {
     if (!result.ok) throw new Error(result.message || "โหลด stock ไม่สำเร็จ");
 
     state.stock.items = normalizeStockItems(result.items || result.stock);
+    state.store = normalizeStoreStatus(result.store);
     state.stock.lastLoadedAt = Date.now();
-    updateStockStatus("Stock ออนไลน์: เมนูหมดจะปิดขายอัตโนมัติ", "ready");
+    if (isStoreClosed()) {
+      updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
+    } else {
+      updateStockStatus("ร้านเปิดอยู่: stock ออนไลน์ เมนูหมดจะปิดขายอัตโนมัติ", "ready");
+    }
     renderMenu();
     renderCart();
   } catch (error) {
@@ -368,6 +391,7 @@ async function loadLiveStock(options = {}) {
 }
 
 function stockValidationMessages() {
+  if (isStoreClosed()) return [state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว"];
   if (!state.stock.enabled) return [];
 
   return Object.keys(state.cart).map(Number).reduce((messages, id) => {
@@ -419,6 +443,9 @@ async function submitStockOrder(total) {
     body: JSON.stringify(orderPayload(total))
   });
   const result = await response.json();
+  if (result.store) {
+    state.store = normalizeStoreStatus(result.store);
+  }
   if (result.items || result.stock) {
     state.stock.items = normalizeStockItems(result.items || result.stock);
   }
@@ -592,6 +619,7 @@ function renderMenu() {
   }
 
   $("#menuGrid").innerHTML = items.map((item, index) => {
+    const storeClosed = isStoreClosed();
     const imageSrc = optimizedImageUrl(item.image, index < 2 ? 520 : 420, index < 2 ? 62 : 58);
     const loading = index < 2 ? "eager" : "lazy";
     const quantity = state.cart[item.id] || 0;
@@ -600,18 +628,21 @@ function renderMenu() {
     const remaining = getRemainingStock(item.id);
     const soldOut = isItemSoldOut(item.id);
     const lowStock = remaining !== null && remaining > 0 && remaining <= 3;
-    const stockClass = soldOut ? " is-sold-out" : lowStock ? " is-low-stock" : "";
-    const stockText = soldOut
+    const unavailable = storeClosed || soldOut;
+    const stockClass = unavailable ? " is-sold-out" : lowStock ? " is-low-stock" : "";
+    const stockText = storeClosed
+      ? "ร้านปิด"
+      : soldOut
       ? "ขายหมดแล้ว"
       : remaining !== null
         ? `เหลือ ${remaining} ชุด`
         : "พร้อมขาย";
-    const tapText = soldOut ? "ปิดขายอัตโนมัติ" : "แตะรูปเพื่อเลือก";
-    const disabledAttr = soldOut ? " disabled aria-disabled=\"true\"" : "";
+    const tapText = storeClosed ? "ร้านปิดรับออเดอร์" : soldOut ? "ปิดขายอัตโนมัติ" : "แตะรูปเพื่อเลือก";
+    const disabledAttr = unavailable ? " disabled aria-disabled=\"true\"" : "";
 
     return `
       <article class="menu-card${stockClass}" style="transition-delay:${Math.min(index * 55, 330)}ms">
-        <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="${soldOut ? `${item.name} ขายหมดแล้ว` : `เลือก ${item.name}`}"${disabledAttr}>
+        <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="${unavailable ? `${item.name} ปิดขายอยู่` : `เลือก ${item.name}`}"${disabledAttr}>
           <img src="${imageSrc}" alt="${item.name}" width="520" height="300" loading="${loading}" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />
           <span class="badge">${item.tag}</span>
           <span class="stock-badge${stockClass}">${stockText}</span>
@@ -648,7 +679,7 @@ function updateMenuQuantityBadges() {
   document.querySelectorAll(".image-add-trigger").forEach(trigger => {
     const id = Number(trigger.dataset.id);
     const quantity = state.cart[id] || 0;
-    const soldOut = isItemSoldOut(id);
+    const soldOut = isStoreClosed() || isItemSoldOut(id);
     const badge = trigger.querySelector(".menu-quantity-badge");
 
     trigger.classList.toggle("is-selected", quantity > 0);
@@ -666,6 +697,12 @@ function updateMenuQuantityBadges() {
 }
 
 function addToCart(id, sourceButton) {
+  if (isStoreClosed()) {
+    updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
+    renderCart();
+    return;
+  }
+
   if (isItemSoldOut(id) || availableToAdd(id) <= 0) {
     const item = menuItems.find(menu => menu.id === id);
     updateStockStatus(`${item?.name || "เมนูนี้"} ขายหมดแล้วหรือเหลือไม่พอ`, "error");
@@ -858,6 +895,12 @@ function initSoundToggle() {
 }
 
 function updateQty(id, change) {
+  if (change > 0 && isStoreClosed()) {
+    updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
+    renderCart();
+    return;
+  }
+
   if (change > 0 && availableToAdd(id) <= 0) {
     const item = menuItems.find(menu => menu.id === id);
     updateStockStatus(`${item?.name || "เมนูนี้"} เหลือไม่พอสำหรับเพิ่มแล้ว`, "error");
