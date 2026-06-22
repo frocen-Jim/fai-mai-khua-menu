@@ -334,9 +334,3 @@ This version remembers customer contact and delivery information in the visitor'
 
 ## v47 menu quantity badges
 This version shows the selected quantity directly on each menu image, so customers can see how many items they have added before sending the order.
-
-
-## v54 update - Food images
-- Added 7 real menu images into `/images/`.
-- Updated the first 7 menu cards in `app.js` to use local images instead of Unsplash links.
-- Menu names/prices are kept from v53.

@@ -16,7 +16,6 @@ const restaurant = {
 };
 
 // ================================
-// v54 food images updated: first 7 menu images now use local images/menu-v54-*.jpg
 // จุดที่ 2: แก้เมนู ราคา และรูปอาหารจริงตรงนี้
 // image ใช้ได้ 2 แบบ:
 // 1) รูปในโฟลเดอร์ images เช่น image: "images/krapao.jpg"
@@ -56,7 +55,7 @@ const menuItems = [
     category: "ข้าวไฟแรง",
     price: 60000,
     description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
-    image: "images/menu-v54-07-krapao-egg.jpg",
+    image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=900&q=80",
     tag: "ขายดี",
     theme: { accent: "#ffb636", fire: "#e8431f", glow: "rgba(232,67,31,.30)", deep: "#130806" }
   },
@@ -66,7 +65,7 @@ const menuItems = [
     category: "ข้าวไฟแรง",
     price: 55000,
     description: "ไก่นุ่ม ซอสเทอริยากิ หอมหวานเค็มกำลังดี",
-    image: "images/menu-v54-01-rice-fire.jpg",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
     tag: "ญี่ปุ่น",
     theme: { accent: "#f6c85f", fire: "#2dc071", glow: "rgba(45,192,113,.28)", deep: "#06140d" }
   },
@@ -76,7 +75,7 @@ const menuItems = [
     category: "ข้าวไฟแรง",
     price: 58000,
     description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
-    image: "images/menu-v54-03-fried-rice-egg.jpg",
+    image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=900&q=80",
     tag: "สุขภาพ",
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
@@ -86,7 +85,7 @@ const menuItems = [
     category: "เมนูพิเศษ",
     price: 95000,
     description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
-    image: "images/menu-v54-02-beef-rice.jpg",
+    image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=900&q=80",
     tag: "พรีเมียม",
     theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
   },
@@ -96,7 +95,7 @@ const menuItems = [
     category: "เมนูพิเศษ",
     price: 110000,
     description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
-    image: "images/menu-v54-04-spaghetti-fire.jpg",
+    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=900&q=80",
     tag: "แนะนำ",
     theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
   },
@@ -106,7 +105,7 @@ const menuItems = [
     category: "สุขภาพ",
     price: 65000,
     description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
-    image: "images/menu-v54-05-spaghetti-pork.jpg",
+    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80",
     tag: "คลีน",
     theme: { accent: "#b7ef8a", fire: "#2dc071", glow: "rgba(45,192,113,.25)", deep: "#071407" }
   },
@@ -116,7 +115,7 @@ const menuItems = [
     category: "สุขภาพ",
     price: 70000,
     description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
-    image: "images/menu-v54-06-noodle-fire.jpg",
+    image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=900&q=80",
     tag: "สดใหม่",
     theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
   },
