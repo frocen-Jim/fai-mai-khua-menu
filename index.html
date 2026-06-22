@@ -1,441 +1,307 @@
-// Google Apps Script backend for Fai Mai Khua QR Menu stock/order system.
-// 1) Open https://script.google.com and create a new project.
-// 2) Paste this whole file into Code.gs.
-// 3) Change ADMIN_TOKEN to your private admin password.
-// 4) Run setupStockSystem() once, then Deploy > New deployment > Web app.
-// 5) Copy the Web app URL into config.js > stockApiUrl.
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ໄຟໄໝ້ຄົວ | QR Menu</title>
+  <meta name="description" content="เมนูออนไลน์ร้านໄຟໄໝ້ຄົວ สแกน QR แล้วดูเมนูและส่งออเดอร์ได้ทันที" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//a.tile.openstreetmap.org">
+  <link rel="dns-prefetch" href="//b.tile.openstreetmap.org">
+  <link rel="dns-prefetch" href="//c.tile.openstreetmap.org">
+  <link rel="dns-prefetch" href="//server.arcgisonline.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;800;900&family=Noto+Sans+Thai:wght@400;600;700;800;900&family=Noto+Serif+Lao:wght@600;700;800;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/logo-fai-mai-khua-small.png" />
+  <link rel="stylesheet" href="styles.css?v=53" />
 
-const QR_MENU_CONFIG = {
-  SPREADSHEET_ID: "",
-  ORDER_TOKEN: "fai-mai-khua-order",
-  ADMIN_TOKEN: "CHANGE_THIS_ADMIN_PASSWORD",
-  TIMEZONE: "Asia/Bangkok"
-};
+  <meta name="theme-color" content="#e8431f" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="ໄຟໄໝ້ຄົວ" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+</head>
+<body>
+  <div class="page-glow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="ember-field" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="flame-zone" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
 
-const SHEETS = {
-  STOCK: "Stock",
-  ORDERS: "Orders",
-  ORDER_ITEMS: "OrderItems",
-  SETTINGS: "Settings"
-};
+  <header class="hero" id="top">
+    <nav class="topbar">
+      <a class="brand" href="#top" aria-label="กลับไปด้านบน">
+        <div class="brand-mark brand-logo">
+          <img src="images/logo-fai-mai-khua-small.png" width="96" height="96" decoding="async" alt="โลโก้ໄຟໄໝ້ຄົວ" />
+        </div>
+        <div>
+          <p class="eyebrow">QR FIRE MENU</p>
+          <h1 id="restaurantName">ໄຟໄໝ້ຄົວ</h1>
+        </div>
+      </a>
+      <div class="nav-pills" aria-label="เมนูนำทาง">
+        <a href="#signature">Signature</a>
+        <a href="#menu">Menu</a>
+        <a href="#customer">Customer</a>
+        <a href="#order">Order</a>
+      </div>
+      <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="true">Sound: On</button>
+      <a class="call-btn shine" id="callBtn" href="tel:+8562099469995">ໂທ</a>
+    </nav>
 
-const MENU_SEED = [
-  [1, "ข้าวกะเพราหมู + ไข่ดาว", 20, true],
-  [2, "ข้าวไก่เทอริยากิ", 20, true],
-  [3, "ข้าวหน้าไก่มิโสะ", 20, true],
-  [4, "เนื้อเสือร้องไห้ New Zealand", 10, true],
-  [5, "ข้าวหน้าแซลมอนย่าง", 10, true],
-  [6, "สลัดไก่อบ", 15, true],
-  [7, "Caesar Salad", 15, true],
-  [8, "S'more Brownie Cookie", 25, true],
-  [9, "ชาเย็นไฟไหม้", 30, true]
-];
+    <section class="hero-stage" id="signature">
+      <div class="hero-copy reveal-now">
+        <img class="hero-brand-logo" src="images/logo-fai-mai-khua-small.png" width="148" height="148" decoding="async" alt="โลโก้ໄຟໄໝ້ຄົວ" />
+        <div class="fire-kitchen-label"><span class="mini-flame-icon">🔥</span> เอกลักษณ์ครัวไฟแรง</div>
+        <p class="tagline">FIRE COOKED • FRESH SERVED</p>
+        <h2><span>ไฟไหม้</span><span>ครัว</span></h2>
+        <p class="hero-text">ครัวไฟแรง รสจัด วัตถุดิบจริงทุกจาน เลือกเมนู กรอกข้อมูล แล้วส่งออเดอร์เข้าร้านได้ทันที</p>
+        <div class="hero-actions">
+          <a href="#menu" class="primary-btn shine">ดูเมนูทั้งหมด</a>
+          <a href="#order" class="secondary-btn">รายการที่เลือก</a>
+        </div>
+        <div class="quick-stats" aria-label="จุดเด่นร้าน">
+          <div><strong>10:30</strong><span>เปิดร้าน</span></div>
+          <div><strong>FIRE</strong><span>ครัวไฟแรง</span></div>
+          <div><strong>KIP</strong><span>ราคาชัดเจน</span></div>
+        </div>
+      </div>
 
-function setupStockSystem() {
-  const ss = getSpreadsheet_();
-  const stock = getOrCreateSheet_(ss, SHEETS.STOCK);
-  const orders = getOrCreateSheet_(ss, SHEETS.ORDERS);
-  const orderItems = getOrCreateSheet_(ss, SHEETS.ORDER_ITEMS);
-  const settings = getOrCreateSheet_(ss, SHEETS.SETTINGS);
-  const today = businessDate_();
+      <div class="food-orbit" aria-hidden="true">
+        <div class="orbit-ring ring-one"></div>
+        <div class="orbit-ring ring-two"></div>
+        <img id="heroImage" class="hero-food" src="https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=560&q=65" width="560" height="560" decoding="async" fetchpriority="high" alt="เมนูแนะนำของร้าน" />
+        <span class="ingredient chili">✦</span>
+        <span class="ingredient leaf">◆</span>
+        <span class="ingredient flame">●</span>
+      </div>
 
-  setHeaders_(stock, ["itemId", "name", "stockToday", "soldToday", "active", "businessDate", "updatedAt"]);
-  setHeaders_(orders, ["orderNo", "dateTime", "businessDate", "customerName", "customerPhone", "orderType", "tableText", "deliveryAddress", "mapLink", "customerNote", "totalKip", "displayTotal", "status", "source"]);
-  setHeaders_(orderItems, ["orderNo", "dateTime", "businessDate", "itemId", "name", "qty", "priceKip", "subtotalKip"]);
-  setHeaders_(settings, ["key", "value", "updatedAt"]);
-  ensureSettings_(settings);
+      <aside class="dish-panel reveal-now" aria-label="เมนูแนะนำ">
+        <div class="panel-flame-glow" aria-hidden="true"></div>
+        <p class="eyebrow">SIGNATURE DISH</p>
+        <h3 id="heroDishName">ข้าวกะเพราหมู + ไข่ดาว</h3>
+        <p id="heroDishDesc">กะเพราหมูรสจัด เสิร์ฟพร้อมข้าวหอมและไข่ดาว</p>
+        <div class="rating-line" aria-label="คะแนนความนิยม">
+          <span>🔥</span><span>🔥</span><span>🔥</span><span>🔥</span><span>🔥</span>
+        </div>
+        <div class="panel-bottom">
+          <strong id="heroDishPrice">60,000 Kip</strong>
+          <button id="heroAddBtn" class="add-btn">+ เพิ่ม</button>
+        </div>
+      </aside>
+    </section>
+  </header>
 
-  if (stock.getLastRow() < 2) {
-    const now = new Date();
-    stock.getRange(2, 1, MENU_SEED.length, 7).setValues(MENU_SEED.map(item => [
-      item[0],
-      item[1],
-      item[2],
-      0,
-      item[3],
-      today,
-      now
-    ]));
-  }
+  <main>
+    <section class="info-grid reveal" aria-label="ข้อมูลร้าน">
+      <div class="info-card">
+        <span>เวลาเปิด</span>
+        <strong id="openHours">10:30 - 22:00</strong>
+      </div>
+      <div class="info-card">
+        <span>ที่ตั้ง</span>
+        <strong id="locationText">Vientiane, Laos</strong>
+      </div>
+      <div class="info-card">
+        <span>บริการ</span>
+        <strong>นั่งทาน • รับกลับ • เดลิเวอรี</strong>
+      </div>
+    </section>
 
-  stock.autoResizeColumns(1, 7);
-  orders.autoResizeColumns(1, 14);
-  orderItems.autoResizeColumns(1, 8);
-  settings.autoResizeColumns(1, 3);
-}
+    <section class="controls reveal" id="menu">
+      <div>
+        <p class="eyebrow">OUR FIRE MENU</p>
+        <h2>เมนูอาหาร</h2>
+        <div class="section-fire-line" aria-hidden="true"><span></span></div>
+      </div>
+      <input id="searchInput" type="search" placeholder="ค้นหา เช่น กะเพรา, เนื้อ, ข้าว" />
+    </section>
 
-function doGet(e) {
-  const action = (e.parameter.action || "stock").toLowerCase();
+    <p class="stock-status" id="stockStatus">Stock จะทำงานหลังตั้งค่าหลังบ้านร้าน</p>
+    <div class="category-tabs reveal" id="categoryTabs"></div>
+    <section class="menu-grid" id="menuGrid" aria-live="polite"></section>
 
-  if (action === "stock") {
-    return json_({
-      ok: true,
-      businessDate: businessDate_(),
-      store: storeStatus_(),
-      items: stockSnapshot_()
-    });
-  }
+    <section class="customer-panel reveal" id="customer">
+      <div class="order-header customer-memory-header">
+        <div>
+          <p class="eyebrow">CUSTOMER</p>
+          <h2>ข้อมูลลูกค้า / จุดส่งอาหาร</h2>
+          <p id="savedCustomerStatus" class="saved-customer-status">ข้อมูลลูกค้าจะถูกจำไว้ใน browser นี้หลังจากเริ่มกรอก</p>
+        </div>
+        <button type="button" class="clear-btn saved-customer-clear" id="clearSavedCustomerBtn">ล้างข้อมูลที่จำไว้</button>
+      </div>
 
-  if (action === "summary") {
-    if ((e.parameter.adminToken || "") !== QR_MENU_CONFIG.ADMIN_TOKEN) {
-      return json_({ ok: false, message: "Admin token ไม่ถูกต้อง" });
-    }
-    return json_(adminSummary_(e.parameter.date || businessDate_()));
-  }
+      <div class="customer-form">
+        <div class="field">
+          <label for="customerName">ชื่อลูกค้า <em>*</em></label>
+          <input id="customerName" name="customer_name" class="table-input" type="text" placeholder="เช่น คุณจิมมี่" autocomplete="name" />
+        </div>
 
-  return json_({ ok: false, message: "Unknown action" });
-}
+        <div class="field">
+          <label for="customerPhone">เบอร์ໂທติดต่อ <em>*</em></label>
+          <input id="customerPhone" name="customer_phone" class="table-input" type="tel" placeholder="เช่น 020xxxxxxxx" autocomplete="tel" />
+        </div>
 
-function doPost(e) {
-  let payload;
-  try {
-    payload = JSON.parse(e.postData.contents || "{}");
-  } catch (error) {
-    return json_({ ok: false, message: "ข้อมูล order ไม่ถูกต้อง" });
-  }
+        <div class="field wide">
+          <label>เลือกรูปแบบรับอาหาร <em>*</em></label>
+          <div class="choice-group" role="radiogroup" aria-label="เลือกรูปแบบรับอาหาร">
+            <label class="choice-card">
+              <input type="radio" name="orderType" value="นั่งทานที่ร้าน" checked />
+              <span>
+                <strong>นั่งทานที่ร้าน</strong>
+                <small>สำหรับลูกค้าที่อยู่ในร้าน</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="orderType" value="รับเองหน้าร้าน" />
+              <span>
+                <strong>รับเองหน้าร้าน</strong>
+                <small>สั่งไว้แล้วมารับเอง</small>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="orderType" value="จัดส่งเดลิเวอรี" />
+              <span>
+                <strong>จัดส่งเดลิเวอรี</strong>
+                <small>กรอกที่อยู่และ Location</small>
+              </span>
+            </label>
+          </div>
+        </div>
 
-  const action = String(payload.action || "").toLowerCase();
-  if (action !== "submitorder" && action !== "updatestore") {
-    return json_({ ok: false, message: "Unknown post action" });
-  }
+        <div class="field">
+          <label for="tableInput">เลขโต๊ะ / จุดรับอาหาร <em>*</em></label>
+          <input id="tableInput" name="table_or_pickup_point" class="table-input" type="text" placeholder="เช่น โต๊ะ 3 / หน้าร้าน / ฝากไว้ รปภ." autocomplete="off" />
+        </div>
 
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
-  try {
-    if (action === "updatestore") {
-      if ((payload.adminToken || "") !== QR_MENU_CONFIG.ADMIN_TOKEN) {
-        return json_({ ok: false, message: "Admin token ไม่ถูกต้อง" });
-      }
-      return json_(updateStoreStatus_(payload));
-    }
+        <div class="field wide">
+          <label for="deliveryAddress">สถานที่จัดส่ง / ที่อยู่ <em class="delivery-required">*</em></label>
+          <textarea id="deliveryAddress" name="delivery_address" class="table-input textarea-input" placeholder="เขียนที่อยู่ เช่น บ้านเลขที่, หมู่บ้าน, ถนน, ร้าน/ตึกใกล้เคียง" autocomplete="street-address"></textarea>
+        </div>
 
-    if ((payload.token || "") !== QR_MENU_CONFIG.ORDER_TOKEN) {
-      return json_({ ok: false, message: "Order token ไม่ถูกต้อง" });
-    }
-    return json_(submitOrder_(payload));
-  } finally {
-    lock.releaseLock();
-  }
-}
+        <div class="field wide location-field">
+          <label for="mapLink">Location / Google Maps <em class="delivery-required">*</em></label>
+          <div class="location-row">
+            <input id="mapLink" name="map_link" class="table-input" type="url" placeholder="ระบบจะใส่ลิงก์จากหมุดที่ลูกค้าปัก หรือวางลิงก์ Google Maps เอง" autocomplete="url" />
+            <button type="button" class="secondary-btn locate-btn" id="useLocationBtn">ใช้ตำแหน่งปัจจุบัน</button>
+          </div>
 
-function submitOrder_(payload) {
-  const items = Array.isArray(payload.items) ? payload.items : [];
-  if (!items.length) return { ok: false, message: "ไม่มีรายการอาหาร" };
+          <div class="place-search-box">
+            <label for="placeSearchInput">ค้นหาสถานที่ / หมู่บ้าน / ร้านใกล้เคียง</label>
+            <div class="place-search-row">
+              <input id="placeSearchInput" name="place_search" class="table-input" type="search" placeholder="พิมพ์ชื่อสถานที่ ระบบจะแนะนำผลลัพธ์ให้เลือกอัตโนมัติ" autocomplete="off" />
+              <button type="button" class="secondary-btn locate-btn" id="placeSearchBtn">ค้นหา</button>
+            </div>
+            <p class="place-search-hint">พิมพ์อย่างน้อย 2 ตัวอักษร เช่น ชื่อหมู่บ้าน, ร้านใกล้บ้าน, ถนน หรือสถานที่สำคัญ แล้วเลือกรายการที่ใกล้ที่สุด</p>
+            <p id="searchProviderStatus" class="place-provider-status">ระบบค้นหาพร้อมใช้งาน</p>
+            <div id="placeResults" class="place-results" aria-live="polite"></div>
+          </div>
 
-  const ss = getSpreadsheet_();
-  setupStockSystem();
-  const store = storeStatus_();
-  if (!store.isOpen) {
-    return {
-      ok: false,
-      message: store.message || "ร้านปิดรับออเดอร์ชั่วคราว",
-      store,
-      items: stockSnapshot_()
-    };
-  }
+          <div class="map-tools">
+            <button type="button" class="map-action confirm-location-btn is-disabled" id="confirmLocationBtn" aria-disabled="true">ยืนยันตำแหน่งนี้</button>
+            <button type="button" class="map-action" id="clearLocationBtn">ล้าง Location / เลือกใหม่</button>
+          </div>
 
-  const stockSheet = ss.getSheetByName(SHEETS.STOCK);
-  ensureStockBusinessDate_(stockSheet);
-  const stockMap = stockMap_();
+          <div class="map-mode-switch" role="group" aria-label="เลือกประเภทแผนที่">
+            <button type="button" class="map-mode-btn is-active" data-map-mode="street">แผนที่ถนน</button>
+            <button type="button" class="map-mode-btn" data-map-mode="satellite">ภาพดาวเทียม</button>
+          </div>
 
-  const errors = [];
-  items.forEach(item => {
-    const id = Number(item.id);
-    const qty = Number(item.qty || 0);
-    const stock = stockMap[id];
-    if (!stock || !stock.active) {
-      errors.push(`${item.name || id} ปิดขายแล้ว`);
-      return;
-    }
-    if (qty <= 0) {
-      errors.push(`${item.name || id} จำนวนไม่ถูกต้อง`);
-      return;
-    }
-    if (qty > stock.remaining) {
-      errors.push(`${item.name || id} เหลือ ${stock.remaining} ชุด`);
-    }
-  });
+          <div class="map-preview draggable-map" id="mapPreview">
+            <div id="deliveryMap" class="delivery-map"></div>
+            <div class="map-placeholder map-fallback" id="mapFallback">
+              กำลังโหลดแผนที่ดาวเทียม... ถ้าแผนที่ไม่ขึ้น กรุณาตรวจสอบอินเทอร์เน็ต หรือวางลิงก์ Google Maps เอง
+            </div>
+          </div>
 
-  if (errors.length) {
-    return {
-      ok: false,
-      message: errors.join(" / "),
-      items: stockSnapshot_()
-    };
-  }
+          <p class="location-help" id="locationStatus">เลือกเดลิเวอรีแล้วแผนที่จะโหลดขึ้นมา สามารถค้นหาสถานที่ กดใช้ตำแหน่งปัจจุบัน หรือสลับดูแผนที่ถนน/ภาพดาวเทียมได้</p>
+          <p class="location-help location-warning">โลโก้ร้านบนแผนที่คือจุดร้าน ຮ້ານ ໄຟໄໝ້ຄົວ ลูกค้าจะเห็นตำแหน่งตัวเองแบบ real-time หลังอนุญาต Location และยังสามารถปักหมุดจุดส่งของตัวเองหรือสั่งไปส่งให้คนอื่นได้</p>
 
-  const now = new Date();
-  const date = businessDate_();
-  const orderNo = Utilities.formatDate(now, QR_MENU_CONFIG.TIMEZONE, "yyyyMMdd-HHmmss") + "-" + Math.floor(Math.random() * 900 + 100);
-  const customer = payload.customer || {};
-  const order = payload.order || {};
+          <div class="gps-accuracy-panel" id="gpsAccuracyPanel">
+            <strong>GPS Accuracy</strong>
+            <span id="gpsAccuracyText">ยังไม่ได้ตรวจตำแหน่ง</span>
+            <small>ถ้าค่าคลาดเคลื่อนสูง ให้ลูกค้าลากหมุดไฟไปยังจุดส่งจริงก่อนกดยืนยัน</small>
+          </div>
+        </div>
 
-  ss.getSheetByName(SHEETS.ORDERS).appendRow([
-    orderNo,
-    now,
-    date,
-    customer.customerName || "",
-    customer.customerPhone || "",
-    customer.orderType || "",
-    customer.tableText || "",
-    customer.deliveryAddress || "",
-    customer.mapLink || "",
-    customer.customerNote || "",
-    Number(order.totalKip || 0),
-    order.displayTotal || "",
-    "confirmed",
-    order.source || "qr-menu"
-  ]);
+        <div class="field wide">
+          <label for="customerNote">หมายเหตุเพิ่มเติม</label>
+          <textarea id="customerNote" name="customer_note" class="table-input textarea-input" placeholder="เช่น ไม่เผ็ด, แยกน้ำจิ้ม, ໂທก่อนถึง, ไม่มีช้อน" autocomplete="off"></textarea>
+        </div>
+      </div>
+    </section>
 
-  const itemRows = items.map(item => [
-    orderNo,
-    now,
-    date,
-    Number(item.id),
-    item.name || "",
-    Number(item.qty || 0),
-    Number(item.priceKip || 0),
-    Number(item.subtotalKip || 0)
-  ]);
-  const orderItemsSheet = ss.getSheetByName(SHEETS.ORDER_ITEMS);
-  orderItemsSheet.getRange(orderItemsSheet.getLastRow() + 1, 1, itemRows.length, 8).setValues(itemRows);
+    <section class="order-panel reveal" id="order">
+      <div class="order-header">
+        <div>
+          <p class="eyebrow">ORDER</p>
+          <h2>ORDER LIST</h2>
+        </div>
+        <button class="clear-btn" id="clearBtn">ล้างรายการ</button>
+      </div>
+      <div id="orderItems" class="order-items empty">ยังไม่มีรายการที่เลือก</div>
+      <div class="total-row">
+        <span>รวมโดยประมาณ</span>
+        <strong id="totalPrice">0 Kip</strong>
+      </div>
+      <div id="orderValidation" class="validation-box" aria-live="polite"></div>
+      <a id="sendOrderBtn" class="primary-btn full shine is-disabled" href="#" target="_blank" rel="noopener" aria-disabled="true">กรอกข้อมูลให้ครบก่อนยืนยันออเดอร์</a>
+      <p class="note" id="stockOrderNote">หมายเหตุ: ข้อมูลลูกค้าและรายการอาหารจะถูกส่งเข้า WhatsApp ร้าน หากเปิดระบบ stock แล้ว ระบบจะตัด stock ก่อนเปิด WhatsApp</p>
+    </section>
+  </main>
 
-  items.forEach(item => {
-    const stock = stockMap[Number(item.id)];
-    const soldCell = stockSheet.getRange(stock.row, 4);
-    soldCell.setValue(Number(soldCell.getValue() || 0) + Number(item.qty || 0));
-    stockSheet.getRange(stock.row, 7).setValue(now);
-  });
+  <div class="floating-cart" id="floatingCart" aria-live="polite">
+    <button class="floating-cart-bar shine" id="floatingCartToggle" type="button" aria-expanded="false" aria-controls="floatingCartDrawer">
+      <span class="floating-cart-count" id="floatingCartCount">0</span>
+      <span class="floating-cart-copy">
+        <strong>ORDER</strong>
+        <small id="floatingCartSummary">ยังไม่มีรายการ</small>
+      </span>
+      <span class="floating-cart-total" id="floatingCartTotal">0 Kip</span>
+    </button>
 
-  return {
-    ok: true,
-    message: "ตัด stock และบันทึก order แล้ว",
-    orderNo,
-    store: storeStatus_(),
-    items: stockSnapshot_()
-  };
-}
+    <div class="floating-cart-drawer" id="floatingCartDrawer" hidden>
+      <button class="floating-cart-backdrop" id="floatingCartBackdrop" type="button" aria-label="ปิดรายการออเดอร์"></button>
+      <section class="floating-cart-sheet" aria-label="รายการอาหารที่เลือก">
+        <div class="floating-cart-head">
+          <div>
+            <p class="eyebrow">ORDER LIST</p>
+            <h2>รายการที่เลือก</h2>
+          </div>
+          <button class="cart-icon-btn" id="floatingCartClose" type="button" aria-label="ปิด">×</button>
+        </div>
 
-function stockSnapshot_() {
-  const ss = getSpreadsheet_();
-  setupStockSystem();
-  const sheet = ss.getSheetByName(SHEETS.STOCK);
-  ensureStockBusinessDate_(sheet);
-  const values = sheet.getDataRange().getValues();
-  const items = {};
+        <div id="floatingOrderItems" class="floating-order-items empty">ยังไม่มีรายการที่เลือก</div>
 
-  for (let row = 1; row < values.length; row += 1) {
-    const itemId = Number(values[row][0]);
-    if (!itemId) continue;
-    const stockToday = Number(values[row][2] || 0);
-    const soldToday = Number(values[row][3] || 0);
-    const active = values[row][4] === true || String(values[row][4]).toLowerCase() === "true";
-    const remaining = Math.max(0, stockToday - soldToday);
-    items[itemId] = {
-      id: itemId,
-      name: values[row][1],
-      stockToday,
-      soldToday,
-      remaining,
-      available: active && remaining > 0
-    };
-  }
+        <div class="floating-total-row">
+          <span>รวมโดยประมาณ</span>
+          <strong id="floatingDrawerTotal">0 Kip</strong>
+        </div>
 
-  return items;
-}
+        <div id="floatingValidation" class="validation-box" aria-live="polite"></div>
 
-function stockMap_() {
-  const sheet = getSpreadsheet_().getSheetByName(SHEETS.STOCK);
-  const values = sheet.getDataRange().getValues();
-  const map = {};
+        <div class="floating-cart-actions">
+          <button class="clear-btn" id="floatingClearBtn" type="button">ล้างรายการ</button>
+          <a id="floatingSendOrderBtn" class="primary-btn shine is-disabled" href="#" target="_blank" rel="noopener" aria-disabled="true">กรอกข้อมูลให้ครบก่อนส่ง</a>
+        </div>
+      </section>
+    </div>
+  </div>
 
-  for (let index = 1; index < values.length; index += 1) {
-    const itemId = Number(values[index][0]);
-    const stockToday = Number(values[index][2] || 0);
-    const soldToday = Number(values[index][3] || 0);
-    const active = values[index][4] === true || String(values[index][4]).toLowerCase() === "true";
-    map[itemId] = {
-      row: index + 1,
-      name: values[index][1],
-      stockToday,
-      soldToday,
-      remaining: Math.max(0, stockToday - soldToday),
-      active
-    };
-  }
-
-  return map;
-}
-
-function adminSummary_(date) {
-  const ss = getSpreadsheet_();
-  setupStockSystem();
-  const orders = ss.getSheetByName(SHEETS.ORDERS).getDataRange().getValues();
-  const orderItems = ss.getSheetByName(SHEETS.ORDER_ITEMS).getDataRange().getValues();
-  let orderCount = 0;
-  let totalKip = 0;
-  const items = {};
-
-  for (let row = 1; row < orders.length; row += 1) {
-    if (String(orders[row][2]) !== String(date)) continue;
-    orderCount += 1;
-    totalKip += Number(orders[row][10] || 0);
-  }
-
-  for (let row = 1; row < orderItems.length; row += 1) {
-    if (String(orderItems[row][2]) !== String(date)) continue;
-    const itemId = Number(orderItems[row][3]);
-    if (!items[itemId]) {
-      items[itemId] = {
-        itemId,
-        name: orderItems[row][4],
-        qty: 0,
-        revenueKip: 0
-      };
-    }
-    items[itemId].qty += Number(orderItems[row][5] || 0);
-    items[itemId].revenueKip += Number(orderItems[row][7] || 0);
-  }
-
-  return {
-    ok: true,
-    date,
-    orderCount,
-    totalKip,
-    spreadsheetUrl: ss.getUrl(),
-    items: Object.values(items).sort((a, b) => b.qty - a.qty),
-    store: storeStatus_(),
-    stock: stockSnapshot_()
-  };
-}
-
-function ensureStockBusinessDate_(sheet) {
-  const today = businessDate_();
-  const lastRow = sheet.getLastRow();
-  if (lastRow < 2) return;
-
-  const dateRange = sheet.getRange(2, 6, lastRow - 1, 1);
-  const dates = dateRange.getValues();
-  let changed = false;
-
-  dates.forEach((row, index) => {
-    if (String(row[0]) !== today) {
-      sheet.getRange(index + 2, 4).setValue(0);
-      sheet.getRange(index + 2, 6).setValue(today);
-      sheet.getRange(index + 2, 7).setValue(new Date());
-      changed = true;
-    }
-  });
-
-  if (changed) SpreadsheetApp.flush();
-}
-
-function ensureSettings_(sheet) {
-  const existing = {};
-  const values = sheet.getDataRange().getValues();
-  for (let row = 1; row < values.length; row += 1) {
-    const key = String(values[row][0] || "");
-    if (key) existing[key] = true;
-  }
-
-  const now = new Date();
-  const defaults = [
-    ["storeOpen", "TRUE", now],
-    ["storeMessage", "ร้านเปิดรับออเดอร์แล้ว", now]
-  ];
-  defaults.forEach(row => {
-    if (!existing[row[0]]) sheet.appendRow(row);
-  });
-}
-
-function truthy_(value) {
-  const text = String(value).trim().toLowerCase();
-  return value === true || text === "true" || text === "yes" || text === "open" || text === "1";
-}
-
-function getSetting_(key, fallback) {
-  const sheet = getSpreadsheet_().getSheetByName(SHEETS.SETTINGS);
-  const values = sheet.getDataRange().getValues();
-  for (let row = 1; row < values.length; row += 1) {
-    if (String(values[row][0]) === key) return values[row][1];
-  }
-  return fallback;
-}
-
-function setSetting_(key, value) {
-  const sheet = getSpreadsheet_().getSheetByName(SHEETS.SETTINGS);
-  const values = sheet.getDataRange().getValues();
-  for (let row = 1; row < values.length; row += 1) {
-    if (String(values[row][0]) === key) {
-      sheet.getRange(row + 1, 2, 1, 2).setValues([[value, new Date()]]);
-      return;
-    }
-  }
-  sheet.appendRow([key, value, new Date()]);
-}
-
-function storeStatus_() {
-  setupStockSystem();
-  const isOpen = truthy_(getSetting_("storeOpen", "TRUE"));
-  const defaultMessage = isOpen ? "ร้านเปิดรับออเดอร์แล้ว" : "ร้านปิดรับออเดอร์ชั่วคราว";
-  return {
-    isOpen,
-    message: String(getSetting_("storeMessage", defaultMessage) || defaultMessage),
-    updatedAt: new Date().toISOString()
-  };
-}
-
-function updateStoreStatus_(payload) {
-  setupStockSystem();
-  const isOpen = payload.isOpen === true || String(payload.isOpen).toLowerCase() === "true";
-  const message = String(payload.message || (isOpen ? "ร้านเปิดรับออเดอร์แล้ว" : "ร้านปิดรับออเดอร์ชั่วคราว")).trim();
-  setSetting_("storeOpen", isOpen ? "TRUE" : "FALSE");
-  setSetting_("storeMessage", message);
-  SpreadsheetApp.flush();
-  return {
-    ok: true,
-    message: isOpen ? "เปิดร้านแล้ว" : "ปิดร้านแล้ว",
-    store: storeStatus_()
-  };
-}
-
-function businessDate_() {
-  return Utilities.formatDate(new Date(), QR_MENU_CONFIG.TIMEZONE, "yyyy-MM-dd");
-}
-
-function getOrCreateSheet_(ss, name) {
-  return ss.getSheetByName(name) || ss.insertSheet(name);
-}
-
-function getSpreadsheet_() {
-  if (QR_MENU_CONFIG.SPREADSHEET_ID) {
-    return SpreadsheetApp.openById(QR_MENU_CONFIG.SPREADSHEET_ID);
-  }
-
-  const props = PropertiesService.getScriptProperties();
-  const savedId = props.getProperty("STOCK_SPREADSHEET_ID");
-  if (savedId) {
-    return SpreadsheetApp.openById(savedId);
-  }
-
-  const active = SpreadsheetApp.getActiveSpreadsheet();
-  if (active) {
-    props.setProperty("STOCK_SPREADSHEET_ID", active.getId());
-    return active;
-  }
-
-  const ss = SpreadsheetApp.create("Fai Mai Khua QR Menu Backend");
-  props.setProperty("STOCK_SPREADSHEET_ID", ss.getId());
-  return ss;
-}
-
-function setHeaders_(sheet, headers) {
-  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-  sheet.setFrozenRows(1);
-}
-
-function json_(data) {
-  return ContentService
-    .createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
-}
+  <footer>
+    <img class="footer-logo" src="images/logo-fai-mai-khua-small.png" width="96" height="96" loading="lazy" decoding="async" alt="โลโก้ໄຟໄໝ້ຄົວ" />
+    <strong id="footerName">ໄຟໄໝ້ຄົວ</strong>
+    <p>Scan QR • View Menu • Order Faster</p>
+  </footer>
+  <script src="config.js?v=53"></script>
+  <script src="app.js?v=53"></script>
+</body>
+</html>
