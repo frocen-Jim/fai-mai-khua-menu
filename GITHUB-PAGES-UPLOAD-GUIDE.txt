@@ -1,10 +1,14 @@
-GitHub Pages upload package for Fai Mai Khua QR Menu.
+// ใส่ Google Maps Platform API Key ตรงนี้เพื่อใช้ฐานข้อมูลค้นหาสถานที่จาก Google Maps จริง ๆ
+// ต้องเปิดใช้งาน Places API (New) และจำกัด key ให้ปลอดภัยก่อนใช้งานจริง
+window.FAI_MAI_KHUA_CONFIG = {
+  googleMapsApiKey: "",
+  searchProvider: "auto", // auto = ใช้ Google ถ้ามี key, ถ้าไม่มีจะใช้ระบบ fallback
 
-Upload all files in this package to a public GitHub repository, then enable Pages:
-Settings > Pages > Deploy from a branch > main > /root > Save.
-
-Open the final link shown by GitHub Pages. It is usually:
-https://YOUR_USERNAME.github.io/REPOSITORY_NAME/
-
-If you later use a custom domain, add it in Settings > Pages > Custom domain.
-Version v46 adds browser memory for repeat customer details.
+  // ระบบ stock / ยอดขายรายวัน
+  // 1) สร้าง Google Apps Script จากไฟล์ google-apps-script-stock-backend.gs
+  // 2) Deploy เป็น Web app
+  // 3) วาง URL ตรง stockApiUrl แล้วอัปไฟล์ขึ้น GitHub
+  stockApiUrl: "",
+  stockApiToken: "fai-mai-khua-order",
+  stockRefreshMs: 45000
+};
