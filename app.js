@@ -1,10 +1,10 @@
-// ================================
-// จุดที่ 1: แก้ข้อมูลร้านจริงตรงนี้
-// phone ใส่เครื่องหมาย + ได้ แต่ whatsapp ต้องใช้รหัสประเทศและตัด 0 หน้าออก เช่น 02099469995 = 8562099469995
+﻿// ================================
+// เธเธธเธ”เธ—เธตเน 1: เนเธเนเธเนเธญเธกเธนเธฅเธฃเนเธฒเธเธเธฃเธดเธเธ•เธฃเธเธเธตเน
+// phone เนเธชเนเน€เธเธฃเธทเนเธญเธเธซเธกเธฒเธข + เนเธ”เน เนเธ•เน whatsapp เธ•เนเธญเธเนเธเนเธฃเธซเธฑเธชเธเธฃเธฐเน€เธ—เธจเนเธฅเธฐเธ•เธฑเธ” 0 เธซเธเนเธฒเธญเธญเธ เน€เธเนเธ 02099469995 = 8562099469995
 // ================================
 const restaurant = {
-  name: "ໄຟໄໝ້ຄົວ",
-  googleMapName: "ຮ້ານ ໄຟໄໝ້ຄົວ",
+  name: "เปเบเปเปเปเบเบปเบง",
+  googleMapName: "เบฎเปเบฒเบ เปเบเปเปเปเบเบปเบง",
   phone: "+8562099469995",
   whatsapp: "8562099469995",
   openHours: "10:30 - 22:00",
@@ -12,16 +12,16 @@ const restaurant = {
   storeLat: 17.9822450,
   storeLng: 102.6284250,
   storeMapsUrl: "https://www.google.com/maps/search/?api=1&query=%E0%BA%AE%E0%BB%89%E0%BA%B2%E0%BA%99%20%E0%BB%84%E0%BA%9F%E0%BB%84%E0%BB%9D%E0%BB%89%E0%BA%84%E0%BA%BB%E0%BA%A7",
-  deliveryNote: "ค่าส่งคิดตามระยะทาง / ร้านจะยืนยันอีกครั้ง"
+  deliveryNote: "เธเนเธฒเธชเนเธเธเธดเธ”เธ•เธฒเธกเธฃเธฐเธขเธฐเธ—เธฒเธ / เธฃเนเธฒเธเธเธฐเธขเธทเธเธขเธฑเธเธญเธตเธเธเธฃเธฑเนเธ"
 };
 
 // ================================
-// จุดที่ 2: แก้เมนู ราคา และรูปอาหารจริงตรงนี้
-// image ใช้ได้ 2 แบบ:
-// 1) รูปในโฟลเดอร์ images เช่น image: "images/krapao.jpg"
-// 2) ลิงก์รูปออนไลน์ เช่น image: "https://..."
-// id ห้ามซ้ำกัน และ price ไม่ต้องใส่ comma เช่น 60000
-// theme คือสี animation ของเมนูแนะนำ ถ้ายังไม่ถนัด ปล่อยไว้แบบเดิมได้
+// เธเธธเธ”เธ—เธตเน 2: เนเธเนเน€เธกเธเธน เธฃเธฒเธเธฒ เนเธฅเธฐเธฃเธนเธเธญเธฒเธซเธฒเธฃเธเธฃเธดเธเธ•เธฃเธเธเธตเน
+// image เนเธเนเนเธ”เน 2 เนเธเธ:
+// 1) เธฃเธนเธเนเธเนเธเธฅเน€เธ”เธญเธฃเน images เน€เธเนเธ image: "images/krapao.jpg"
+// 2) เธฅเธดเธเธเนเธฃเธนเธเธญเธญเธเนเธฅเธเน เน€เธเนเธ image: "https://..."
+// id เธซเนเธฒเธกเธเนเธณเธเธฑเธ เนเธฅเธฐ price เนเธกเนเธ•เนเธญเธเนเธชเน comma เน€เธเนเธ 60000
+// theme เธเธทเธญเธชเธต animation เธเธญเธเน€เธกเธเธนเนเธเธฐเธเธณ เธ–เนเธฒเธขเธฑเธเนเธกเนเธ–เธเธฑเธ” เธเธฅเนเธญเธขเนเธงเนเนเธเธเน€เธ”เธดเธกเนเธ”เน
 // ================================
 
 const currencyOptions = {
@@ -45,104 +45,104 @@ const currencyOptions = {
   }
 };
 
-// หมายเหตุ: ราคาในระบบตั้งต้นเป็น Kip.
-// THB / USD เป็นราคาแสดงโดยประมาณเท่านั้น สามารถแก้ rateFromKip ได้ในไฟล์ app.js.
+// เธซเธกเธฒเธขเน€เธซเธ•เธธ: เธฃเธฒเธเธฒเนเธเธฃเธฐเธเธเธ•เธฑเนเธเธ•เนเธเน€เธเนเธ Kip.
+// THB / USD เน€เธเนเธเธฃเธฒเธเธฒเนเธชเธ”เธเนเธ”เธขเธเธฃเธฐเธกเธฒเธ“เน€เธ—เนเธฒเธเธฑเนเธ เธชเธฒเธกเธฒเธฃเธ–เนเธเน rateFromKip เนเธ”เนเนเธเนเธเธฅเน app.js.
 
 const menuItems = [
   {
     id: 1,
-    name: "ข้าวกะเพราหมู + ไข่ดาว",
-    category: "ข้าวไฟแรง",
+    name: "เธเนเธฒเธงเธเธฐเน€เธเธฃเธฒเธซเธกเธน + เนเธเนเธ”เธฒเธง",
+    category: "เธเนเธฒเธงเนเธเนเธฃเธ",
     price: 60000,
-    description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
-    image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=900&q=80",
-    tag: "ขายดี",
+    description: "เธเธฐเน€เธเธฃเธฒเธซเธกเธนเธฃเธชเธเธฑเธ” เธเธฑเธ”เนเธเนเธฃเธ เน€เธชเธดเธฃเนเธเธเธฃเนเธญเธกเธเนเธฒเธงเธซเธญเธกเนเธฅเธฐเนเธเนเธ”เธฒเธง",
+    image: "images/krapao-moo-kai-dao.jpg",
+    tag: "เธเธฒเธขเธ”เธต",
     theme: { accent: "#ffb636", fire: "#e8431f", glow: "rgba(232,67,31,.30)", deep: "#130806" }
   },
   {
     id: 2,
-    name: "ข้าวไก่เทอริยากิ",
-    category: "ข้าวไฟแรง",
+    name: "เธเนเธฒเธงเนเธเนเน€เธ—เธญเธฃเธดเธขเธฒเธเธด",
+    category: "เธเนเธฒเธงเนเธเนเธฃเธ",
     price: 55000,
-    description: "ไก่นุ่ม ซอสเทอริยากิ หอมหวานเค็มกำลังดี",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
-    tag: "ญี่ปุ่น",
+    description: "เนเธเนเธเธธเนเธก เธเธญเธชเน€เธ—เธญเธฃเธดเธขเธฒเธเธด เธซเธญเธกเธซเธงเธฒเธเน€เธเนเธกเธเธณเธฅเธฑเธเธ”เธต",
+    image: "images/teriyaki-chicken.jpg",
+    tag: "เธเธตเนเธเธธเนเธ",
     theme: { accent: "#f6c85f", fire: "#2dc071", glow: "rgba(45,192,113,.28)", deep: "#06140d" }
   },
   {
     id: 3,
-    name: "ข้าวหน้าไก่มิโสะ",
-    category: "ข้าวไฟแรง",
+    name: "เธเนเธฒเธงเธซเธเนเธฒเนเธเนเธกเธดเนเธชเธฐ",
+    category: "เธเนเธฒเธงเนเธเนเธฃเธ",
     price: 58000,
-    description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
-    image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=900&q=80",
-    tag: "สุขภาพ",
+    description: "เนเธเนเธซเธกเธฑเธเธกเธดเนเธชเธฐ เธขเนเธฒเธเธซเธญเธก เธเธดเธเธเนเธฒเธข เธญเธดเนเธกเธเธญเธ”เธต",
+    image: "images/miso-chicken-rice.jpg",
+    tag: "เธชเธธเธเธ เธฒเธ",
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
   {
     id: 4,
-    name: "เนื้อเสือร้องไห้ New Zealand",
-    category: "เมนูพิเศษ",
+    name: "เน€เธเธทเนเธญเน€เธชเธทเธญเธฃเนเธญเธเนเธซเน New Zealand",
+    category: "เน€เธกเธเธนเธเธดเน€เธจเธฉ",
     price: 95000,
-    description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
-    image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=900&q=80",
-    tag: "พรีเมียม",
+    description: "เน€เธเธทเนเธญเธซเธญเธก เธขเนเธฒเธเธเนเธณ เน€เธชเธดเธฃเนเธเธเธฃเนเธญเธกเธเนเธณเธเธดเนเธกเนเธเนเธงเธชเนเธ•เธฅเนเนเธเนเธซเธกเนเธเธฃเธฑเธง",
+    image: "images/new-zealand-steak.jpg",
+    tag: "เธเธฃเธตเน€เธกเธตเธขเธก",
     theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
   },
   {
     id: 5,
-    name: "ข้าวหน้าแซลมอนย่าง",
-    category: "เมนูพิเศษ",
+    name: "เธเนเธฒเธงเธซเธเนเธฒเนเธเธฅเธกเธญเธเธขเนเธฒเธ",
+    category: "เน€เธกเธเธนเธเธดเน€เธจเธฉ",
     price: 110000,
-    description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
-    image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=900&q=80",
-    tag: "แนะนำ",
+    description: "เนเธเธฅเธกเธญเธเธขเนเธฒเธเน€เธเธฅเธทเธญ เธซเธญเธกเธเธฃเธดเธเนเธ—เธข เน€เธชเธดเธฃเนเธเธเธฃเนเธญเธกเธเนเธฒเธงเนเธฅเธฐเธเธฑเธเธชเธ”",
+    image: "images/salmon-rice.jpg",
+    tag: "เนเธเธฐเธเธณ",
     theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
   },
   {
     id: 6,
-    name: "สลัดไก่อบ",
-    category: "สุขภาพ",
+    name: "เธชเธฅเธฑเธ”เนเธเนเธญเธ",
+    category: "เธชเธธเธเธ เธฒเธ",
     price: 65000,
-    description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
-    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80",
-    tag: "คลีน",
+    description: "เธเธฑเธเธชเธ” เนเธเนเธญเธ เธเธญเธชเน€เธเธฒ เน เน€เธซเธกเธฒเธฐเธเธฑเธเธเธเธฃเธฑเธเธชเธธเธเธ เธฒเธ",
+    image: "images/roasted-chicken-salad.jpg",
+    tag: "เธเธฅเธตเธ",
     theme: { accent: "#b7ef8a", fire: "#2dc071", glow: "rgba(45,192,113,.25)", deep: "#071407" }
   },
   {
     id: 7,
     name: "Caesar Salad",
-    category: "สุขภาพ",
+    category: "เธชเธธเธเธ เธฒเธ",
     price: 70000,
-    description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
-    image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&w=900&q=80",
-    tag: "สดใหม่",
+    description: "เธเธฑเธเธเธฃเธญเธ เธเธญเธชเธเธตเธเธฒเธฃเน เธเธเธกเธเธฑเธเธเธฃเธญเธ เนเธฅเธฐเนเธเธฃเธ•เธตเธเนเธเนเธ",
+    image: "images/caesar-salad.jpg",
+    tag: "เธชเธ”เนเธซเธกเน",
     theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
   },
   {
     id: 8,
-    name: "S’more Brownie Cookie",
-    category: "ของหวาน",
+    name: "Sโ€more Brownie Cookie",
+    category: "เธเธญเธเธซเธงเธฒเธ",
     price: 35000,
-    description: "คุกกี้บราวนี่เข้มข้น มาร์ชเมลโลว์ และบิสกิตกรอบ",
+    description: "เธเธธเธเธเธตเนเธเธฃเธฒเธงเธเธตเนเน€เธเนเธกเธเนเธ เธกเธฒเธฃเนเธเน€เธกเธฅเนเธฅเธงเน เนเธฅเธฐเธเธดเธชเธเธดเธ•เธเธฃเธญเธ",
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",
-    tag: "ของหวาน",
+    tag: "เธเธญเธเธซเธงเธฒเธ",
     theme: { accent: "#f5c7a9", fire: "#8b5e34", glow: "rgba(139,94,52,.28)", deep: "#130c08" }
   },
   {
     id: 9,
-    name: "ชาเย็นไฟไหม้",
-    category: "เครื่องดื่ม",
+    name: "เธเธฒเน€เธขเนเธเนเธเนเธซเธกเน",
+    category: "เน€เธเธฃเธทเนเธญเธเธ”เธทเนเธก",
     price: 20000,
-    description: "ชาเย็นหอม หวานมันกำลังดี ดับเผ็ดหลังจานไฟแรง",
-    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=900&q=80",
-    tag: "เย็น",
+    description: "เธเธฒเน€เธขเนเธเธซเธญเธก เธซเธงเธฒเธเธกเธฑเธเธเธณเธฅเธฑเธเธ”เธต เธ”เธฑเธเน€เธเนเธ”เธซเธฅเธฑเธเธเธฒเธเนเธเนเธฃเธ",
+    image: "images/thai-tea.jpg",
+    tag: "เน€เธขเนเธ",
     theme: { accent: "#ffd166", fire: "#f77f00", glow: "rgba(247,127,0,.25)", deep: "#130b03" }
   }
 ];
 
 const state = {
-  category: "ทั้งหมด",
+  category: "เธ—เธฑเนเธเธซเธกเธ”",
   search: "",
   cart: {},
   featuredIndex: 0,
@@ -176,7 +176,7 @@ const state = {
   },
   store: {
     isOpen: true,
-    message: "ร้านเปิดรับออเดอร์แล้ว"
+    message: "เธฃเนเธฒเธเน€เธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเนเธฅเนเธง"
   },
   orderSubmitting: false
 };
@@ -305,7 +305,7 @@ function normalizeStoreStatus(rawStore) {
   const isOpen = store.isOpen !== false;
   return {
     isOpen,
-    message: store.message || (isOpen ? "ร้านเปิดรับออเดอร์แล้ว" : "ร้านปิดรับออเดอร์ชั่วคราว")
+    message: store.message || (isOpen ? "เธฃเนเธฒเธเน€เธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเนเธฅเนเธง" : "เธฃเนเธฒเธเธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเธเธฑเนเธงเธเธฃเธฒเธง")
   };
 }
 
@@ -352,14 +352,14 @@ async function loadLiveStock(options = {}) {
     state.stock.enabled = false;
     state.stock.items = {};
     state.store = normalizeStoreStatus();
-    updateStockStatus("Stock ยังไม่ได้เชื่อมหลังบ้าน ร้านสามารถขายได้ทุกเมนูตามปกติ");
+    updateStockStatus("Stock เธขเธฑเธเนเธกเนเนเธ”เนเน€เธเธทเนเธญเธกเธซเธฅเธฑเธเธเนเธฒเธ เธฃเนเธฒเธเธชเธฒเธกเธฒเธฃเธ–เธเธฒเธขเนเธ”เนเธ—เธธเธเน€เธกเธเธนเธ•เธฒเธกเธเธเธ•เธด");
     return;
   }
 
   state.stock.enabled = true;
   state.stock.loading = true;
   state.stock.error = "";
-  if (!silent) updateStockStatus("กำลังโหลด stock ล่าสุดจากหลังบ้าน...", "loading");
+  if (!silent) updateStockStatus("เธเธณเธฅเธฑเธเนเธซเธฅเธ” stock เธฅเนเธฒเธชเธธเธ”เธเธฒเธเธซเธฅเธฑเธเธเนเธฒเธ...", "loading");
 
   try {
     const response = await fetch(stockUrlWithParams({
@@ -370,28 +370,28 @@ async function loadLiveStock(options = {}) {
       cache: "no-store"
     });
     const result = await response.json();
-    if (!result.ok) throw new Error(result.message || "โหลด stock ไม่สำเร็จ");
+    if (!result.ok) throw new Error(result.message || "เนเธซเธฅเธ” stock เนเธกเนเธชเธณเน€เธฃเนเธ");
 
     state.stock.items = normalizeStockItems(result.items || result.stock);
     state.store = normalizeStoreStatus(result.store);
     state.stock.lastLoadedAt = Date.now();
     if (isStoreClosed()) {
-      updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
+      updateStockStatus(state.store.message || "เธฃเนเธฒเธเธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเธเธฑเนเธงเธเธฃเธฒเธง", "error");
     } else {
-      updateStockStatus("ร้านเปิดอยู่: stock ออนไลน์ เมนูหมดจะปิดขายอัตโนมัติ", "ready");
+      updateStockStatus("เธฃเนเธฒเธเน€เธเธดเธ”เธญเธขเธนเน: stock เธญเธญเธเนเธฅเธเน เน€เธกเธเธนเธซเธกเธ”เธเธฐเธเธดเธ”เธเธฒเธขเธญเธฑเธ•เนเธเธกเธฑเธ•เธด", "ready");
     }
     renderMenu();
     renderCart();
   } catch (error) {
-    state.stock.error = error?.message || "โหลด stock ไม่สำเร็จ";
-    updateStockStatus("โหลด stock ไม่สำเร็จ ระบบยังแสดงเมนูเดิม กรุณาตรวจ URL หลังบ้าน", "error");
+    state.stock.error = error?.message || "เนเธซเธฅเธ” stock เนเธกเนเธชเธณเน€เธฃเนเธ";
+    updateStockStatus("เนเธซเธฅเธ” stock เนเธกเนเธชเธณเน€เธฃเนเธ เธฃเธฐเธเธเธขเธฑเธเนเธชเธ”เธเน€เธกเธเธนเน€เธ”เธดเธก เธเธฃเธธเธ“เธฒเธ•เธฃเธงเธ URL เธซเธฅเธฑเธเธเนเธฒเธ", "error");
   } finally {
     state.stock.loading = false;
   }
 }
 
 function stockValidationMessages() {
-  if (isStoreClosed()) return [state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว"];
+  if (isStoreClosed()) return [state.store.message || "เธฃเนเธฒเธเธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเธเธฑเนเธงเธเธฃเธฒเธง"];
   if (!state.stock.enabled) return [];
 
   return Object.keys(state.cart).map(Number).reduce((messages, id) => {
@@ -400,9 +400,9 @@ function stockValidationMessages() {
     if (!item || remaining === null) return messages;
 
     if (remaining <= 0) {
-      messages.push(`${item.name} ขายหมดแล้ว`);
+      messages.push(`${item.name} เธเธฒเธขเธซเธกเธ”เนเธฅเนเธง`);
     } else if (state.cart[id] > remaining) {
-      messages.push(`${item.name} เหลือ ${remaining} ชุด กรุณาลดจำนวน`);
+      messages.push(`${item.name} เน€เธซเธฅเธทเธญ ${remaining} เธเธธเธ” เธเธฃเธธเธ“เธฒเธฅเธ”เธเธณเธเธงเธ`);
     }
 
     return messages;
@@ -453,7 +453,7 @@ async function submitStockOrder(total) {
   if (!result.ok) {
     renderMenu();
     renderCart();
-    throw new Error(result.message || "Stock ไม่พอสำหรับออเดอร์นี้");
+    throw new Error(result.message || "Stock เนเธกเนเธเธญเธชเธณเธซเธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเธเธตเน");
   }
 
   if (result.items || result.stock) {
@@ -588,7 +588,7 @@ function startHeroSlider() {
 }
 
 function renderTabs() {
-  const categories = ["ทั้งหมด", ...new Set(menuItems.map(item => item.category))];
+  const categories = ["เธ—เธฑเนเธเธซเธกเธ”", ...new Set(menuItems.map(item => item.category))];
   $("#categoryTabs").innerHTML = categories.map(category => `
     <button class="tab ${state.category === category ? "active" : ""}" data-category="${category}">${category}</button>
   `).join("");
@@ -605,7 +605,7 @@ function renderTabs() {
 function filteredItems() {
   const keyword = state.search.trim().toLowerCase();
   return menuItems.filter(item => {
-    const matchCategory = state.category === "ทั้งหมด" || item.category === state.category;
+    const matchCategory = state.category === "เธ—เธฑเนเธเธซเธกเธ”" || item.category === state.category;
     const matchSearch = !keyword || [item.name, item.category, item.description].join(" ").toLowerCase().includes(keyword);
     return matchCategory && matchSearch;
   });
@@ -614,7 +614,7 @@ function filteredItems() {
 function renderMenu() {
   const items = filteredItems();
   if (!items.length) {
-    $("#menuGrid").innerHTML = `<div class="order-items empty">ไม่พบเมนูที่ค้นหา</div>`;
+    $("#menuGrid").innerHTML = `<div class="order-items empty">เนเธกเนเธเธเน€เธกเธเธนเธ—เธตเนเธเนเธเธซเธฒ</div>`;
     return;
   }
 
@@ -631,22 +631,22 @@ function renderMenu() {
     const unavailable = storeClosed || soldOut;
     const stockClass = unavailable ? " is-sold-out" : lowStock ? " is-low-stock" : "";
     const stockText = storeClosed
-      ? "ร้านปิด"
+      ? "เธฃเนเธฒเธเธเธดเธ”"
       : soldOut
-      ? "ขายหมดแล้ว"
+      ? "เธเธฒเธขเธซเธกเธ”เนเธฅเนเธง"
       : remaining !== null
-        ? `เหลือ ${remaining} ชุด`
-        : "พร้อมขาย";
-    const tapText = storeClosed ? "ร้านปิดรับออเดอร์" : soldOut ? "ปิดขายอัตโนมัติ" : "แตะรูปเพื่อเลือก";
+        ? `เน€เธซเธฅเธทเธญ ${remaining} เธเธธเธ”`
+        : "เธเธฃเนเธญเธกเธเธฒเธข";
+    const tapText = storeClosed ? "เธฃเนเธฒเธเธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเน" : soldOut ? "เธเธดเธ”เธเธฒเธขเธญเธฑเธ•เนเธเธกเธฑเธ•เธด" : "เนเธ•เธฐเธฃเธนเธเน€เธเธทเนเธญเน€เธฅเธทเธญเธ";
     const disabledAttr = unavailable ? " disabled aria-disabled=\"true\"" : "";
 
     return `
       <article class="menu-card${stockClass}" style="transition-delay:${Math.min(index * 55, 330)}ms">
-        <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="${unavailable ? `${item.name} ปิดขายอยู่` : `เลือก ${item.name}`}"${disabledAttr}>
+        <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="${unavailable ? `${item.name} เธเธดเธ”เธเธฒเธขเธญเธขเธนเน` : `เน€เธฅเธทเธญเธ ${item.name}`}"${disabledAttr}>
           <img src="${imageSrc}" alt="${item.name}" width="520" height="300" loading="${loading}" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />
           <span class="badge">${item.tag}</span>
           <span class="stock-badge${stockClass}">${stockText}</span>
-          <span class="menu-quantity-badge${quantityClass}" data-menu-qty="${item.id}" aria-label="จำนวนที่เลือก">${quantity}</span>
+          <span class="menu-quantity-badge${quantityClass}" data-menu-qty="${item.id}" aria-label="เธเธณเธเธงเธเธ—เธตเนเน€เธฅเธทเธญเธ">${quantity}</span>
         </button>
         <div class="menu-body">
           <h3>${item.name}</h3>
@@ -686,26 +686,26 @@ function updateMenuQuantityBadges() {
     trigger.disabled = soldOut;
     trigger.setAttribute("aria-disabled", String(soldOut));
     trigger.setAttribute("aria-label", quantity > 0
-      ? `เลือกเพิ่ม ${quantity} ชิ้นแล้ว`
-      : soldOut ? "เมนูนี้ขายหมดแล้ว" : "เลือกเมนูนี้");
+      ? `เน€เธฅเธทเธญเธเน€เธเธดเนเธก ${quantity} เธเธดเนเธเนเธฅเนเธง`
+      : soldOut ? "เน€เธกเธเธนเธเธตเนเธเธฒเธขเธซเธกเธ”เนเธฅเนเธง" : "เน€เธฅเธทเธญเธเน€เธกเธเธนเธเธตเน");
 
     if (!badge) return;
     badge.textContent = String(quantity);
     badge.classList.toggle("is-visible", quantity > 0);
-    badge.setAttribute("aria-label", quantity > 0 ? `เลือกแล้ว ${quantity} ชิ้น` : "ยังไม่ได้เลือก");
+    badge.setAttribute("aria-label", quantity > 0 ? `เน€เธฅเธทเธญเธเนเธฅเนเธง ${quantity} เธเธดเนเธ` : "เธขเธฑเธเนเธกเนเนเธ”เนเน€เธฅเธทเธญเธ");
   });
 }
 
 function addToCart(id, sourceButton) {
   if (isStoreClosed()) {
-    updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
+    updateStockStatus(state.store.message || "เธฃเนเธฒเธเธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเธเธฑเนเธงเธเธฃเธฒเธง", "error");
     renderCart();
     return;
   }
 
   if (isItemSoldOut(id) || availableToAdd(id) <= 0) {
     const item = menuItems.find(menu => menu.id === id);
-    updateStockStatus(`${item?.name || "เมนูนี้"} ขายหมดแล้วหรือเหลือไม่พอ`, "error");
+    updateStockStatus(`${item?.name || "เน€เธกเธเธนเธเธตเน"} เธเธฒเธขเธซเธกเธ”เนเธฅเนเธงเธซเธฃเธทเธญเน€เธซเธฅเธทเธญเนเธกเนเธเธญ`, "error");
     renderMenu();
     renderCart();
     return;
@@ -896,14 +896,14 @@ function initSoundToggle() {
 
 function updateQty(id, change) {
   if (change > 0 && isStoreClosed()) {
-    updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
+    updateStockStatus(state.store.message || "เธฃเนเธฒเธเธเธดเธ”เธฃเธฑเธเธญเธญเน€เธ”เธญเธฃเนเธเธฑเนเธงเธเธฃเธฒเธง", "error");
     renderCart();
     return;
   }
 
   if (change > 0 && availableToAdd(id) <= 0) {
     const item = menuItems.find(menu => menu.id === id);
-    updateStockStatus(`${item?.name || "เมนูนี้"} เหลือไม่พอสำหรับเพิ่มแล้ว`, "error");
+    updateStockStatus(`${item?.name || "เน€เธกเธเธนเธเธตเน"} เน€เธซเธฅเธทเธญเนเธกเนเธเธญเธชเธณเธซเธฃเธฑเธเน€เธเธดเนเธกเนเธฅเนเธง`, "error");
     renderCart();
     return;
   }
@@ -1001,7 +1001,7 @@ function saveCustomerMemory(options = {}) {
 
   if (!storageAvailable) {
     if (!silent) {
-      setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้เว็บจำข้อมูลอัตโนมัติ ถ้าใช้โหมดส่วนตัว/Incognito ข้อมูลอาจหาย");
+      setCustomerMemoryStatus("browser เธเธตเนเนเธกเนเธญเธเธธเธเธฒเธ•เนเธซเนเน€เธงเนเธเธเธณเธเนเธญเธกเธนเธฅเธญเธฑเธ•เนเธเธกเธฑเธ•เธด เธ–เนเธฒเนเธเนเนเธซเธกเธ”เธชเนเธงเธเธ•เธฑเธง/Incognito เธเนเธญเธกเธนเธฅเธญเธฒเธเธซเธฒเธข");
     }
   }
 
@@ -1025,24 +1025,24 @@ function saveCustomerMemory(options = {}) {
     }
     writeCustomerMemoryCookie(snapshot);
     if (!silent) {
-      setCustomerMemoryStatus("ระบบจำข้อมูลลูกค้าไว้ใน browser นี้แล้ว รอบหน้าจะเติมให้อัตโนมัติ");
+      setCustomerMemoryStatus("เธฃเธฐเธเธเธเธณเธเนเธญเธกเธนเธฅเธฅเธนเธเธเนเธฒเนเธงเนเนเธ browser เธเธตเนเนเธฅเนเธง เธฃเธญเธเธซเธเนเธฒเธเธฐเน€เธ•เธดเธกเนเธซเนเธญเธฑเธ•เนเธเธกเธฑเธ•เธด");
     }
   } catch (error) {
     if (!silent) {
-      setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้จำข้อมูลอัตโนมัติ");
+      setCustomerMemoryStatus("browser เธเธตเนเนเธกเนเธญเธเธธเธเธฒเธ•เนเธซเนเธเธณเธเนเธญเธกเธนเธฅเธญเธฑเธ•เนเธเธกเธฑเธ•เธด");
     }
   }
 }
 
 function restoreCustomerMemory() {
   if (!canUseCustomerMemory()) {
-    setCustomerMemoryStatus("browser นี้ไม่อนุญาตให้เว็บจำข้อมูลอัตโนมัติ ถ้าใช้โหมดส่วนตัว/Incognito ข้อมูลอาจหาย");
+    setCustomerMemoryStatus("browser เธเธตเนเนเธกเนเธญเธเธธเธเธฒเธ•เนเธซเนเน€เธงเนเธเธเธณเธเนเธญเธกเธนเธฅเธญเธฑเธ•เนเธเธกเธฑเธ•เธด เธ–เนเธฒเนเธเนเนเธซเธกเธ”เธชเนเธงเธเธ•เธฑเธง/Incognito เธเนเธญเธกเธนเธฅเธญเธฒเธเธซเธฒเธข");
     return;
   }
 
   const saved = readCustomerMemory();
   if (!saved) {
-    setCustomerMemoryStatus("ข้อมูลลูกค้าจะถูกจำไว้ใน browser นี้หลังจากเริ่มกรอก");
+    setCustomerMemoryStatus("เธเนเธญเธกเธนเธฅเธฅเธนเธเธเนเธฒเธเธฐเธ–เธนเธเธเธณเนเธงเนเนเธ browser เธเธตเนเธซเธฅเธฑเธเธเธฒเธเน€เธฃเธดเนเธกเธเธฃเธญเธ");
     return;
   }
 
@@ -1080,7 +1080,7 @@ function restoreCustomerMemory() {
     setLocationConfirmed(true);
   }
 
-  setCustomerMemoryStatus("เติมข้อมูลจากครั้งก่อนให้แล้ว สามารถแก้ไขได้ตามปกติ");
+  setCustomerMemoryStatus("เน€เธ•เธดเธกเธเนเธญเธกเธนเธฅเธเธฒเธเธเธฃเธฑเนเธเธเนเธญเธเนเธซเนเนเธฅเนเธง เธชเธฒเธกเธฒเธฃเธ–เนเธเนเนเธเนเธ”เนเธ•เธฒเธกเธเธเธ•เธด");
 }
 
 function clearCustomerMemory() {
@@ -1094,12 +1094,12 @@ function clearCustomerMemory() {
     if (element) element.value = "";
   });
 
-  const defaultOrderType = document.querySelector('input[name="orderType"][value="นั่งทานที่ร้าน"]');
+  const defaultOrderType = document.querySelector('input[name="orderType"][value="เธเธฑเนเธเธ—เธฒเธเธ—เธตเนเธฃเนเธฒเธ"]');
   if (defaultOrderType) defaultOrderType.checked = true;
 
   setLocationConfirmed(false);
   updateMapPreview("");
-  setCustomerMemoryStatus("ล้างข้อมูลที่จำไว้แล้ว ลูกค้าสามารถกรอกใหม่ได้");
+  setCustomerMemoryStatus("เธฅเนเธฒเธเธเนเธญเธกเธนเธฅเธ—เธตเนเธเธณเนเธงเนเนเธฅเนเธง เธฅเธนเธเธเนเธฒเธชเธฒเธกเธฒเธฃเธ–เธเธฃเธญเธเนเธซเธกเนเนเธ”เน");
   renderCart();
 }
 
@@ -1108,26 +1108,26 @@ function validateOrderForm() {
   const ids = Object.keys(state.cart);
   const missing = [];
 
-  if (!ids.length) missing.push("เลือกรายการอาหารอย่างน้อย 1 รายการ");
-  if (!info.customerName) missing.push("กรอกชื่อลูกค้า");
-  if (!info.customerPhone) missing.push("กรอกเบอร์โทรติดต่อ");
+  if (!ids.length) missing.push("เน€เธฅเธทเธญเธเธฃเธฒเธขเธเธฒเธฃเธญเธฒเธซเธฒเธฃเธญเธขเนเธฒเธเธเนเธญเธข 1 เธฃเธฒเธขเธเธฒเธฃ");
+  if (!info.customerName) missing.push("เธเธฃเธญเธเธเธทเนเธญเธฅเธนเธเธเนเธฒ");
+  if (!info.customerPhone) missing.push("เธเธฃเธญเธเน€เธเธญเธฃเนเนเธ—เธฃเธ•เธดเธ”เธ•เนเธญ");
   if (info.customerPhone && info.customerPhone.replace(/\D/g, "").length < 8) {
-    missing.push("ตรวจสอบเบอร์โทรให้ถูกต้อง");
+    missing.push("เธ•เธฃเธงเธเธชเธญเธเน€เธเธญเธฃเนเนเธ—เธฃเนเธซเนเธ–เธนเธเธ•เนเธญเธ");
   }
-  if (!info.orderType) missing.push("เลือกรูปแบบรับอาหาร");
+  if (!info.orderType) missing.push("เน€เธฅเธทเธญเธเธฃเธนเธเนเธเธเธฃเธฑเธเธญเธฒเธซเธฒเธฃ");
 
-  if (info.orderType === "นั่งทานที่ร้าน") {
-    if (!info.tableText) missing.push("กรอกเลขโต๊ะ");
-  }
-
-  if (info.orderType === "รับเองหน้าร้าน") {
-    if (!info.tableText) missing.push("กรอกชื่อ/จุดรับอาหารหน้าร้าน");
+  if (info.orderType === "เธเธฑเนเธเธ—เธฒเธเธ—เธตเนเธฃเนเธฒเธ") {
+    if (!info.tableText) missing.push("เธเธฃเธญเธเน€เธฅเธเนเธ•เนเธฐ");
   }
 
-  if (info.orderType === "จัดส่งเดลิเวอรี") {
-    if (!info.deliveryAddress) missing.push("กรอกสถานที่จัดส่ง / ที่อยู่");
-    if (!info.mapLink) missing.push("ใส่ Location หรือกดใช้ตำแหน่งปัจจุบัน");
-    if (info.mapLink && !state.locationConfirmed) missing.push("กดปุ่มยืนยันตำแหน่งนี้หลังตรวจสอบหมุดในแผนที่");
+  if (info.orderType === "เธฃเธฑเธเน€เธญเธเธซเธเนเธฒเธฃเนเธฒเธ") {
+    if (!info.tableText) missing.push("เธเธฃเธญเธเธเธทเนเธญ/เธเธธเธ”เธฃเธฑเธเธญเธฒเธซเธฒเธฃเธซเธเนเธฒเธฃเนเธฒเธ");
+  }
+
+  if (info.orderType === "เธเธฑเธ”เธชเนเธเน€เธ”เธฅเธดเน€เธงเธญเธฃเธต") {
+    if (!info.deliveryAddress) missing.push("เธเธฃเธญเธเธชเธ–เธฒเธเธ—เธตเนเธเธฑเธ”เธชเนเธ / เธ—เธตเนเธญเธขเธนเน");
+    if (!info.mapLink) missing.push("เนเธชเน Location เธซเธฃเธทเธญเธเธ”เนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธ");
+    if (info.mapLink && !state.locationConfirmed) missing.push("เธเธ”เธเธธเนเธกเธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนเธซเธฅเธฑเธเธ•เธฃเธงเธเธชเธญเธเธซเธกเธธเธ”เนเธเนเธเธเธ—เธตเน");
   }
 
   missing.push(...stockValidationMessages());
@@ -1146,19 +1146,19 @@ function updateValidationBox(validation) {
 
   if (validation.isValid) {
     box.className = "validation-box is-ready";
-    box.innerHTML = "ข้อมูลครบแล้ว สามารถกดยืนยันออเดอร์ได้";
+    box.innerHTML = "เธเนเธญเธกเธนเธฅเธเธฃเธเนเธฅเนเธง เธชเธฒเธกเธฒเธฃเธ–เธเธ”เธขเธทเธเธขเธฑเธเธญเธญเน€เธ”เธญเธฃเนเนเธ”เน";
     button.classList.remove("is-disabled");
     button.setAttribute("aria-disabled", "false");
-    button.textContent = "ยืนยันออเดอร์ / ส่งเข้า WhatsApp ร้าน";
+    button.textContent = "เธขเธทเธเธขเธฑเธเธญเธญเน€เธ”เธญเธฃเน / เธชเนเธเน€เธเนเธฒ WhatsApp เธฃเนเธฒเธ";
   } else {
     box.className = "validation-box";
     box.innerHTML = `
-      <strong>กรอกข้อมูลให้ครบก่อนยืนยันออเดอร์</strong>
+      <strong>เธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธเนเธญเธเธขเธทเธเธขเธฑเธเธญเธญเน€เธ”เธญเธฃเน</strong>
       <ul>${validation.missing.map(item => `<li>${item}</li>`).join("")}</ul>
     `;
     button.classList.add("is-disabled");
     button.setAttribute("aria-disabled", "true");
-    button.textContent = "กรอกข้อมูลให้ครบก่อนยืนยันออเดอร์";
+    button.textContent = "เธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธเนเธญเธเธขเธทเธเธขเธฑเธเธญเธญเน€เธ”เธญเธฃเน";
   }
 }
 
@@ -1169,19 +1169,19 @@ function updateFloatingValidationBox(validation) {
 
   if (validation.isValid) {
     box.className = "validation-box is-ready";
-    box.innerHTML = "ข้อมูลครบแล้ว สามารถส่งออเดอร์ได้";
+    box.innerHTML = "เธเนเธญเธกเธนเธฅเธเธฃเธเนเธฅเนเธง เธชเธฒเธกเธฒเธฃเธ–เธชเนเธเธญเธญเน€เธ”เธญเธฃเนเนเธ”เน";
     button.classList.remove("is-disabled");
     button.setAttribute("aria-disabled", "false");
-    button.textContent = "ส่งออเดอร์เข้า WhatsApp";
+    button.textContent = "เธชเนเธเธญเธญเน€เธ”เธญเธฃเนเน€เธเนเธฒ WhatsApp";
   } else {
     box.className = "validation-box";
     box.innerHTML = `
-      <strong>ยังส่งไม่ได้</strong>
+      <strong>เธขเธฑเธเธชเนเธเนเธกเนเนเธ”เน</strong>
       <ul>${validation.missing.map(item => `<li>${item}</li>`).join("")}</ul>
     `;
     button.classList.add("is-disabled");
     button.setAttribute("aria-disabled", "true");
-    button.textContent = "กรอกข้อมูลให้ครบก่อนส่ง";
+    button.textContent = "เธเธฃเธญเธเธเนเธญเธกเธนเธฅเนเธซเนเธเธฃเธเธเนเธญเธเธชเนเธ";
   }
 }
 
@@ -1196,7 +1196,7 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
       <div class="${rowClass}">
         <strong>${item.name}</strong>
         <div class="${controlsClass}">
-          <button data-action="minus" data-id="${id}" type="button">−</button>
+          <button data-action="minus" data-id="${id}" type="button">โ’</button>
           <span>${qty}</span>
           <button data-action="plus" data-id="${id}" type="button">+</button>
         </div>
@@ -1244,7 +1244,7 @@ function updateFloatingCart(ids, total, validation) {
   const floatingCart = $("#floatingCart");
 
   if (barCount) barCount.textContent = String(count);
-  if (summary) summary.textContent = count ? `${count} รายการในออเดอร์` : "ยังไม่มีรายการ";
+  if (summary) summary.textContent = count ? `${count} เธฃเธฒเธขเธเธฒเธฃเนเธเธญเธญเน€เธ”เธญเธฃเน` : "เธขเธฑเธเนเธกเนเธกเธตเธฃเธฒเธขเธเธฒเธฃ";
   if (barTotal) barTotal.textContent = money(total);
   if (drawerTotal) drawerTotal.textContent = money(total);
   if (floatingCart) floatingCart.classList.toggle("has-items", count > 0);
@@ -1252,7 +1252,7 @@ function updateFloatingCart(ids, total, validation) {
   if (itemsBox) {
     if (!ids.length) {
       itemsBox.className = "floating-order-items empty";
-      itemsBox.textContent = "ยังไม่มีรายการที่เลือก";
+      itemsBox.textContent = "เธขเธฑเธเนเธกเนเธกเธตเธฃเธฒเธขเธเธฒเธฃเธ—เธตเนเน€เธฅเธทเธญเธ";
     } else {
       itemsBox.className = "floating-order-items";
       itemsBox.innerHTML = orderRowsTemplate(ids, "floating-order-row", "floating-qty-controls");
@@ -1272,7 +1272,7 @@ function renderCart() {
 
   if (!ids.length) {
     orderItems.className = "order-items empty";
-    orderItems.textContent = "ยังไม่มีรายการที่เลือก";
+    orderItems.textContent = "เธขเธฑเธเนเธกเนเธกเธตเธฃเธฒเธขเธเธฒเธฃเธ—เธตเนเน€เธฅเธทเธญเธ";
     $("#totalPrice").textContent = money(0);
     $("#sendOrderBtn").href = "#";
     updateValidationBox(validation);
@@ -1297,26 +1297,26 @@ function buildOrderText(total) {
   const info = getCustomerInfo();
 
   const lines = [
-    `สวัสดีครับ/ค่ะ ต้องการสั่งอาหารจาก ${restaurant.name}`,
+    `เธชเธงเธฑเธชเธ”เธตเธเธฃเธฑเธ/เธเนเธฐ เธ•เนเธญเธเธเธฒเธฃเธชเธฑเนเธเธญเธฒเธซเธฒเธฃเธเธฒเธ ${restaurant.name}`,
     "",
-    "ข้อมูลลูกค้า",
-    `ชื่อ: ${info.customerName}`,
-    `เบอร์โทร: ${info.customerPhone}`,
-    `รูปแบบรับอาหาร: ${info.orderType}`,
-    `เลขโต๊ะ/จุดรับอาหาร: ${info.tableText}`,
-    info.deliveryAddress ? `สถานที่จัดส่ง: ${info.deliveryAddress}` : "สถานที่จัดส่ง: -",
+    "เธเนเธญเธกเธนเธฅเธฅเธนเธเธเนเธฒ",
+    `เธเธทเนเธญ: ${info.customerName}`,
+    `เน€เธเธญเธฃเนเนเธ—เธฃ: ${info.customerPhone}`,
+    `เธฃเธนเธเนเธเธเธฃเธฑเธเธญเธฒเธซเธฒเธฃ: ${info.orderType}`,
+    `เน€เธฅเธเนเธ•เนเธฐ/เธเธธเธ”เธฃเธฑเธเธญเธฒเธซเธฒเธฃ: ${info.tableText}`,
+    info.deliveryAddress ? `เธชเธ–เธฒเธเธ—เธตเนเธเธฑเธ”เธชเนเธ: ${info.deliveryAddress}` : "เธชเธ–เธฒเธเธ—เธตเนเธเธฑเธ”เธชเนเธ: -",
     info.mapLink ? `Location: ${info.mapLink}` : "Location: -",
-    info.customerNote ? `หมายเหตุ: ${info.customerNote}` : "หมายเหตุ: -",
+    info.customerNote ? `เธซเธกเธฒเธขเน€เธซเธ•เธธ: ${info.customerNote}` : "เธซเธกเธฒเธขเน€เธซเธ•เธธ: -",
     "",
-    "รายการอาหาร",
+    "เธฃเธฒเธขเธเธฒเธฃเธญเธฒเธซเธฒเธฃ",
     ...Object.keys(state.cart).map(id => {
       const item = menuItems.find(menu => menu.id === Number(id));
       return `- ${item.name} x ${state.cart[id]} = ${money(item.price * state.cart[id])}`;
     }),
     "",
-    `รวมโดยประมาณ: ${money(total)}`,
-    state.selectedCurrency !== "LAK" ? `ราคาอ้างอิง Kip: ${new Intl.NumberFormat("lo-LA").format(total)} Kip` : null,
-    `หมายเหตุจากร้าน: ${restaurant.deliveryNote}`
+    `เธฃเธงเธกเนเธ”เธขเธเธฃเธฐเธกเธฒเธ“: ${money(total)}`,
+    state.selectedCurrency !== "LAK" ? `เธฃเธฒเธเธฒเธญเนเธฒเธเธญเธดเธ Kip: ${new Intl.NumberFormat("lo-LA").format(total)} Kip` : null,
+    `เธซเธกเธฒเธขเน€เธซเธ•เธธเธเธฒเธเธฃเนเธฒเธ: ${restaurant.deliveryNote}`
   ];
   return lines.filter(Boolean).join("\n");
 }
@@ -1336,15 +1336,15 @@ function setLocationConfirmed(isConfirmed) {
       confirmBtn.classList.add("is-confirmed");
       confirmBtn.classList.remove("is-disabled");
       confirmBtn.setAttribute("aria-disabled", "false");
-      confirmBtn.textContent = "ยืนยันตำแหน่งแล้ว";
+      confirmBtn.textContent = "เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเนเธฅเนเธง";
     } else {
       confirmBtn.classList.remove("is-confirmed");
-      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+      confirmBtn.textContent = "เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเน";
     }
   }
 
   if (state.locationConfirmed && status) {
-    status.textContent = "ยืนยัน Location แล้ว ลูกค้าสามารถกดยืนยันออเดอร์ได้เมื่อข้อมูลครบ";
+    status.textContent = "เธขเธทเธเธขเธฑเธ Location เนเธฅเนเธง เธฅเธนเธเธเนเธฒเธชเธฒเธกเธฒเธฃเธ–เธเธ”เธขเธทเธเธขเธฑเธเธญเธญเน€เธ”เธญเธฃเนเนเธ”เนเน€เธกเธทเนเธญเธเนเธญเธกเธนเธฅเธเธฃเธ";
   }
 
   saveCustomerMemory({ force: true });
@@ -1362,7 +1362,7 @@ function loadLeafletAssets() {
   if (state.mapLoadingPromise) return state.mapLoadingPromise;
 
   const status = $("#locationStatus");
-  if (status) status.textContent = "กำลังโหลดแผนที่ กรุณารอสักครู่...";
+  if (status) status.textContent = "เธเธณเธฅเธฑเธเนเธซเธฅเธ”เนเธเธเธ—เธตเน เธเธฃเธธเธ“เธฒเธฃเธญเธชเธฑเธเธเธฃเธนเน...";
 
   state.mapLoadingPromise = (async () => {
     let lastError = null;
@@ -1402,7 +1402,7 @@ async function ensureDeliveryMap() {
   setMapPreviewState("loading");
   if (fallback) {
     fallback.style.display = "grid";
-    fallback.textContent = "กำลังโหลดแผนที่...";
+    fallback.textContent = "เธเธณเธฅเธฑเธเนเธซเธฅเธ”เนเธเธเธ—เธตเน...";
   }
 
   try {
@@ -1417,15 +1417,15 @@ async function ensureDeliveryMap() {
   } catch (error) {
     if (fallback) {
       fallback.style.display = "grid";
-      fallback.textContent = "โหลดแผนที่ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต หรือวางลิงก์ Google Maps เอง";
+      fallback.textContent = "เนเธซเธฅเธ”เนเธเธเธ—เธตเนเนเธกเนเธชเธณเน€เธฃเนเธ เธเธฃเธธเธ“เธฒเธ•เธฃเธงเธเธชเธญเธเธญเธดเธเน€เธ—เธญเธฃเนเน€เธเนเธ• เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
     }
     setMapPreviewState("fallback");
     const status = $("#locationStatus");
     if (status) {
       const hasLocationLink = Boolean($("#mapLink")?.value.trim());
       status.textContent = hasLocationLink
-        ? "แผนที่โหลดไม่สำเร็จ แต่ระบบมีลิงก์ Location แล้ว สามารถกดยืนยันตำแหน่งได้หากลิงก์ถูกต้อง"
-        : "โหลดแผนที่ไม่สำเร็จ แต่ยังสามารถวางลิงก์ Google Maps เองได้";
+        ? "เนเธเธเธ—เธตเนเนเธซเธฅเธ”เนเธกเนเธชเธณเน€เธฃเนเธ เนเธ•เนเธฃเธฐเธเธเธกเธตเธฅเธดเธเธเน Location เนเธฅเนเธง เธชเธฒเธกเธฒเธฃเธ–เธเธ”เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเนเธ”เนเธซเธฒเธเธฅเธดเธเธเนเธ–เธนเธเธ•เนเธญเธ"
+        : "เนเธซเธฅเธ”เนเธเธเธ—เธตเนเนเธกเนเธชเธณเน€เธฃเนเธ เนเธ•เนเธขเธฑเธเธชเธฒเธกเธฒเธฃเธ–เธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธเนเธ”เน";
     }
     return null;
   }
@@ -1483,8 +1483,8 @@ function setMapMode(mode) {
   const status = $("#locationStatus");
   if (status && state.selectedLatLng && !state.locationConfirmed) {
     status.textContent = mode === "satellite"
-      ? "เปลี่ยนเป็นภาพดาวเทียมแล้ว ดูบ้าน/อาคารให้ชัด แล้วกดยืนยันตำแหน่งนี้"
-      : "เปลี่ยนเป็นแผนที่ถนนแล้ว ดูชื่อถนน/สถานที่ แล้วกดยืนยันตำแหน่งนี้";
+      ? "เน€เธเธฅเธตเนเธขเธเน€เธเนเธเธ เธฒเธเธ”เธฒเธงเน€เธ—เธตเธขเธกเนเธฅเนเธง เธ”เธนเธเนเธฒเธ/เธญเธฒเธเธฒเธฃเนเธซเนเธเธฑเธ” เนเธฅเนเธงเธเธ”เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเน"
+      : "เน€เธเธฅเธตเนเธขเธเน€เธเนเธเนเธเธเธ—เธตเนเธ–เธเธเนเธฅเนเธง เธ”เธนเธเธทเนเธญเธ–เธเธ/เธชเธ–เธฒเธเธ—เธตเน เนเธฅเนเธงเธเธ”เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเน";
   }
 }
 
@@ -1496,8 +1496,8 @@ function addStoreLogoMarker() {
     className: "store-logo-marker",
     html: `
       <div class="store-logo-pin">
-        <img src="images/logo-fai-mai-khua-small.png" alt="ຮ້ານ ໄຟໄໝ້ຄົວ" />
-        <span>ໄຟໄໝ້ຄົວ</span>
+        <img src="images/logo-fai-mai-khua-small.png" alt="เบฎเปเบฒเบ เปเบเปเปเปเบเบปเบง" />
+        <span>เปเบเปเปเปเบเบปเบง</span>
       </div>
     `,
     iconSize: [86, 92],
@@ -1514,9 +1514,9 @@ function addStoreLogoMarker() {
 
   state.storeMarker.bindPopup(`
     <strong>${restaurant.googleMapName}</strong><br>
-    ตำแหน่งร้านบน Google Maps<br>
-    <a href="${restaurant.storeMapsUrl}" target="_blank" rel="noopener">ค้นหาชื่อร้านใน Google Maps</a><br>
-    <a href="https://www.google.com/maps?q=${restaurant.storeLat},${restaurant.storeLng}" target="_blank" rel="noopener">เปิดพิกัดร้าน</a>
+    เธ•เธณเนเธซเธเนเธเธฃเนเธฒเธเธเธ Google Maps<br>
+    <a href="${restaurant.storeMapsUrl}" target="_blank" rel="noopener">เธเนเธเธซเธฒเธเธทเนเธญเธฃเนเธฒเธเนเธ Google Maps</a><br>
+    <a href="https://www.google.com/maps?q=${restaurant.storeLat},${restaurant.storeLng}" target="_blank" rel="noopener">เน€เธเธดเธ”เธเธดเธเธฑเธ”เธฃเนเธฒเธ</a>
   `);
 
   L.circle([restaurant.storeLat, restaurant.storeLng], {
@@ -1538,7 +1538,7 @@ function initDeliveryMap() {
   if (!window.L) {
     if (fallback) {
       fallback.style.display = "grid";
-      fallback.textContent = "แผนที่จะโหลดเมื่อเริ่มใช้งาน Location";
+      fallback.textContent = "เนเธเธเธ—เธตเนเธเธฐเนเธซเธฅเธ”เน€เธกเธทเนเธญเน€เธฃเธดเนเธกเนเธเนเธเธฒเธ Location";
     }
     return;
   }
@@ -1586,17 +1586,17 @@ function initDeliveryMap() {
   state.marker.on("dragstart", () => setLocationConfirmed(false));
   state.marker.on("dragend", () => {
     const position = state.marker.getLatLng();
-    setSelectedLocation(position.lat, position.lng, "เลื่อนหมุดแล้ว ถ้าจุดส่งถูกต้องให้กด “ยืนยันตำแหน่งนี้”");
+    setSelectedLocation(position.lat, position.lng, "เน€เธฅเธทเนเธญเธเธซเธกเธธเธ”เนเธฅเนเธง เธ–เนเธฒเธเธธเธ”เธชเนเธเธ–เธนเธเธ•เนเธญเธเนเธซเนเธเธ” โ€เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนโ€");
   });
 
   state.map.on("click", (event) => {
     setLocationConfirmed(false);
-    setSelectedLocation(event.latlng.lat, event.latlng.lng, "หมุดวิ่งไปตำแหน่งที่เลือกแล้ว ถ้าจุดส่งถูกต้องให้กด “ยืนยันตำแหน่งนี้”");
+    setSelectedLocation(event.latlng.lat, event.latlng.lng, "เธซเธกเธธเธ”เธงเธดเนเธเนเธเธ•เธณเนเธซเธเนเธเธ—เธตเนเน€เธฅเธทเธญเธเนเธฅเนเธง เธ–เนเธฒเธเธธเธ”เธชเนเธเธ–เธนเธเธ•เนเธญเธเนเธซเนเธเธ” โ€เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนโ€");
   });
 
   if (hasSavedLatLng) {
     const wasLocationConfirmed = state.locationConfirmed;
-    setSelectedLocation(initialLatLng[0], initialLatLng[1], "เปิดแผนที่ตาม Location ที่เลือกไว้แล้ว ตรวจสอบหมุดก่อนกดยืนยันตำแหน่ง");
+    setSelectedLocation(initialLatLng[0], initialLatLng[1], "เน€เธเธดเธ”เนเธเธเธ—เธตเนเธ•เธฒเธก Location เธ—เธตเนเน€เธฅเธทเธญเธเนเธงเนเนเธฅเนเธง เธ•เธฃเธงเธเธชเธญเธเธซเธกเธธเธ”เธเนเธญเธเธเธ”เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธ");
     if (wasLocationConfirmed) setLocationConfirmed(true);
   } else {
     state.selectedLatLng = null;
@@ -1607,12 +1607,12 @@ function initDeliveryMap() {
       confirmBtn.classList.add("is-disabled");
       confirmBtn.classList.remove("is-confirmed");
       confirmBtn.setAttribute("aria-disabled", "true");
-      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+      confirmBtn.textContent = "เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเน";
     }
 
     const status = $("#locationStatus");
     if (status) {
-      status.textContent = "แผนที่พร้อมแล้ว โลโก้ร้านคือจุดร้าน ຮ້ານ ໄຟໄໝ້ຄົວ ให้ลูกค้าแตะบนแผนที่ ลากหมุด ใช้ตำแหน่งปัจจุบัน หรือค้นหาจุดส่งก่อนกดยืนยันตำแหน่ง";
+      status.textContent = "เนเธเธเธ—เธตเนเธเธฃเนเธญเธกเนเธฅเนเธง เนเธฅเนเธเนเธฃเนเธฒเธเธเธทเธญเธเธธเธ”เธฃเนเธฒเธ เบฎเปเบฒเบ เปเบเปเปเปเบเบปเบง เนเธซเนเธฅเธนเธเธเนเธฒเนเธ•เธฐเธเธเนเธเธเธ—เธตเน เธฅเธฒเธเธซเธกเธธเธ” เนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธ เธซเธฃเธทเธญเธเนเธเธซเธฒเธเธธเธ”เธชเนเธเธเนเธญเธเธเธ”เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธ";
     }
 
     renderCart();
@@ -1659,7 +1659,7 @@ function setSelectedLocation(latitude, longitude, message) {
 
   if (!Number.isFinite(numericLat) || !Number.isFinite(numericLng) || Math.abs(numericLat) > 90 || Math.abs(numericLng) > 180) {
     const status = $("#locationStatus");
-    if (status) status.textContent = "พิกัดไม่ถูกต้อง กรุณาเลือกตำแหน่งใหม่ หรือวางลิงก์ Google Maps ที่ถูกต้อง";
+    if (status) status.textContent = "เธเธดเธเธฑเธ”เนเธกเนเธ–เธนเธเธ•เนเธญเธ เธเธฃเธธเธ“เธฒเน€เธฅเธทเธญเธเธ•เธณเนเธซเธเนเธเนเธซเธกเน เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เธ—เธตเนเธ–เธนเธเธ•เนเธญเธ";
     return;
   }
 
@@ -1677,7 +1677,7 @@ function setSelectedLocation(latitude, longitude, message) {
   if (confirmBtn) {
     confirmBtn.classList.remove("is-disabled", "is-confirmed");
     confirmBtn.setAttribute("aria-disabled", "false");
-    confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+    confirmBtn.textContent = "เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเน";
   }
 
   if (state.marker && state.map) {
@@ -1708,7 +1708,7 @@ function updateMapPreview(link) {
       confirmBtn.classList.add("is-disabled");
       confirmBtn.classList.remove("is-confirmed");
       confirmBtn.setAttribute("aria-disabled", "true");
-      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+      confirmBtn.textContent = "เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเน";
     }
     return;
   }
@@ -1716,7 +1716,7 @@ function updateMapPreview(link) {
   const coords = extractCoordinates(value);
   if (coords) {
     ensureDeliveryMap().then(() => {
-      setSelectedLocation(coords.latitude, coords.longitude, "พบพิกัดจากลิงก์แล้ว ตรวจสอบหมุดแล้วกด “ยืนยันตำแหน่งนี้”");
+      setSelectedLocation(coords.latitude, coords.longitude, "เธเธเธเธดเธเธฑเธ”เธเธฒเธเธฅเธดเธเธเนเนเธฅเนเธง เธ•เธฃเธงเธเธชเธญเธเธซเธกเธธเธ”เนเธฅเนเธงเธเธ” โ€เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนโ€");
     });
   } else {
     state.locationConfirmed = false;
@@ -1724,10 +1724,10 @@ function updateMapPreview(link) {
     if (confirmBtn) {
       confirmBtn.classList.remove("is-disabled", "is-confirmed");
       confirmBtn.setAttribute("aria-disabled", "false");
-      confirmBtn.textContent = "ยืนยันตำแหน่งนี้";
+      confirmBtn.textContent = "เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเน";
     }
     const status = $("#locationStatus");
-    if (status) status.textContent = "วางลิงก์ Google Maps แล้ว ถ้าลิงก์ถูกต้องให้กด “ยืนยันตำแหน่งนี้”";
+    if (status) status.textContent = "เธงเธฒเธเธฅเธดเธเธเน Google Maps เนเธฅเนเธง เธ–เนเธฒเธฅเธดเธเธเนเธ–เธนเธเธ•เนเธญเธเนเธซเนเธเธ” โ€เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนโ€";
     renderCart();
   }
 }
@@ -1765,12 +1765,12 @@ function updateGpsAccuracyPanel(accuracy, status = "checking") {
 
   if (!accuracy) {
     panel.classList.add("is-checking");
-    text.textContent = status === "checking" ? "กำลังจับตำแหน่ง..." : "ยังไม่มีข้อมูลความแม่นยำ";
+    text.textContent = status === "checking" ? "เธเธณเธฅเธฑเธเธเธฑเธเธ•เธณเนเธซเธเนเธ..." : "เธขเธฑเธเนเธกเนเธกเธตเธเนเธญเธกเธนเธฅเธเธงเธฒเธกเนเธกเนเธเธขเธณ";
     return;
   }
 
   const rounded = Math.round(accuracy);
-  text.textContent = `คลาดเคลื่อนประมาณ ${rounded} เมตร`;
+  text.textContent = `เธเธฅเธฒเธ”เน€เธเธฅเธทเนเธญเธเธเธฃเธฐเธกเธฒเธ“ ${rounded} เน€เธกเธ•เธฃ`;
 
   if (rounded <= 25) {
     panel.classList.add("is-good");
@@ -1782,15 +1782,15 @@ function updateGpsAccuracyPanel(accuracy, status = "checking") {
 }
 
 function getAccuracyMessage(accuracy) {
-  if (!accuracy) return "ระบบไม่ทราบค่าความแม่นยำ กรุณาตรวจสอบหมุดก่อนยืนยัน";
+  if (!accuracy) return "เธฃเธฐเธเธเนเธกเนเธ—เธฃเธฒเธเธเนเธฒเธเธงเธฒเธกเนเธกเนเธเธขเธณ เธเธฃเธธเธ“เธฒเธ•เธฃเธงเธเธชเธญเธเธซเธกเธธเธ”เธเนเธญเธเธขเธทเธเธขเธฑเธ";
   const rounded = Math.round(accuracy);
   if (rounded <= 25) {
-    return `ตำแหน่งค่อนข้างแม่น คลาดเคลื่อนประมาณ ${rounded} เมตร`;
+    return `เธ•เธณเนเธซเธเนเธเธเนเธญเธเธเนเธฒเธเนเธกเนเธ เธเธฅเธฒเธ”เน€เธเธฅเธทเนเธญเธเธเธฃเธฐเธกเธฒเธ“ ${rounded} เน€เธกเธ•เธฃ`;
   }
   if (rounded <= 80) {
-    return `ตำแหน่งพอใช้ได้ แต่ยังอาจคลาดเคลื่อนประมาณ ${rounded} เมตร กรุณาดูหมุดก่อนยืนยัน`;
+    return `เธ•เธณเนเธซเธเนเธเธเธญเนเธเนเนเธ”เน เนเธ•เนเธขเธฑเธเธญเธฒเธเธเธฅเธฒเธ”เน€เธเธฅเธทเนเธญเธเธเธฃเธฐเธกเธฒเธ“ ${rounded} เน€เธกเธ•เธฃ เธเธฃเธธเธ“เธฒเธ”เธนเธซเธกเธธเธ”เธเนเธญเธเธขเธทเธเธขเธฑเธ`;
   }
-  return `ตำแหน่งจากเครื่องนี้คลาดเคลื่อนสูงประมาณ ${rounded} เมตร ห้ามยืนยันจนกว่าจะลากหมุดไฟไปจุดส่งจริง`;
+  return `เธ•เธณเนเธซเธเนเธเธเธฒเธเน€เธเธฃเธทเนเธญเธเธเธตเนเธเธฅเธฒเธ”เน€เธเธฅเธทเนเธญเธเธชเธนเธเธเธฃเธฐเธกเธฒเธ“ ${rounded} เน€เธกเธ•เธฃ เธซเนเธฒเธกเธขเธทเธเธขเธฑเธเธเธเธเธงเนเธฒเธเธฐเธฅเธฒเธเธซเธกเธธเธ”เนเธเนเธเธเธธเธ”เธชเนเธเธเธฃเธดเธ`;
 }
 
 function updateUserLiveLocation(latitude, longitude, accuracy) {
@@ -1801,7 +1801,7 @@ function updateUserLiveLocation(latitude, longitude, accuracy) {
 
   const userIcon = L.divIcon({
     className: "live-user-marker",
-    html: `<span></span><b>คุณอยู่ตรงนี้</b>`,
+    html: `<span></span><b>เธเธธเธ“เธญเธขเธนเนเธ•เธฃเธเธเธตเน</b>`,
     iconSize: [96, 54],
     iconAnchor: [48, 28]
   });
@@ -1865,10 +1865,10 @@ function updateSearchProviderStatus() {
 
   if (shouldUseGooglePlaces()) {
     status.className = "place-provider-status is-google";
-    status.textContent = "กำลังใช้ฐานข้อมูล Google Maps / Google Places";
+    status.textContent = "เธเธณเธฅเธฑเธเนเธเนเธเธฒเธเธเนเธญเธกเธนเธฅ Google Maps / Google Places";
   } else {
     status.className = "place-provider-status is-fallback";
-    status.textContent = "ยังไม่ได้ใส่ Google API key: ตอนนี้ใช้ระบบค้นหาสำรองก่อน";
+    status.textContent = "เธขเธฑเธเนเธกเนเนเธ”เนเนเธชเน Google API key: เธ•เธญเธเธเธตเนเนเธเนเธฃเธฐเธเธเธเนเธเธซเธฒเธชเธณเธฃเธญเธเธเนเธญเธ";
   }
 }
 
@@ -1885,7 +1885,7 @@ async function searchPlace(options = {}) {
 
   if (query.length < 2) {
     resultsBox.className = "place-results is-empty";
-    resultsBox.innerHTML = auto ? "พิมพ์อย่างน้อย 2 ตัวอักษร เพื่อให้ระบบแนะนำสถานที่" : "กรุณาพิมพ์ชื่อสถานที่ก่อนค้นหา";
+    resultsBox.innerHTML = auto ? "เธเธดเธกเธเนเธญเธขเนเธฒเธเธเนเธญเธข 2 เธ•เธฑเธงเธญเธฑเธเธฉเธฃ เน€เธเธทเนเธญเนเธซเนเธฃเธฐเธเธเนเธเธฐเธเธณเธชเธ–เธฒเธเธ—เธตเน" : "เธเธฃเธธเธ“เธฒเธเธดเธกเธเนเธเธทเนเธญเธชเธ–เธฒเธเธ—เธตเนเธเนเธญเธเธเนเธเธซเธฒ";
     return;
   }
 
@@ -1897,8 +1897,8 @@ async function searchPlace(options = {}) {
 
   resultsBox.className = "place-results is-loading";
   resultsBox.innerHTML = shouldUseGooglePlaces()
-    ? "กำลังค้นหาจาก Google Maps..."
-    : "กำลังค้นหาสถานที่จากระบบสำรอง...";
+    ? "เธเธณเธฅเธฑเธเธเนเธเธซเธฒเธเธฒเธ Google Maps..."
+    : "เธเธณเธฅเธฑเธเธเนเธเธซเธฒเธชเธ–เธฒเธเธ—เธตเนเธเธฒเธเธฃเธฐเธเธเธชเธณเธฃเธญเธ...";
 
   try {
     const places = shouldUseGooglePlaces()
@@ -1915,7 +1915,7 @@ async function searchPlace(options = {}) {
       try {
         const fallbackPlaces = await searchOpenStreetMapPlaces(query);
         renderPlaceResults(fallbackPlaces, query, auto, true);
-        if (status) status.textContent = "Google Places ขัดข้องชั่วคราว ระบบแสดงผลค้นหาสำรองให้ก่อน";
+        if (status) status.textContent = "Google Places เธเธฑเธ”เธเนเธญเธเธเธฑเนเธงเธเธฃเธฒเธง เธฃเธฐเธเธเนเธชเธ”เธเธเธฅเธเนเธเธซเธฒเธชเธณเธฃเธญเธเนเธซเนเธเนเธญเธ";
         return;
       } catch (fallbackError) {
         // Continue to generic error below.
@@ -1923,8 +1923,8 @@ async function searchPlace(options = {}) {
     }
 
     resultsBox.className = "place-results is-empty";
-    resultsBox.innerHTML = "ค้นหาสถานที่ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต หรือใช้ตำแหน่งปัจจุบัน";
-    if (status) status.textContent = "ระบบค้นหาสถานที่ขัดข้อง กรุณากดใช้ตำแหน่งปัจจุบัน หรือวางลิงก์ Google Maps เอง";
+    resultsBox.innerHTML = "เธเนเธเธซเธฒเธชเธ–เธฒเธเธ—เธตเนเนเธกเนเธชเธณเน€เธฃเนเธ เธเธฃเธธเธ“เธฒเธ•เธฃเธงเธเธชเธญเธเธญเธดเธเน€เธ—เธญเธฃเนเน€เธเนเธ• เธซเธฃเธทเธญเนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธ";
+    if (status) status.textContent = "เธฃเธฐเธเธเธเนเธเธซเธฒเธชเธ–เธฒเธเธ—เธตเนเธเธฑเธ”เธเนเธญเธ เธเธฃเธธเธ“เธฒเธเธ”เนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธ เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
   }
 }
 
@@ -2047,15 +2047,15 @@ function renderPlaceResults(places, query, auto = false, usedFallback = false) {
   if (!places.length) {
     resultsBox.className = "place-results is-empty";
     resultsBox.innerHTML = auto
-      ? `ยังไม่พบ “${query}” ลองพิมพ์ชื่อให้ละเอียดขึ้น เช่น ชื่อหมู่บ้าน + เมือง`
-      : "ไม่พบสถานที่ ลองพิมพ์ชื่อให้ละเอียดขึ้น เช่น ชื่อหมู่บ้าน + เมือง";
-    if (status) status.textContent = "ค้นหาไม่เจอ กรุณาลองพิมพ์ชื่อสถานที่ใหม่ หรือใช้ตำแหน่งปัจจุบัน";
+      ? `เธขเธฑเธเนเธกเนเธเธ โ€${query}โ€ เธฅเธญเธเธเธดเธกเธเนเธเธทเนเธญเนเธซเนเธฅเธฐเน€เธญเธตเธขเธ”เธเธถเนเธ เน€เธเนเธ เธเธทเนเธญเธซเธกเธนเนเธเนเธฒเธ + เน€เธกเธทเธญเธ`
+      : "เนเธกเนเธเธเธชเธ–เธฒเธเธ—เธตเน เธฅเธญเธเธเธดเธกเธเนเธเธทเนเธญเนเธซเนเธฅเธฐเน€เธญเธตเธขเธ”เธเธถเนเธ เน€เธเนเธ เธเธทเนเธญเธซเธกเธนเนเธเนเธฒเธ + เน€เธกเธทเธญเธ";
+    if (status) status.textContent = "เธเนเธเธซเธฒเนเธกเนเน€เธเธญ เธเธฃเธธเธ“เธฒเธฅเธญเธเธเธดเธกเธเนเธเธทเนเธญเธชเธ–เธฒเธเธ—เธตเนเนเธซเธกเน เธซเธฃเธทเธญเนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธ";
     return;
   }
 
   const providerTitle = usedFallback
-    ? "สถานที่แนะนำจากระบบสำรอง"
-    : (places[0]?.provider === "google" ? "สถานที่แนะนำจาก Google Maps" : "สถานที่แนะนำ");
+    ? "เธชเธ–เธฒเธเธ—เธตเนเนเธเธฐเธเธณเธเธฒเธเธฃเธฐเธเธเธชเธณเธฃเธญเธ"
+    : (places[0]?.provider === "google" ? "เธชเธ–เธฒเธเธ—เธตเนเนเธเธฐเธเธณเธเธฒเธ Google Maps" : "เธชเธ–เธฒเธเธ—เธตเนเนเธเธฐเธเธณ");
 
   resultsBox.className = "place-results";
   resultsBox.innerHTML = `
@@ -2082,7 +2082,7 @@ async function selectPlaceResult(button, resultsBox) {
   const provider = button.dataset.provider;
   let lat = button.dataset.lat;
   let lng = button.dataset.lng;
-  let title = button.querySelector("strong")?.textContent || "สถานที่ที่เลือก";
+  let title = button.querySelector("strong")?.textContent || "เธชเธ–เธฒเธเธ—เธตเนเธ—เธตเนเน€เธฅเธทเธญเธ";
 
   button.classList.add("is-loading");
 
@@ -2097,7 +2097,7 @@ async function selectPlaceResult(button, resultsBox) {
     if (!lat || !lng) throw new Error("No coordinates");
 
     await ensureDeliveryMap();
-    setSelectedLocation(lat, lng, `เลือกสถานที่ “${title}” แล้ว ถ้าหมุดตรงกับจุดส่งจริงให้กด “ยืนยันตำแหน่งนี้”`);
+    setSelectedLocation(lat, lng, `เน€เธฅเธทเธญเธเธชเธ–เธฒเธเธ—เธตเน โ€${title}โ€ เนเธฅเนเธง เธ–เนเธฒเธซเธกเธธเธ”เธ•เธฃเธเธเธฑเธเธเธธเธ”เธชเนเธเธเธฃเธดเธเนเธซเนเธเธ” โ€เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนโ€`);
 
     resultsBox.querySelectorAll(".place-result").forEach(item => item.classList.remove("is-selected"));
     button.classList.add("is-selected");
@@ -2108,7 +2108,7 @@ async function selectPlaceResult(button, resultsBox) {
     document.querySelector("#mapPreview")?.scrollIntoView({ behavior: "smooth", block: "center" });
   } catch (error) {
     const status = $("#locationStatus");
-    if (status) status.textContent = "ดึงพิกัดสถานที่ไม่สำเร็จ กรุณาเลือกผลลัพธ์อื่น หรือลากหมุดเอง";
+    if (status) status.textContent = "เธ”เธถเธเธเธดเธเธฑเธ”เธชเธ–เธฒเธเธ—เธตเนเนเธกเนเธชเธณเน€เธฃเนเธ เธเธฃเธธเธ“เธฒเน€เธฅเธทเธญเธเธเธฅเธฅเธฑเธเธเนเธญเธทเนเธ เธซเธฃเธทเธญเธฅเธฒเธเธซเธกเธธเธ”เน€เธญเธ";
   } finally {
     button.classList.remove("is-loading");
   }
@@ -2143,14 +2143,14 @@ function schedulePlaceAutocomplete() {
   if (query.length < 2) {
     if (resultsBox) {
       resultsBox.className = "place-results is-empty";
-      resultsBox.innerHTML = query.length ? "พิมพ์เพิ่มอีกนิด ระบบจะแนะนำสถานที่ให้เลือก" : "";
+      resultsBox.innerHTML = query.length ? "เธเธดเธกเธเนเน€เธเธดเนเธกเธญเธตเธเธเธดเธ” เธฃเธฐเธเธเธเธฐเนเธเธฐเธเธณเธชเธ–เธฒเธเธ—เธตเนเนเธซเนเน€เธฅเธทเธญเธ" : "";
     }
     return;
   }
 
   if (resultsBox) {
     resultsBox.className = "place-results is-loading";
-    resultsBox.innerHTML = shouldUseGooglePlaces() ? "กำลังเตรียมค้นหาจาก Google Maps..." : "กำลังรอข้อความให้ครบ...";
+    resultsBox.innerHTML = shouldUseGooglePlaces() ? "เธเธณเธฅเธฑเธเน€เธ•เธฃเธตเธขเธกเธเนเธเธซเธฒเธเธฒเธ Google Maps..." : "เธเธณเธฅเธฑเธเธฃเธญเธเนเธญเธเธงเธฒเธกเนเธซเนเธเธฃเธ...";
   }
 
   state.placeSearchTimer = setTimeout(() => {
@@ -2163,12 +2163,12 @@ async function useCurrentLocation() {
   const mapReadyPromise = ensureDeliveryMap().catch(() => null);
 
   if (!navigator.geolocation) {
-    if (status) status.textContent = "เครื่องนี้ไม่รองรับการดึงตำแหน่ง กรุณาวางลิงก์ Google Maps เอง";
+    if (status) status.textContent = "เน€เธเธฃเธทเนเธญเธเธเธตเนเนเธกเนเธฃเธญเธเธฃเธฑเธเธเธฒเธฃเธ”เธถเธเธ•เธณเนเธซเธเนเธ เธเธฃเธธเธ“เธฒเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
     updateGpsAccuracyPanel(null, "failed");
     return;
   }
 
-  if (status) status.textContent = "กำลังจับตำแหน่งให้แม่นขึ้น... กรุณารอสักครู่และเปิด GPS/Wi‑Fi";
+  if (status) status.textContent = "เธเธณเธฅเธฑเธเธเธฑเธเธ•เธณเนเธซเธเนเธเนเธซเนเนเธกเนเธเธเธถเนเธ... เธเธฃเธธเธ“เธฒเธฃเธญเธชเธฑเธเธเธฃเธนเนเนเธฅเธฐเน€เธเธดเธ” GPS/Wiโ€‘Fi";
   updateGpsAccuracyPanel(null, "checking");
 
   state.bestGpsPosition = null;
@@ -2192,7 +2192,7 @@ async function useCurrentLocation() {
     const bestMessage = getAccuracyMessage(bestAccuracy);
 
     if (status && !finished) {
-      status.textContent = `กำลังปรับตำแหน่ง... ได้ข้อมูล ${sampleCount} ครั้ง / ดีที่สุดตอนนี้: ${bestMessage}`;
+      status.textContent = `เธเธณเธฅเธฑเธเธเธฃเธฑเธเธ•เธณเนเธซเธเนเธ... เนเธ”เนเธเนเธญเธกเธนเธฅ ${sampleCount} เธเธฃเธฑเนเธ / เธ”เธตเธ—เธตเนเธชเธธเธ”เธ•เธญเธเธเธตเน: ${bestMessage}`;
     }
 
     if (!finished && accuracy && accuracy <= 20) {
@@ -2211,7 +2211,7 @@ async function useCurrentLocation() {
 
     const best = state.bestGpsPosition;
     if (!best) {
-      if (status) status.textContent = "ยังจับตำแหน่งไม่ได้ กรุณาลองอีกครั้ง หรือวางลิงก์ Google Maps เอง";
+      if (status) status.textContent = "เธขเธฑเธเธเธฑเธเธ•เธณเนเธซเธเนเธเนเธกเนเนเธ”เน เธเธฃเธธเธ“เธฒเธฅเธญเธเธญเธตเธเธเธฃเธฑเนเธ เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
       updateGpsAccuracyPanel(null, "failed");
       return;
     }
@@ -2224,11 +2224,11 @@ async function useCurrentLocation() {
     updateGpsAccuracyPanel(accuracy, "done");
 
     const message = getAccuracyMessage(accuracy);
-    setSelectedLocation(lat, lng, `${message} หมุดสีฟ้าคือตำแหน่งลูกค้าปัจจุบัน ส่วนหมุดไฟคือจุดส่ง หากไม่ตรงให้ลากหมุดไฟไปตำแหน่งจริงก่อนกด “ยืนยันตำแหน่งนี้”`);
+    setSelectedLocation(lat, lng, `${message} เธซเธกเธธเธ”เธชเธตเธเนเธฒเธเธทเธญเธ•เธณเนเธซเธเนเธเธฅเธนเธเธเนเธฒเธเธฑเธเธเธธเธเธฑเธ เธชเนเธงเธเธซเธกเธธเธ”เนเธเธเธทเธญเธเธธเธ”เธชเนเธ เธซเธฒเธเนเธกเนเธ•เธฃเธเนเธซเนเธฅเธฒเธเธซเธกเธธเธ”เนเธเนเธเธ•เธณเนเธซเธเนเธเธเธฃเธดเธเธเนเธญเธเธเธ” โ€เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนโ€`);
 
     mapReadyPromise.then(() => {
       if (state.map) {
-        setSelectedLocation(lat, lng, `${message} หมุดสีฟ้าคือตำแหน่งลูกค้าปัจจุบัน ส่วนหมุดไฟคือจุดส่ง หากไม่ตรงให้ลากหมุดไฟไปตำแหน่งจริงก่อนกด “ยืนยันตำแหน่งนี้”`);
+        setSelectedLocation(lat, lng, `${message} เธซเธกเธธเธ”เธชเธตเธเนเธฒเธเธทเธญเธ•เธณเนเธซเธเนเธเธฅเธนเธเธเนเธฒเธเธฑเธเธเธธเธเธฑเธ เธชเนเธงเธเธซเธกเธธเธ”เนเธเธเธทเธญเธเธธเธ”เธชเนเธ เธซเธฒเธเนเธกเนเธ•เธฃเธเนเธซเนเธฅเธฒเธเธซเธกเธธเธ”เนเธเนเธเธ•เธณเนเธซเธเนเธเธเธฃเธดเธเธเนเธญเธเธเธ” โ€เธขเธทเธเธขเธฑเธเธ•เธณเนเธซเธเนเธเธเธตเนโ€`);
       }
     });
     startLiveUserLocation();
@@ -2237,15 +2237,15 @@ async function useCurrentLocation() {
   navigator.geolocation.getCurrentPosition(
     (position) => acceptPosition(position),
     (error) => {
-      let message = "ไม่สามารถดึงตำแหน่งได้ กรุณาเปิด Location หรือวางลิงก์ Google Maps เอง";
+      let message = "เนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธ”เธถเธเธ•เธณเนเธซเธเนเธเนเธ”เน เธเธฃเธธเธ“เธฒเน€เธเธดเธ” Location เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
       if (error.code === error.PERMISSION_DENIED) {
-        message = "ลูกค้ายังไม่ได้อนุญาต Location กรุณากดอนุญาต หรือวางลิงก์ Google Maps เอง";
+        message = "เธฅเธนเธเธเนเธฒเธขเธฑเธเนเธกเนเนเธ”เนเธญเธเธธเธเธฒเธ• Location เธเธฃเธธเธ“เธฒเธเธ”เธญเธเธธเธเธฒเธ• เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
       }
       if (error.code === error.POSITION_UNAVAILABLE) {
-        message = "เครื่องไม่สามารถหาตำแหน่งได้ตอนนี้ กรุณาเปิด GPS/Wi‑Fi หรือวางลิงก์ Google Maps เอง";
+        message = "เน€เธเธฃเธทเนเธญเธเนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธซเธฒเธ•เธณเนเธซเธเนเธเนเธ”เนเธ•เธญเธเธเธตเน เธเธฃเธธเธ“เธฒเน€เธเธดเธ” GPS/Wiโ€‘Fi เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
       }
       if (error.code === error.TIMEOUT) {
-        message = "ใช้เวลาหาตำแหน่งนานเกินไป กรุณาลองอีกครั้ง หรือวางลิงก์ Google Maps เอง";
+        message = "เนเธเนเน€เธงเธฅเธฒเธซเธฒเธ•เธณเนเธซเธเนเธเธเธฒเธเน€เธเธดเธเนเธ เธเธฃเธธเธ“เธฒเธฅเธญเธเธญเธตเธเธเธฃเธฑเนเธ เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เน€เธญเธ";
       }
       if (status) status.textContent = message;
       updateGpsAccuracyPanel(null, "failed");
@@ -2311,7 +2311,7 @@ function setOrderSubmitting(isSubmitting) {
     if (!button) return;
     button.classList.toggle("is-loading", isSubmitting);
     button.setAttribute("aria-busy", String(isSubmitting));
-    if (isSubmitting) button.textContent = "กำลังตัด stock...";
+    if (isSubmitting) button.textContent = "เธเธณเธฅเธฑเธเธ•เธฑเธ” stock...";
   });
 }
 
@@ -2343,7 +2343,7 @@ async function handleSendOrderClick(event) {
     saveCustomerMemory({ force: true, silent: true });
     openWhatsappOrder(total);
   } catch (error) {
-    const message = error?.message || "ส่งออเดอร์ไม่สำเร็จ กรุณาลองใหม่";
+    const message = error?.message || "เธชเนเธเธญเธญเน€เธ”เธญเธฃเนเนเธกเนเธชเธณเน€เธฃเนเธ เธเธฃเธธเธ“เธฒเธฅเธญเธเนเธซเธกเน";
     updateStockStatus(message, "error");
     const failedValidation = {
       isValid: false,
@@ -2439,7 +2439,7 @@ if (mapInput) {
 
 document.querySelectorAll('input[name="orderType"]').forEach(input => {
   input.addEventListener("change", () => {
-    if (input.checked && input.value === "จัดส่งเดลิเวอรี") {
+    if (input.checked && input.value === "เธเธฑเธ”เธชเนเธเน€เธ”เธฅเธดเน€เธงเธญเธฃเธต") {
       ensureDeliveryMap();
     }
     saveCustomerMemory({ force: true });
@@ -2501,7 +2501,7 @@ if (clearLocationButton) {
     setLocationConfirmed(false);
     updateMapPreview("");
     const status = $("#locationStatus");
-    if (status) status.textContent = "ล้าง Location แล้ว กรุณากดใช้ตำแหน่งปัจจุบัน หรือวางลิงก์ Google Maps ใหม่";
+    if (status) status.textContent = "เธฅเนเธฒเธ Location เนเธฅเนเธง เธเธฃเธธเธ“เธฒเธเธ”เนเธเนเธ•เธณเนเธซเธเนเธเธเธฑเธเธเธธเธเธฑเธ เธซเธฃเธทเธญเธงเธฒเธเธฅเธดเธเธเน Google Maps เนเธซเธกเน";
     saveCustomerMemory({ force: true });
     renderCart();
   });
@@ -2546,3 +2546,6 @@ if ("serviceWorker" in navigator) {
     });
   });
 }
+
+
+
