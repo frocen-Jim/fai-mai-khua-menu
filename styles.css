@@ -2539,3 +2539,101 @@ footer strong { color: var(--text); }
     text-align: center;
   }
 }
+
+
+/* v55: per-menu item notes */
+label[for="customerNote"],
+#customerNote {
+  display: none !important;
+}
+
+.item-note-box {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 7px;
+  margin-top: 2px;
+}
+
+.item-note-box span {
+  color: rgba(255, 226, 166, .86);
+  font-size: .82rem;
+  font-weight: 900;
+  letter-spacing: .01em;
+}
+
+.item-note-input {
+  width: 100%;
+  min-height: 44px;
+  resize: vertical;
+  border: 1px solid rgba(255, 214, 138, .16);
+  border-radius: 14px;
+  padding: 10px 12px;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255, 118, 24, .08), transparent 42%),
+    rgba(255,255,255,.055);
+  outline: none;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.item-note-input::placeholder {
+  color: rgba(255, 246, 232, .42);
+}
+
+.item-note-input:focus {
+  border-color: rgba(255, 190, 67, .62);
+  box-shadow: 0 0 0 3px rgba(255, 182, 54, .11);
+}
+
+.floating-order-row .item-note-box {
+  margin-top: 0;
+}
+
+@media (max-width: 720px) {
+  .item-note-input {
+    font-size: 16px;
+  }
+}
+
+
+/* v56: ingredient stickers on every menu card */
+.ingredient-stickers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 0 8px;
+}
+
+.ingredient-sticker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 214, 138, .18);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 179, 49, .16), transparent 50%),
+    rgba(255,255,255,.055);
+  color: rgba(255, 239, 207, .92);
+  font-size: .76rem;
+  font-weight: 850;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.menu-card:hover .ingredient-sticker {
+  border-color: rgba(255, 190, 67, .34);
+}
+
+@media (max-width: 520px) {
+  .ingredient-stickers {
+    gap: 6px;
+  }
+
+  .ingredient-sticker {
+    font-size: .72rem;
+    padding: 5px 8px;
+  }
+}

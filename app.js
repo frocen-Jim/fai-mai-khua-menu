@@ -16,6 +16,7 @@ const restaurant = {
 };
 
 // ================================
+// v55 item note per menu: each cart item has its own note field
 // v54 food images updated: first 7 menu images now use local images/menu-v54-*.jpg
 // จุดที่ 2: แก้เมนู ราคา และรูปอาหารจริงตรงนี้
 // image ใช้ได้ 2 แบบ:
@@ -58,6 +59,7 @@ const menuItems = [
     description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
     image: "images/menu-v54-07-krapao-egg.jpg",
     tag: "ขายดี",
+    ingredients: ["หมู", "พริก", "กระเทียม", "ใบกะเพรา", "ไข่ดาว"],
     theme: { accent: "#ffb636", fire: "#e8431f", glow: "rgba(232,67,31,.30)", deep: "#130806" }
   },
   {
@@ -68,6 +70,7 @@ const menuItems = [
     description: "ไก่นุ่ม ซอสเทอริยากิ หอมหวานเค็มกำลังดี",
     image: "images/menu-v54-01-rice-fire.jpg",
     tag: "ญี่ปุ่น",
+    ingredients: ["ไก่", "ซอสเทอริยากิ", "ข้าว", "แตงกวา"],
     theme: { accent: "#f6c85f", fire: "#2dc071", glow: "rgba(45,192,113,.28)", deep: "#06140d" }
   },
   {
@@ -78,6 +81,7 @@ const menuItems = [
     description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
     image: "images/menu-v54-03-fried-rice-egg.jpg",
     tag: "สุขภาพ",
+    ingredients: ["ไก่", "มิโสะ", "ข้าว", "ผัก"],
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
   {
@@ -88,6 +92,7 @@ const menuItems = [
     description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
     image: "images/menu-v54-02-beef-rice.jpg",
     tag: "พรีเมียม",
+    ingredients: ["เนื้อ NZ", "น้ำจิ้มแจ่ว", "พริก", "ข้าวคั่ว"],
     theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
   },
   {
@@ -98,6 +103,7 @@ const menuItems = [
     description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
     image: "images/menu-v54-04-spaghetti-fire.jpg",
     tag: "แนะนำ",
+    ingredients: ["แซลมอน", "เกลือ", "พริกไทย", "ข้าว", "ผักสด"],
     theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
   },
   {
@@ -108,6 +114,7 @@ const menuItems = [
     description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
     image: "images/menu-v54-05-spaghetti-pork.jpg",
     tag: "คลีน",
+    ingredients: ["ไก่อบ", "ผักสด", "ซอสเบา", "แตงกวา"],
     theme: { accent: "#b7ef8a", fire: "#2dc071", glow: "rgba(45,192,113,.25)", deep: "#071407" }
   },
   {
@@ -118,6 +125,7 @@ const menuItems = [
     description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
     image: "images/menu-v54-06-noodle-fire.jpg",
     tag: "สดใหม่",
+    ingredients: ["ผักสลัด", "ซีซาร์ซอส", "ขนมปังกรอบ", "โปรตีน"],
     theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
   },
   {
@@ -128,6 +136,7 @@ const menuItems = [
     description: "คุกกี้บราวนี่เข้มข้น มาร์ชเมลโลว์ และบิสกิตกรอบ",
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",
     tag: "ของหวาน",
+    ingredients: ["ช็อกโกแลต", "มาร์ชเมลโลว์", "บิสกิต", "เนย"],
     theme: { accent: "#f5c7a9", fire: "#8b5e34", glow: "rgba(139,94,52,.28)", deep: "#130c08" }
   },
   {
@@ -138,6 +147,7 @@ const menuItems = [
     description: "ชาเย็นหอม หวานมันกำลังดี ดับเผ็ดหลังจานไฟแรง",
     image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=900&q=80",
     tag: "เย็น",
+    ingredients: ["ชาไทย", "นม", "น้ำตาล", "น้ำแข็ง"],
     theme: { accent: "#ffd166", fire: "#f77f00", glow: "rgba(247,127,0,.25)", deep: "#130b03" }
   }
 ];
@@ -146,6 +156,7 @@ const state = {
   category: "ทั้งหมด",
   search: "",
   cart: {},
+  itemNotes: {},
   featuredIndex: 0,
   soundEnabled: true,
   audioContext: null,
@@ -428,6 +439,7 @@ function orderPayload(total) {
         id: Number(id),
         name: item?.name || `Item ${id}`,
         qty: state.cart[id],
+        note: itemNoteValue(id),
         priceKip: item?.price || 0,
         subtotalKip: (item?.price || 0) * state.cart[id]
       };
@@ -607,10 +619,21 @@ function filteredItems() {
   const keyword = state.search.trim().toLowerCase();
   return menuItems.filter(item => {
     const matchCategory = state.category === "ทั้งหมด" || item.category === state.category;
-    const matchSearch = !keyword || [item.name, item.category, item.description].join(" ").toLowerCase().includes(keyword);
+    const matchSearch = !keyword || [item.name, item.category, item.description, ...(item.ingredients || [])].join(" ").toLowerCase().includes(keyword);
     return matchCategory && matchSearch;
   });
 }
+
+
+function ingredientStickersTemplate(item) {
+  if (!item.ingredients || !item.ingredients.length) return "";
+  return `
+    <div class="ingredient-stickers" aria-label="วัตถุดิบหลัก">
+      ${item.ingredients.map(ingredient => `<span class="ingredient-sticker">${escapeHtml(ingredient)}</span>`).join("")}
+    </div>
+  `;
+}
+
 
 function renderMenu() {
   const items = filteredItems();
@@ -652,6 +675,7 @@ function renderMenu() {
         <div class="menu-body">
           <h3>${item.name}</h3>
           <p class="desc">${item.description}</p>
+          ${ingredientStickersTemplate(item)}
         <div class="card-bottom">
             <span class="price">${money(item.price)}</span>
             <span class="tap-note">${tapText}</span>
@@ -910,7 +934,10 @@ function updateQty(id, change) {
   }
 
   state.cart[id] = (state.cart[id] || 0) + change;
-  if (state.cart[id] <= 0) delete state.cart[id];
+  if (state.cart[id] <= 0) {
+    delete state.cart[id];
+    delete state.itemNotes[id];
+  }
   updateMenuQuantityBadges();
   renderCart();
 }
@@ -1193,6 +1220,9 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
 
     const qty = state.cart[id];
     const subtotal = item.price * qty;
+    const noteId = `item-note-${rowClass.replace(/\s+/g, "-")}-${id}`;
+    const noteValue = escapeHtml(state.itemNotes[id] || "");
+
     return `
       <div class="${rowClass}">
         <strong>${item.name}</strong>
@@ -1202,6 +1232,17 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
           <button data-action="plus" data-id="${id}" type="button">+</button>
         </div>
         <span>${money(subtotal)}</span>
+        <label class="item-note-box" for="${noteId}">
+          <span>หมายเหตุเมนูนี้</span>
+          <textarea
+            id="${noteId}"
+            class="item-note-input"
+            data-id="${id}"
+            rows="2"
+            placeholder="เช่น ไม่ใส่พริก, ไม่ใส่ผัก, แยกน้ำจิ้ม"
+            autocomplete="off"
+          >${noteValue}</textarea>
+        </label>
       </div>
     `;
   }).join("");
@@ -1258,6 +1299,7 @@ function updateFloatingCart(ids, total, validation) {
       itemsBox.className = "floating-order-items";
       itemsBox.innerHTML = orderRowsTemplate(ids, "floating-order-row", "floating-qty-controls");
       bindQuantityButtons(".floating-qty-controls button");
+      bindItemNoteInputs();
     }
   }
 
@@ -1287,6 +1329,7 @@ function renderCart() {
   $("#totalPrice").textContent = money(total);
 
   bindQuantityButtons(".qty-controls button");
+  bindItemNoteInputs();
 
   updateValidationBox(validation);
   updateFloatingCart(ids, total, validation);
@@ -1307,12 +1350,13 @@ function buildOrderText(total) {
     `เลขโต๊ะ/จุดรับอาหาร: ${info.tableText}`,
     info.deliveryAddress ? `สถานที่จัดส่ง: ${info.deliveryAddress}` : "สถานที่จัดส่ง: -",
     info.mapLink ? `Location: ${info.mapLink}` : "Location: -",
-    info.customerNote ? `หมายเหตุ: ${info.customerNote}` : "หมายเหตุ: -",
     "",
     "รายการอาหาร",
     ...Object.keys(state.cart).map(id => {
       const item = menuItems.find(menu => menu.id === Number(id));
-      return `- ${item.name} x ${state.cart[id]} = ${money(item.price * state.cart[id])}`;
+      const note = itemNoteValue(id);
+      const row = `- ${item.name} x ${state.cart[id]} = ${money(item.price * state.cart[id])}`;
+      return note ? `${row}\n  หมายเหตุเมนูนี้: ${note}` : row;
     }),
     "",
     `รวมโดยประมาณ: ${money(total)}`,
@@ -2134,6 +2178,58 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+
+function itemNoteValue(id) {
+  return String(state.itemNotes?.[Number(id)] || "").trim();
+}
+
+function setItemNoteValue(id, value) {
+  const key = Number(id);
+  const text = String(value || "");
+  if (!key) return;
+
+  if (text.trim()) {
+    state.itemNotes[key] = text;
+  } else {
+    delete state.itemNotes[key];
+  }
+}
+
+function refreshOrderLinksOnly() {
+  const ids = Object.keys(state.cart).map(Number);
+  const total = cartTotal(ids);
+  const validation = validateOrderForm();
+  const mainSend = $("#sendOrderBtn");
+  const floatingSend = $("#floatingSendOrderBtn");
+
+  if (mainSend) mainSend.href = orderHref(total, validation);
+  if (floatingSend) floatingSend.href = orderHref(total, validation);
+}
+
+function bindItemNoteInputs() {
+  document.querySelectorAll(".item-note-input").forEach(input => {
+    if (input.dataset.boundItemNote === "true") return;
+    input.dataset.boundItemNote = "true";
+
+    input.addEventListener("input", () => {
+      const id = Number(input.dataset.id);
+      setItemNoteValue(id, input.value);
+
+      // Sync the same note field between desktop cart and floating cart drawer.
+      document.querySelectorAll(`.item-note-input[data-id="${id}"]`).forEach(otherInput => {
+        if (otherInput !== input && otherInput.value !== input.value) {
+          otherInput.value = input.value;
+        }
+      });
+
+      refreshOrderLinksOnly();
+    });
+
+    input.addEventListener("blur", refreshOrderLinksOnly);
+  });
+}
+
+
 function schedulePlaceAutocomplete() {
   const input = $("#placeSearchInput");
   const resultsBox = $("#placeResults");
@@ -2302,6 +2398,7 @@ function setFloatingCartOpen(isOpen) {
 
 function clearCart() {
   state.cart = {};
+  state.itemNotes = {};
   updateMenuQuantityBadges();
   renderCart();
 }
