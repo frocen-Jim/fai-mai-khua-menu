@@ -1,3 +1,4 @@
+// v65 single visible price + steak standard options
 // v64 clean protein option UI
 // v63 fried rice + pad see ew price options
 // v62 tiger crying beef option price = 65000 Kip
@@ -98,12 +99,12 @@ const menuItems = [
     id: 4,
     name: "ຂັ້ວສະເຕັກ",
     category: "เมนูพิเศษ",
-    price: 70000,
+    price: 55000,
     description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
     image: "images/menu-v54-02-beef-rice.jpg",
     tag: "ເນື້ອນຸ້ມ",
     ingredients: ["เนื้อ NZ", "น้ำจิ้มแจ่ว", "พริก", "ข้าวคั่ว"],
-    variants: [{"id": "beef", "label": "ງົວ", "price": 70000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
   },
   {
@@ -669,10 +670,7 @@ function proteinOptionsTemplate(item) {
           </button>
         `).join("")}
       </div>
-      <div class="protein-selected-price">
-        <span>ລາຄາ</span>
-        <strong>${money(selected.price)}</strong>
-      </div>
+
     </div>
   `;
 }
