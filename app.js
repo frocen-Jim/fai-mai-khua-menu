@@ -1,3 +1,4 @@
+// v57 Lao menu names + luxury Lao typography
 // ================================
 // จุดที่ 1: แก้ข้อมูลร้านจริงตรงนี้
 // phone ใส่เครื่องหมาย + ได้ แต่ whatsapp ต้องใช้รหัสประเทศและตัด 0 หน้าออก เช่น 02099469995 = 8562099469995
@@ -53,7 +54,7 @@ const currencyOptions = {
 const menuItems = [
   {
     id: 1,
-    name: "ข้าวกะเพราหมู + ไข่ดาว",
+    name: "ກະເພົາ",
     category: "ข้าวไฟแรง",
     price: 60000,
     description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
@@ -64,7 +65,7 @@ const menuItems = [
   },
   {
     id: 2,
-    name: "ข้าวไก่เทอริยากิ",
+    name: "ຂັ້ວພິກໄທດຳ",
     category: "ข้าวไฟแรง",
     price: 55000,
     description: "ไก่นุ่ม ซอสเทอริยากิ หอมหวานเค็มกำลังดี",
@@ -75,7 +76,7 @@ const menuItems = [
   },
   {
     id: 3,
-    name: "ข้าวหน้าไก่มิโสะ",
+    name: "ເຂົ້າພັດ",
     category: "ข้าวไฟแรง",
     price: 58000,
     description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
@@ -86,7 +87,7 @@ const menuItems = [
   },
   {
     id: 4,
-    name: "เนื้อเสือร้องไห้ New Zealand",
+    name: "ຂັ້ວສະເຕັກ",
     category: "เมนูพิเศษ",
     price: 95000,
     description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
@@ -97,7 +98,7 @@ const menuItems = [
   },
   {
     id: 5,
-    name: "ข้าวหน้าแซลมอนย่าง",
+    name: "Spaghetti Spicy",
     category: "เมนูพิเศษ",
     price: 110000,
     description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
@@ -108,7 +109,7 @@ const menuItems = [
   },
   {
     id: 6,
-    name: "สลัดไก่อบ",
+    name: "Spaghetti Khymao",
     category: "สุขภาพ",
     price: 65000,
     description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
@@ -119,7 +120,7 @@ const menuItems = [
   },
   {
     id: 7,
-    name: "Caesar Salad",
+    name: "ພັດຊິອິວ",
     category: "สุขภาพ",
     price: 70000,
     description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",

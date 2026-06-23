@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800;900&family=Noto+Serif+Lao:wght@500;600;700;800;900&display=swap');
 :root {
   --font-lao-body: "Noto Sans Lao", "Noto Sans Thai", "Noto Sans", system-ui, sans-serif;
   --font-lao-display: "Noto Serif Lao", "Noto Sans Lao", "Noto Sans Thai", serif;
@@ -2636,4 +2637,58 @@ label[for="customerNote"],
     font-size: .72rem;
     padding: 5px 8px;
   }
+}
+
+
+/* v57: luxury Lao typography */
+:root {
+  --font-lao-ui: "Noto Sans Lao", "Noto Sans Thai", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-lao-luxury: "Noto Serif Lao", "Noto Serif Thai", "Noto Sans Lao", serif;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--font-lao-ui);
+}
+
+.brand-title,
+.hero-title,
+.section-title,
+.menu-card h3,
+.order-title,
+.cart-title,
+.logo-word,
+.restaurant-name,
+h1,
+h2,
+h3 {
+  font-family: var(--font-lao-luxury);
+  letter-spacing: .015em;
+  font-weight: 800;
+}
+
+.menu-card h3 {
+  font-size: clamp(1.08rem, 2.2vw, 1.42rem);
+  line-height: 1.25;
+  color: #ffe7b0;
+  text-shadow:
+    0 1px 0 rgba(255,255,255,.08),
+    0 12px 26px rgba(255, 122, 24, .18);
+}
+
+.menu-card .desc,
+.ingredient-sticker,
+.item-note-box span {
+  font-family: var(--font-lao-ui);
+}
+
+.price,
+.card-price,
+.total-price,
+.cart-total strong:last-child {
+  font-family: var(--font-lao-ui);
+  font-weight: 900;
 }
