@@ -1,3 +1,4 @@
+// v66 add Bacon option to Spaghetti Spicy
 // v65 single visible price + steak standard options
 // v64 clean protein option UI
 // v63 fried rice + pad see ew price options
@@ -116,7 +117,7 @@ const menuItems = [
     image: "images/menu-v54-04-spaghetti-fire.jpg",
     tag: "ເຜັດຮ້ອນ",
     ingredients: ["แซลมอน", "เกลือ", "พริกไทย", "ข้าว", "ผักสด"],
-    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}, {"id": "bacon", "label": "Bacon", "price": 65000}],
     theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
   },
   {
