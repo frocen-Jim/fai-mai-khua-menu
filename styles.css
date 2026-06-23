@@ -2692,3 +2692,9 @@ h3 {
   font-family: var(--font-lao-ui);
   font-weight: 900;
 }
+
+
+/* v58: hide menu descriptions under every menu card */
+.menu-card .desc {
+  display: none !important;
+}
