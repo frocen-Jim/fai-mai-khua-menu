@@ -1,3 +1,4 @@
+// v64 clean protein option UI
 // v63 fried rice + pad see ew price options
 // v62 tiger crying beef option price = 65000 Kip
 // v61 protein options + auto price
@@ -665,9 +666,12 @@ function proteinOptionsTemplate(item) {
             data-variant="${option.id}"
           >
             <span>${escapeHtml(option.label)}</span>
-            <small>${money(option.price)}</small>
           </button>
         `).join("")}
+      </div>
+      <div class="protein-selected-price">
+        <span>ລາຄາ</span>
+        <strong>${money(selected.price)}</strong>
       </div>
     </div>
   `;

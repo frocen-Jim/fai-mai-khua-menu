@@ -2698,3 +2698,173 @@ h3 {
 .menu-card .desc {
   display: none !important;
 }
+
+
+/* v61: protein option selector instead of ingredient stickers */
+.protein-options {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 10px;
+}
+
+.protein-title {
+  color: rgba(255, 226, 166, .86);
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: .02em;
+}
+
+.protein-choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.protein-choice {
+  display: inline-grid;
+  gap: 3px;
+  min-width: 86px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 214, 138, .18);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 179, 49, .16), transparent 52%),
+    rgba(255,255,255,.055);
+  color: rgba(255, 239, 207, .92);
+  cursor: pointer;
+  text-align: left;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.protein-choice span {
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.protein-choice small {
+  color: rgba(255, 246, 232, .62);
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.protein-choice:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 190, 67, .45);
+}
+
+.protein-choice.is-selected {
+  border-color: rgba(255, 190, 67, .86);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 185, 54, .32), transparent 54%),
+    linear-gradient(135deg, rgba(255, 111, 28, .18), rgba(255,255,255,.06));
+  box-shadow:
+    0 0 0 3px rgba(255, 182, 54, .10),
+    0 13px 30px rgba(255, 102, 24, .13);
+}
+
+@media (max-width: 520px) {
+  .protein-choice {
+    min-width: calc(50% - 4px);
+  }
+}
+
+
+/* v64: cleaner protein option UI */
+.protein-options {
+  margin: 12px 0 10px;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 214, 138, .10);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(255, 179, 49, .08), transparent 55%),
+    rgba(0,0,0,.12);
+}
+
+.protein-title {
+  margin-bottom: 7px;
+  color: rgba(255, 226, 166, .84);
+  font-size: .76rem;
+  font-weight: 950;
+  letter-spacing: .04em;
+}
+
+.protein-choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.protein-choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: auto;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 214, 138, .16);
+  background: rgba(255,255,255,.045);
+  color: rgba(255, 239, 207, .90);
+  cursor: pointer;
+  text-align: center;
+  box-shadow: none;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.protein-choice span {
+  font-weight: 950;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.protein-choice small {
+  display: none !important;
+}
+
+.protein-choice:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 190, 67, .42);
+}
+
+.protein-choice.is-selected {
+  border-color: rgba(255, 190, 67, .88);
+  color: #1c0b02;
+  background: linear-gradient(135deg, #ffe1a0, #ffb536);
+  box-shadow:
+    0 0 0 3px rgba(255, 182, 54, .12),
+    0 10px 22px rgba(255, 134, 33, .16);
+}
+
+.protein-selected-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 214, 138, .11);
+}
+
+.protein-selected-price span {
+  color: rgba(255, 246, 232, .55);
+  font-size: .74rem;
+  font-weight: 900;
+  letter-spacing: .03em;
+}
+
+.protein-selected-price strong {
+  color: #ffe3a4;
+  font-size: .92rem;
+  font-weight: 950;
+}
+
+@media (max-width: 520px) {
+  .protein-choice {
+    flex: 1 1 calc(50% - 6px);
+    padding: 8px 9px;
+  }
+
+  .protein-choice span {
+    font-size: .88rem;
+  }
+}
