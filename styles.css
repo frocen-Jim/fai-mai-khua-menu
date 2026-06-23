@@ -2868,3 +2868,62 @@ h3 {
     font-size: .88rem;
   }
 }
+
+
+/* v65: show only one price per menu card */
+.protein-selected-price {
+  display: none !important;
+}
+
+.protein-options {
+  padding-bottom: 8px;
+}
+
+
+/* v67: dropdown note per menu */
+.item-note-select,
+.item-note-custom {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(255, 214, 138, .16);
+  border-radius: 14px;
+  padding: 10px 12px;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255, 118, 24, .08), transparent 42%),
+    rgba(255,255,255,.055);
+  outline: none;
+  font: inherit;
+  line-height: 1.45;
+}
+
+.item-note-select {
+  appearance: auto;
+  cursor: pointer;
+}
+
+.item-note-select:focus,
+.item-note-custom:focus {
+  border-color: rgba(255, 190, 67, .62);
+  box-shadow: 0 0 0 3px rgba(255, 182, 54, .11);
+}
+
+.item-note-custom {
+  display: none;
+  margin-top: 8px;
+}
+
+.item-note-custom.is-visible {
+  display: block;
+}
+
+.item-note-input {
+  display: none !important;
+}
+
+@media (max-width: 720px) {
+  .item-note-select,
+  .item-note-custom {
+    font-size: 16px;
+  }
+}

@@ -1,3 +1,4 @@
+// v67 fried rice egg label + note dropdown
 // v66 add Bacon option to Spaghetti Spicy
 // v65 single visible price + steak standard options
 // v64 clean protein option UI
@@ -93,7 +94,7 @@ const menuItems = [
     image: "images/menu-v54-03-fried-rice-egg.jpg",
     tag: "ຫອມກະທະ",
     ingredients: ["ไก่", "มิโสะ", "ข้าว", "ผัก"],
-    variants: [{"id": "egg", "label": "ເຂົ້າພັດໄຂ່", "price": 50000}, {"id": "chicken", "label": "ໄກ່", "price": 50000}, {"id": "pork", "label": "ໝູ", "price": 50000}, {"id": "beef", "label": "ງົວ", "price": 55000}],
+    variants: [{"id": "egg", "label": "ໄຂ່", "price": 50000}, {"id": "chicken", "label": "ໄກ່", "price": 50000}, {"id": "pork", "label": "ໝູ", "price": 50000}, {"id": "beef", "label": "ງົວ", "price": 55000}],
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
   {
@@ -1285,7 +1286,10 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
     const unitPrice = itemEffectivePrice(item);
     const subtotal = unitPrice * qty;
     const noteId = `item-note-${rowClass.replace(/\s+/g, "-")}-${id}`;
-    const noteValue = escapeHtml(state.itemNotes[id] || "");
+    const customId = `item-note-custom-${rowClass.replace(/\s+/g, "-")}-${id}`;
+    const currentNote = state.itemNotes[id] || "";
+    const isCustom = noteSelectValue(currentNote) === "__custom__";
+    const customValue = escapeHtml(noteCustomValue(currentNote));
 
     return `
       <div class="${rowClass}">
@@ -1298,14 +1302,22 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
         <span>${money(subtotal)}</span>
         <label class="item-note-box" for="${noteId}">
           <span>หมายเหตุเมนูนี้</span>
-          <textarea
+          <select
             id="${noteId}"
-            class="item-note-input"
+            class="item-note-select"
             data-id="${id}"
-            rows="2"
-            placeholder="เช่น ไม่ใส่พริก, ไม่ใส่ผัก, แยกน้ำจิ้ม"
+          >
+            ${noteOptionsTemplate(currentNote)}
+          </select>
+          <input
+            id="${customId}"
+            class="item-note-custom ${isCustom ? "is-visible" : ""}"
+            data-id="${id}"
+            type="text"
+            value="${customValue}"
+            placeholder="ຂຽນເພີ່ມ..."
             autocomplete="off"
-          >${noteValue}</textarea>
+          />
         </label>
       </div>
     `;
@@ -2244,6 +2256,39 @@ function escapeHtml(value) {
 }
 
 
+
+const quickNoteOptions = [
+  { value: "", label: "ປົກກະຕິ" },
+  { value: "ບໍ່ໃສ່ພິກ", label: "ບໍ່ໃສ່ພິກ" },
+  { value: "ເຜັດນ້ອຍ", label: "ເຜັດນ້ອຍ" },
+  { value: "ເຜັດຫຼາຍ", label: "ເຜັດຫຼາຍ" },
+  { value: "ບໍ່ໃສ່ຜັກ", label: "ບໍ່ໃສ່ຜັກ" },
+  { value: "ແຍກນ້ຳຈິ້ມ", label: "ແຍກນ້ຳຈິ້ມ" },
+  { value: "__custom__", label: "ອື່ນໆ" }
+];
+
+function noteSelectValue(note) {
+  const text = String(note || "").trim();
+  if (!text) return "";
+  return quickNoteOptions.some(option => option.value === text) ? text : "__custom__";
+}
+
+function noteCustomValue(note) {
+  const text = String(note || "").trim();
+  if (!text) return "";
+  return quickNoteOptions.some(option => option.value === text) ? "" : text;
+}
+
+function noteOptionsTemplate(note) {
+  const selected = noteSelectValue(note);
+  return quickNoteOptions.map(option => `
+    <option value="${escapeHtml(option.value)}" ${option.value === selected ? "selected" : ""}>
+      ${escapeHtml(option.label)}
+    </option>
+  `).join("");
+}
+
+
 function itemNoteValue(id) {
   return String(state.itemNotes?.[Number(id)] || "").trim();
 }
@@ -2272,21 +2317,37 @@ function refreshOrderLinksOnly() {
 }
 
 function bindItemNoteInputs() {
-  document.querySelectorAll(".item-note-input").forEach(input => {
+  document.querySelectorAll(".item-note-select").forEach(select => {
+    if (select.dataset.boundItemNote === "true") return;
+    select.dataset.boundItemNote = "true";
+
+    select.addEventListener("change", () => {
+      const id = Number(select.dataset.id);
+      const customInput = document.querySelector(`.item-note-custom[data-id="${id}"]`);
+      const value = select.value;
+
+      if (value === "__custom__") {
+        customInput?.classList.add("is-visible");
+        setItemNoteValue(id, customInput?.value || "");
+        setTimeout(() => customInput?.focus(), 20);
+      } else {
+        customInput?.classList.remove("is-visible");
+        if (customInput) customInput.value = "";
+        setItemNoteValue(id, value);
+      }
+
+      renderCart();
+      refreshOrderLinksOnly();
+    });
+  });
+
+  document.querySelectorAll(".item-note-custom").forEach(input => {
     if (input.dataset.boundItemNote === "true") return;
     input.dataset.boundItemNote = "true";
 
     input.addEventListener("input", () => {
       const id = Number(input.dataset.id);
       setItemNoteValue(id, input.value);
-
-      // Sync the same note field between desktop cart and floating cart drawer.
-      document.querySelectorAll(`.item-note-input[data-id="${id}"]`).forEach(otherInput => {
-        if (otherInput !== input && otherInput.value !== input.value) {
-          otherInput.value = input.value;
-        }
-      });
-
       refreshOrderLinksOnly();
     });
 
