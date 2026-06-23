@@ -1,3 +1,5 @@
+// v62 tiger crying beef option price = 65000 Kip
+// v61 protein options + auto price
 // v60 requested tag text + remove tea menu
 // v59 menu badge text updated
 // v57 Lao menu names + luxury Lao typography
@@ -58,11 +60,12 @@ const menuItems = [
     id: 1,
     name: "ກະເພົາ",
     category: "ข้าวไฟแรง",
-    price: 60000,
+    price: 55000,
     description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
     image: "images/menu-v54-07-krapao-egg.jpg",
     tag: "ໄຟແຮງ",
     ingredients: ["หมู", "พริก", "กระเทียม", "ใบกะเพรา", "ไข่ดาว"],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#ffb636", fire: "#e8431f", glow: "rgba(232,67,31,.30)", deep: "#130806" }
   },
   {
@@ -74,61 +77,67 @@ const menuItems = [
     image: "images/menu-v54-01-rice-fire.jpg",
     tag: "ແສບຮ້ອນ",
     ingredients: ["ไก่", "ซอสเทอริยากิ", "ข้าว", "แตงกวา"],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#f6c85f", fire: "#2dc071", glow: "rgba(45,192,113,.28)", deep: "#06140d" }
   },
   {
     id: 3,
     name: "ເຂົ້າພັດ",
     category: "ข้าวไฟแรง",
-    price: 58000,
+    price: 55000,
     description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
     image: "images/menu-v54-03-fried-rice-egg.jpg",
     tag: "ຫອມກະທະ",
     ingredients: ["ไก่", "มิโสะ", "ข้าว", "ผัก"],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
   {
     id: 4,
     name: "ຂັ້ວສະເຕັກ",
     category: "เมนูพิเศษ",
-    price: 95000,
+    price: 70000,
     description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
     image: "images/menu-v54-02-beef-rice.jpg",
     tag: "ເນື້ອນຸ້ມ",
     ingredients: ["เนื้อ NZ", "น้ำจิ้มแจ่ว", "พริก", "ข้าวคั่ว"],
+    variants: [{"id": "beef", "label": "ງົວ", "price": 70000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
   },
   {
     id: 5,
     name: "Spaghetti Spicy",
     category: "เมนูพิเศษ",
-    price: 110000,
+    price: 55000,
     description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
     image: "images/menu-v54-04-spaghetti-fire.jpg",
     tag: "ເຜັດຮ້ອນ",
     ingredients: ["แซลมอน", "เกลือ", "พริกไทย", "ข้าว", "ผักสด"],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
   },
   {
     id: 6,
     name: "Spaghetti Khymao",
     category: "สุขภาพ",
-    price: 65000,
+    price: 55000,
     description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
     image: "images/menu-v54-05-spaghetti-pork.jpg",
     tag: "ຈັດຈ້ານ",
     ingredients: ["ไก่อบ", "ผักสด", "ซอสเบา", "แตงกวา"],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#b7ef8a", fire: "#2dc071", glow: "rgba(45,192,113,.25)", deep: "#071407" }
   },
   {
     id: 7,
     name: "ພັດຊິອິວ",
     category: "สุขภาพ",
-    price: 70000,
+    price: 55000,
     description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
     image: "images/menu-v54-06-noodle-fire.jpg",
     tag: "ຫອມໆ",
     ingredients: ["ผักสลัด", "ซีซาร์ซอส", "ขนมปังกรอบ", "โปรตีน"],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
   },
   {
@@ -149,6 +158,7 @@ const state = {
   search: "",
   cart: {},
   itemNotes: {},
+  selectedVariants: {},
   featuredIndex: 0,
   soundEnabled: true,
   audioContext: null,
@@ -427,13 +437,16 @@ function orderPayload(total) {
     },
     items: Object.keys(state.cart).map(id => {
       const item = menuItems.find(menu => menu.id === Number(id));
+      const unitPrice = item ? itemEffectivePrice(item) : 0;
+      const variant = item ? getSelectedVariant(item) : null;
       return {
         id: Number(id),
-        name: item?.name || `Item ${id}`,
+        name: item ? itemDisplayName(item) : `Item ${id}`,
+        variant: variant?.label || "",
         qty: state.cart[id],
         note: itemNoteValue(id),
-        priceKip: item?.price || 0,
-        subtotalKip: (item?.price || 0) * state.cart[id]
+        priceKip: unitPrice,
+        subtotalKip: unitPrice * state.cart[id]
       };
     })
   };
@@ -617,6 +630,49 @@ function filteredItems() {
 }
 
 
+
+function getSelectedVariant(item) {
+  if (!item?.variants?.length) return null;
+  const selectedId = state.selectedVariants[item.id];
+  return item.variants.find(variant => variant.id === selectedId) || item.variants[0];
+}
+
+function itemDisplayName(item) {
+  const variant = getSelectedVariant(item);
+  return variant ? `${item.name} (${variant.label})` : item.name;
+}
+
+function itemEffectivePrice(item) {
+  const variant = getSelectedVariant(item);
+  return variant?.price ?? item.price;
+}
+
+function proteinOptionsTemplate(item) {
+  if (!item.variants?.length) return "";
+
+  const selected = getSelectedVariant(item);
+  return `
+    <div class="protein-options" aria-label="ເລືອກເນື້ອ">
+      <div class="protein-title">ເລືອກເນື້ອ</div>
+      <div class="protein-choice-list">
+        ${item.variants.map(option => `
+          <button
+            class="protein-choice ${option.id === selected.id ? "is-selected" : ""}"
+            type="button"
+            data-action="select-variant"
+            data-id="${item.id}"
+            data-variant="${option.id}"
+          >
+            <span>${escapeHtml(option.label)}</span>
+            <small>${money(option.price)}</small>
+          </button>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+
 function ingredientStickersTemplate(item) {
   if (!item.ingredients || !item.ingredients.length) return "";
   return `
@@ -667,9 +723,9 @@ function renderMenu() {
         <div class="menu-body">
           <h3>${item.name}</h3>
           <p class="desc">${item.description}</p>
-          ${ingredientStickersTemplate(item)}
+          ${proteinOptionsTemplate(item)}
         <div class="card-bottom">
-            <span class="price">${money(item.price)}</span>
+            <span class="price">${money(itemEffectivePrice(item))}</span>
             <span class="tap-note">${tapText}</span>
           </div>
         </div>
@@ -679,6 +735,17 @@ function renderMenu() {
 
   document.querySelectorAll(".image-add-trigger").forEach(trigger => {
     trigger.addEventListener("click", (event) => addToCart(Number(trigger.dataset.id), event.currentTarget));
+  });
+
+  document.querySelectorAll('[data-action="select-variant"]').forEach(button => {
+    button.addEventListener("click", () => {
+      const id = Number(button.dataset.id);
+      const variantId = button.dataset.variant;
+      if (!id || !variantId) return;
+      state.selectedVariants[id] = variantId;
+      renderMenu();
+      renderCart();
+    });
   });
 
   document.querySelectorAll(".menu-image img").forEach((image) => {
@@ -1211,13 +1278,14 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
     if (!item) return "";
 
     const qty = state.cart[id];
-    const subtotal = item.price * qty;
+    const unitPrice = itemEffectivePrice(item);
+    const subtotal = unitPrice * qty;
     const noteId = `item-note-${rowClass.replace(/\s+/g, "-")}-${id}`;
     const noteValue = escapeHtml(state.itemNotes[id] || "");
 
     return `
       <div class="${rowClass}">
-        <strong>${item.name}</strong>
+        <strong>${escapeHtml(itemDisplayName(item))}</strong>
         <div class="${controlsClass}">
           <button data-action="minus" data-id="${id}" type="button">−</button>
           <span>${qty}</span>
@@ -1253,7 +1321,7 @@ function bindQuantityButtons(selector) {
 function cartTotal(ids) {
   return ids.reduce((total, id) => {
     const item = menuItems.find(menu => menu.id === id);
-    return total + (item ? item.price * state.cart[id] : 0);
+    return total + (item ? itemEffectivePrice(item) * state.cart[id] : 0);
   }, 0);
 }
 
@@ -1347,7 +1415,8 @@ function buildOrderText(total) {
     ...Object.keys(state.cart).map(id => {
       const item = menuItems.find(menu => menu.id === Number(id));
       const note = itemNoteValue(id);
-      const row = `- ${item.name} x ${state.cart[id]} = ${money(item.price * state.cart[id])}`;
+      const unitPrice = item ? itemEffectivePrice(item) : 0;
+      const row = `- ${itemDisplayName(item)} x ${state.cart[id]} = ${money(unitPrice * state.cart[id])}`;
       return note ? `${row}\n  หมายเหตุเมนูนี้: ${note}` : row;
     }),
     "",
