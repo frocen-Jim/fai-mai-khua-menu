@@ -1,3 +1,4 @@
+// v63 fried rice + pad see ew price options
 // v62 tiger crying beef option price = 65000 Kip
 // v61 protein options + auto price
 // v60 requested tag text + remove tea menu
@@ -84,12 +85,12 @@ const menuItems = [
     id: 3,
     name: "ເຂົ້າພັດ",
     category: "ข้าวไฟแรง",
-    price: 55000,
+    price: 50000,
     description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
     image: "images/menu-v54-03-fried-rice-egg.jpg",
     tag: "ຫອມກະທະ",
     ingredients: ["ไก่", "มิโสะ", "ข้าว", "ผัก"],
-    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
+    variants: [{"id": "egg", "label": "ເຂົ້າພັດໄຂ່", "price": 50000}, {"id": "chicken", "label": "ໄກ່", "price": 50000}, {"id": "pork", "label": "ໝູ", "price": 50000}, {"id": "beef", "label": "ງົວ", "price": 55000}],
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
   {
@@ -132,12 +133,12 @@ const menuItems = [
     id: 7,
     name: "ພັດຊິອິວ",
     category: "สุขภาพ",
-    price: 55000,
+    price: 50000,
     description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
     image: "images/menu-v54-06-noodle-fire.jpg",
     tag: "ຫອມໆ",
     ingredients: ["ผักสลัด", "ซีซาร์ซอส", "ขนมปังกรอบ", "โปรตีน"],
-    variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
+    variants: [{"id": "chicken", "label": "ໄກ່", "price": 50000}, {"id": "pork", "label": "ໝູ", "price": 50000}, {"id": "beef", "label": "ງົວ", "price": 55000}],
     theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
   },
   {
