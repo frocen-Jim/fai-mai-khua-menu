@@ -1,3 +1,5 @@
+// v60 requested tag text + remove tea menu
+// v59 menu badge text updated
 // v57 Lao menu names + luxury Lao typography
 // ================================
 // จุดที่ 1: แก้ข้อมูลร้านจริงตรงนี้
@@ -59,7 +61,7 @@ const menuItems = [
     price: 60000,
     description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
     image: "images/menu-v54-07-krapao-egg.jpg",
-    tag: "ขายดี",
+    tag: "ໄຟແຮງ",
     ingredients: ["หมู", "พริก", "กระเทียม", "ใบกะเพรา", "ไข่ดาว"],
     theme: { accent: "#ffb636", fire: "#e8431f", glow: "rgba(232,67,31,.30)", deep: "#130806" }
   },
@@ -70,7 +72,7 @@ const menuItems = [
     price: 55000,
     description: "ไก่นุ่ม ซอสเทอริยากิ หอมหวานเค็มกำลังดี",
     image: "images/menu-v54-01-rice-fire.jpg",
-    tag: "ญี่ปุ่น",
+    tag: "ແສບຮ້ອນ",
     ingredients: ["ไก่", "ซอสเทอริยากิ", "ข้าว", "แตงกวา"],
     theme: { accent: "#f6c85f", fire: "#2dc071", glow: "rgba(45,192,113,.28)", deep: "#06140d" }
   },
@@ -81,7 +83,7 @@ const menuItems = [
     price: 58000,
     description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
     image: "images/menu-v54-03-fried-rice-egg.jpg",
-    tag: "สุขภาพ",
+    tag: "ຫອມກະທະ",
     ingredients: ["ไก่", "มิโสะ", "ข้าว", "ผัก"],
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
@@ -92,7 +94,7 @@ const menuItems = [
     price: 95000,
     description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
     image: "images/menu-v54-02-beef-rice.jpg",
-    tag: "พรีเมียม",
+    tag: "ເນື້ອນຸ້ມ",
     ingredients: ["เนื้อ NZ", "น้ำจิ้มแจ่ว", "พริก", "ข้าวคั่ว"],
     theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
   },
@@ -103,7 +105,7 @@ const menuItems = [
     price: 110000,
     description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
     image: "images/menu-v54-04-spaghetti-fire.jpg",
-    tag: "แนะนำ",
+    tag: "ເຜັດຮ້ອນ",
     ingredients: ["แซลมอน", "เกลือ", "พริกไทย", "ข้าว", "ผักสด"],
     theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
   },
@@ -114,7 +116,7 @@ const menuItems = [
     price: 65000,
     description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
     image: "images/menu-v54-05-spaghetti-pork.jpg",
-    tag: "คลีน",
+    tag: "ຈັດຈ້ານ",
     ingredients: ["ไก่อบ", "ผักสด", "ซอสเบา", "แตงกวา"],
     theme: { accent: "#b7ef8a", fire: "#2dc071", glow: "rgba(45,192,113,.25)", deep: "#071407" }
   },
@@ -125,7 +127,7 @@ const menuItems = [
     price: 70000,
     description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
     image: "images/menu-v54-06-noodle-fire.jpg",
-    tag: "สดใหม่",
+    tag: "ຫອມໆ",
     ingredients: ["ผักสลัด", "ซีซาร์ซอส", "ขนมปังกรอบ", "โปรตีน"],
     theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
   },
@@ -136,21 +138,10 @@ const menuItems = [
     price: 35000,
     description: "คุกกี้บราวนี่เข้มข้น มาร์ชเมลโลว์ และบิสกิตกรอบ",
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",
-    tag: "ของหวาน",
+    tag: "SWEET",
     ingredients: ["ช็อกโกแลต", "มาร์ชเมลโลว์", "บิสกิต", "เนย"],
     theme: { accent: "#f5c7a9", fire: "#8b5e34", glow: "rgba(139,94,52,.28)", deep: "#130c08" }
   },
-  {
-    id: 9,
-    name: "ชาเย็นไฟไหม้",
-    category: "เครื่องดื่ม",
-    price: 20000,
-    description: "ชาเย็นหอม หวานมันกำลังดี ดับเผ็ดหลังจานไฟแรง",
-    image: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=900&q=80",
-    tag: "เย็น",
-    ingredients: ["ชาไทย", "นม", "น้ำตาล", "น้ำแข็ง"],
-    theme: { accent: "#ffd166", fire: "#f77f00", glow: "rgba(247,127,0,.25)", deep: "#130b03" }
-  }
 ];
 
 const state = {
