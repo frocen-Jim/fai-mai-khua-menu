@@ -1,3 +1,4 @@
+// v68 variant-specific cart + custom note fix
 // v67 fried rice egg label + note dropdown
 // v66 add Bacon option to Spaghetti Spicy
 // v65 single visible price + steak standard options
@@ -163,6 +164,7 @@ const state = {
   search: "",
   cart: {},
   itemNotes: {},
+  noteSelect: {},
   selectedVariants: {},
   featuredIndex: 0,
   soundEnabled: true,
@@ -353,7 +355,7 @@ function isItemSoldOut(id) {
 function availableToAdd(id) {
   const remaining = getRemainingStock(id);
   if (remaining === null) return Infinity;
-  return Math.max(0, remaining - (state.cart[id] || 0));
+  return Math.max(0, remaining - cartQtyForMenu(id));
 }
 
 function updateStockStatus(message, tone = "muted") {
@@ -440,18 +442,17 @@ function orderPayload(total) {
       source: "github-pages-qr-menu",
       orderText: buildOrderText(total)
     },
-    items: Object.keys(state.cart).map(id => {
-      const item = menuItems.find(menu => menu.id === Number(id));
-      const unitPrice = item ? itemEffectivePrice(item) : 0;
-      const variant = item ? getSelectedVariant(item) : null;
+    items: Object.keys(state.cart).map(key => {
+      const line = cartLineFromKey(key);
       return {
-        id: Number(id),
-        name: item ? itemDisplayName(item) : `Item ${id}`,
-        variant: variant?.label || "",
-        qty: state.cart[id],
-        note: itemNoteValue(id),
-        priceKip: unitPrice,
-        subtotalKip: unitPrice * state.cart[id]
+        id: line?.id || 0,
+        key,
+        name: line?.name || `Item ${key}`,
+        variant: line?.variant?.label || "",
+        qty: line?.qty || 0,
+        note: itemNoteValue(key),
+        priceKip: line?.price || 0,
+        subtotalKip: (line?.price || 0) * (line?.qty || 0)
       };
     })
   };
@@ -652,6 +653,52 @@ function itemEffectivePrice(item) {
   return variant?.price ?? item.price;
 }
 
+
+function selectedVariantId(item) {
+  return getSelectedVariant(item)?.id || "base";
+}
+
+function cartKeyForItem(item) {
+  return `${item.id}::${selectedVariantId(item)}`;
+}
+
+function parseCartKey(key) {
+  const [idPart, variantId = "base"] = String(key).split("::");
+  return { id: Number(idPart), variantId };
+}
+
+function itemVariantById(item, variantId) {
+  if (!item?.variants?.length || variantId === "base") return null;
+  return item.variants.find(variant => variant.id === variantId) || item.variants[0];
+}
+
+function cartLineFromKey(key) {
+  const parsed = parseCartKey(key);
+  const item = menuItems.find(menu => menu.id === parsed.id);
+  if (!item) return null;
+
+  const variant = itemVariantById(item, parsed.variantId);
+  const price = variant?.price ?? item.price;
+  return {
+    key,
+    id: parsed.id,
+    variantId: parsed.variantId,
+    item,
+    variant,
+    name: variant ? `${item.name} (${variant.label})` : item.name,
+    price,
+    qty: state.cart[key] || 0
+  };
+}
+
+function cartQtyForMenu(id) {
+  return Object.keys(state.cart).reduce((sum, key) => {
+    const parsed = parseCartKey(key);
+    return parsed.id === Number(id) ? sum + (state.cart[key] || 0) : sum;
+  }, 0);
+}
+
+
 function proteinOptionsTemplate(item) {
   if (!item.variants?.length) return "";
 
@@ -767,7 +814,7 @@ function renderMenu() {
 function updateMenuQuantityBadges() {
   document.querySelectorAll(".image-add-trigger").forEach(trigger => {
     const id = Number(trigger.dataset.id);
-    const quantity = state.cart[id] || 0;
+    const quantity = cartQtyForMenu(id);
     const soldOut = isStoreClosed() || isItemSoldOut(id);
     const badge = trigger.querySelector(".menu-quantity-badge");
 
@@ -800,7 +847,11 @@ function addToCart(id, sourceButton) {
     return;
   }
 
-  state.cart[id] = (state.cart[id] || 0) + 1;
+  const item = menuItems.find(menu => menu.id === id);
+  if (!item) return;
+  const key = cartKeyForItem(item);
+  state.cart[key] = (state.cart[key] || 0) + 1;
+
   updateMenuQuantityBadges();
   renderCart();
   igniteAddEffect(sourceButton);
@@ -983,29 +1034,41 @@ function initSoundToggle() {
   });
 }
 
-function updateQty(id, change) {
+function updateQty(idOrKey, change) {
+  const parsedId = String(idOrKey).includes("::") ? parseCartKey(idOrKey).id : Number(idOrKey);
+
   if (change > 0 && isStoreClosed()) {
     updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
     renderCart();
     return;
   }
 
-  if (change > 0 && availableToAdd(id) <= 0) {
-    const item = menuItems.find(menu => menu.id === id);
+  if (change > 0 && availableToAdd(parsedId) <= 0) {
+    const item = menuItems.find(menu => menu.id === parsedId);
     updateStockStatus(`${item?.name || "เมนูนี้"} เหลือไม่พอสำหรับเพิ่มแล้ว`, "error");
     renderCart();
     return;
   }
 
-  state.cart[id] = (state.cart[id] || 0) + change;
-  if (state.cart[id] <= 0) {
-    delete state.cart[id];
-    delete state.itemNotes[id];
+  let key;
+  if (String(idOrKey).includes("::")) {
+    key = String(idOrKey);
+  } else {
+    const item = menuItems.find(menu => menu.id === Number(idOrKey));
+    if (!item) return;
+    key = cartKeyForItem(item);
   }
+
+  state.cart[key] = (state.cart[key] || 0) + change;
+  if (state.cart[key] <= 0) {
+    delete state.cart[key];
+    delete state.itemNotes[key];
+    delete state.noteSelect[key];
+  }
+
   updateMenuQuantityBadges();
   renderCart();
 }
-
 
 function getCustomerInfo() {
   return {
@@ -1277,27 +1340,28 @@ function updateFloatingValidationBox(validation) {
   }
 }
 
-function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-controls") {
-  return ids.map(id => {
-    const item = menuItems.find(menu => menu.id === id);
-    if (!item) return "";
+function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-controls") {
+  return keys.map(key => {
+    const line = cartLineFromKey(key);
+    if (!line) return "";
 
-    const qty = state.cart[id];
-    const unitPrice = itemEffectivePrice(item);
-    const subtotal = unitPrice * qty;
-    const noteId = `item-note-${rowClass.replace(/\s+/g, "-")}-${id}`;
-    const customId = `item-note-custom-${rowClass.replace(/\s+/g, "-")}-${id}`;
-    const currentNote = state.itemNotes[id] || "";
-    const isCustom = noteSelectValue(currentNote) === "__custom__";
-    const customValue = escapeHtml(noteCustomValue(currentNote));
+    const subtotal = line.price * line.qty;
+    const safeKey = escapeHtml(key);
+    const safeDomKey = String(key).replace(/[^a-zA-Z0-9_-]/g, "-");
+    const noteId = `item-note-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
+    const customId = `item-note-custom-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
+    const currentNote = state.itemNotes[key] || "";
+    const selectedNote = state.noteSelect[key] || noteSelectValue(currentNote);
+    const isCustom = selectedNote === "__custom__";
+    const customValue = escapeHtml(isCustom ? currentNote : noteCustomValue(currentNote));
 
     return `
       <div class="${rowClass}">
-        <strong>${escapeHtml(itemDisplayName(item))}</strong>
+        <strong>${escapeHtml(line.name)}</strong>
         <div class="${controlsClass}">
-          <button data-action="minus" data-id="${id}" type="button">−</button>
-          <span>${qty}</span>
-          <button data-action="plus" data-id="${id}" type="button">+</button>
+          <button data-action="minus" data-key="${safeKey}" type="button">−</button>
+          <span>${line.qty}</span>
+          <button data-action="plus" data-key="${safeKey}" type="button">+</button>
         </div>
         <span>${money(subtotal)}</span>
         <label class="item-note-box" for="${noteId}">
@@ -1305,14 +1369,14 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
           <select
             id="${noteId}"
             class="item-note-select"
-            data-id="${id}"
+            data-key="${safeKey}"
           >
-            ${noteOptionsTemplate(currentNote)}
+            ${noteOptionsTemplate(selectedNote === "__custom__" ? "__custom__" : currentNote)}
           </select>
           <input
             id="${customId}"
             class="item-note-custom ${isCustom ? "is-visible" : ""}"
-            data-id="${id}"
+            data-key="${safeKey}"
             type="text"
             value="${customValue}"
             placeholder="ຂຽນເພີ່ມ..."
@@ -1327,22 +1391,24 @@ function orderRowsTemplate(ids, rowClass = "order-row", controlsClass = "qty-con
 function bindQuantityButtons(selector) {
   document.querySelectorAll(selector).forEach(button => {
     button.addEventListener("click", (event) => {
+      const key = button.dataset.key;
+      const id = Number(button.dataset.id);
       const change = button.dataset.action === "plus" ? 1 : -1;
-      updateQty(Number(button.dataset.id), change);
+      updateQty(key || id, change);
       if (change > 0) igniteAddEffect(event.currentTarget);
     });
   });
 }
 
-function cartTotal(ids) {
-  return ids.reduce((total, id) => {
-    const item = menuItems.find(menu => menu.id === id);
-    return total + (item ? itemEffectivePrice(item) * state.cart[id] : 0);
+function cartTotal(keys) {
+  return keys.reduce((total, key) => {
+    const line = cartLineFromKey(key);
+    return total + (line ? line.price * line.qty : 0);
   }, 0);
 }
 
-function cartCount(ids) {
-  return ids.reduce((total, id) => total + (state.cart[id] || 0), 0);
+function cartCount(keys) {
+  return keys.reduce((total, key) => total + (state.cart[key] || 0), 0);
 }
 
 function orderHref(total, validation) {
@@ -1384,7 +1450,7 @@ function updateFloatingCart(ids, total, validation) {
 }
 
 function renderCart() {
-  const ids = Object.keys(state.cart).map(Number);
+  const ids = Object.keys(state.cart);
   const orderItems = $("#orderItems");
   const total = cartTotal(ids);
   const validation = validateOrderForm();
@@ -1428,13 +1494,13 @@ function buildOrderText(total) {
     info.mapLink ? `Location: ${info.mapLink}` : "Location: -",
     "",
     "รายการอาหาร",
-    ...Object.keys(state.cart).map(id => {
-      const item = menuItems.find(menu => menu.id === Number(id));
-      const note = itemNoteValue(id);
-      const unitPrice = item ? itemEffectivePrice(item) : 0;
-      const row = `- ${itemDisplayName(item)} x ${state.cart[id]} = ${money(unitPrice * state.cart[id])}`;
+    ...Object.keys(state.cart).map(key => {
+      const line = cartLineFromKey(key);
+      if (!line) return "";
+      const note = itemNoteValue(key);
+      const row = `- ${line.name} x ${line.qty} = ${money(line.price * line.qty)}`;
       return note ? `${row}\n  หมายเหตุเมนูนี้: ${note}` : row;
-    }),
+    }).filter(Boolean),
     "",
     `รวมโดยประมาณ: ${money(total)}`,
     state.selectedCurrency !== "LAK" ? `ราคาอ้างอิง Kip: ${new Intl.NumberFormat("lo-LA").format(total)} Kip` : null,
@@ -2270,6 +2336,7 @@ const quickNoteOptions = [
 function noteSelectValue(note) {
   const text = String(note || "").trim();
   if (!text) return "";
+  if (text === "__custom__") return "__custom__";
   return quickNoteOptions.some(option => option.value === text) ? text : "__custom__";
 }
 
@@ -2289,12 +2356,11 @@ function noteOptionsTemplate(note) {
 }
 
 
-function itemNoteValue(id) {
-  return String(state.itemNotes?.[Number(id)] || "").trim();
+function itemNoteValue(key) {
+  return String(state.itemNotes?.[key] || "").trim();
 }
 
-function setItemNoteValue(id, value) {
-  const key = Number(id);
+function setItemNoteValue(key, value) {
   const text = String(value || "");
   if (!key) return;
 
@@ -2306,8 +2372,8 @@ function setItemNoteValue(id, value) {
 }
 
 function refreshOrderLinksOnly() {
-  const ids = Object.keys(state.cart).map(Number);
-  const total = cartTotal(ids);
+  const keys = Object.keys(state.cart);
+  const total = cartTotal(keys);
   const validation = validateOrderForm();
   const mainSend = $("#sendOrderBtn");
   const floatingSend = $("#floatingSendOrderBtn");
@@ -2322,21 +2388,22 @@ function bindItemNoteInputs() {
     select.dataset.boundItemNote = "true";
 
     select.addEventListener("change", () => {
-      const id = Number(select.dataset.id);
-      const customInput = document.querySelector(`.item-note-custom[data-id="${id}"]`);
+      const key = select.dataset.key;
+      const customInput = document.querySelector(`.item-note-custom[data-key="${CSS.escape(key)}"]`);
       const value = select.value;
+
+      state.noteSelect[key] = value;
 
       if (value === "__custom__") {
         customInput?.classList.add("is-visible");
-        setItemNoteValue(id, customInput?.value || "");
+        setItemNoteValue(key, customInput?.value || "");
         setTimeout(() => customInput?.focus(), 20);
       } else {
         customInput?.classList.remove("is-visible");
         if (customInput) customInput.value = "";
-        setItemNoteValue(id, value);
+        setItemNoteValue(key, value);
       }
 
-      renderCart();
       refreshOrderLinksOnly();
     });
   });
@@ -2346,15 +2413,15 @@ function bindItemNoteInputs() {
     input.dataset.boundItemNote = "true";
 
     input.addEventListener("input", () => {
-      const id = Number(input.dataset.id);
-      setItemNoteValue(id, input.value);
+      const key = input.dataset.key;
+      state.noteSelect[key] = "__custom__";
+      setItemNoteValue(key, input.value);
       refreshOrderLinksOnly();
     });
 
     input.addEventListener("blur", refreshOrderLinksOnly);
   });
 }
-
 
 function schedulePlaceAutocomplete() {
   const input = $("#placeSearchInput");
@@ -2525,6 +2592,7 @@ function setFloatingCartOpen(isOpen) {
 function clearCart() {
   state.cart = {};
   state.itemNotes = {};
+  state.noteSelect = {};
   updateMenuQuantityBadges();
   renderCart();
 }
@@ -2558,7 +2626,7 @@ async function handleSendOrderClick(event) {
   }
 
   saveCustomerMemory({ force: true });
-  const ids = Object.keys(state.cart).map(Number);
+  const ids = Object.keys(state.cart);
   const total = cartTotal(ids);
 
   try {
