@@ -2992,3 +2992,90 @@ h3 {
 .item-note-custom::placeholder {
   color: rgba(255, 230, 185, .62);
 }
+
+
+/* v73: hide ORDER LIST title on both desktop and mobile popup */
+.floating-cart-head .eyebrow,
+.floating-cart-head h2,
+.floating-cart-head h3,
+.floating-cart-head .order-title,
+.floating-cart-head > div:first-child,
+.floating-cart-head > div:not(:last-child),
+.cart-drawer-head .eyebrow,
+.cart-drawer-head h2,
+.cart-drawer-head h3,
+.cart-drawer-head > div:first-child,
+.order-modal-head .eyebrow,
+.order-modal-head h2,
+.order-modal-head h3,
+.order-modal-head > div:first-child {
+  display: none !important;
+}
+
+.floating-cart-head,
+.cart-drawer-head,
+.order-modal-head {
+  justify-content: flex-end !important;
+  align-items: center !important;
+  min-height: 38px;
+  margin-bottom: 6px !important;
+}
+
+.floating-cart-head button,
+.cart-drawer-head button,
+.order-modal-head button,
+.floating-cart-close,
+.drawer-close,
+.modal-close {
+  display: inline-flex !important;
+}
+
+/* v73: mobile custom note typing fix */
+.item-note-custom {
+  display: none;
+  width: 100%;
+  min-height: 48px;
+  resize: vertical;
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: manipulation;
+  pointer-events: auto;
+  position: relative;
+  z-index: 5;
+  caret-color: #ffe3a4;
+}
+
+.item-note-custom.is-visible {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.item-note-custom.is-visible[disabled] {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.item-note-box {
+  position: relative;
+  z-index: 4;
+}
+
+@media (max-width: 720px) {
+  .item-note-custom,
+  .item-note-select {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .floating-cart-sheet,
+  .floating-cart-drawer,
+  .cart-drawer,
+  .order-modal {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

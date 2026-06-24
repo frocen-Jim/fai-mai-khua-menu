@@ -1,3 +1,4 @@
+// v73 mobile custom note typing + hide popup header on pc
 // v72 other option keeps custom typing, label only other
 // v70 note dropdown readable + clean order popup header
 // v69 store hours 10:00-5:00
@@ -2403,13 +2404,15 @@ function syncCustomNoteInputs() {
     if (select.value === "__custom__") {
       customInput.classList.add("is-visible");
       customInput.removeAttribute("disabled");
+      customInput.readOnly = false;
+      customInput.tabIndex = 0;
     } else {
       customInput.classList.remove("is-visible");
       customInput.setAttribute("disabled", "disabled");
+      customInput.tabIndex = -1;
     }
   });
 }
-
 
 function bindItemNoteInputs() {
   document.querySelectorAll(".item-note-select").forEach(select => {
@@ -2870,3 +2873,35 @@ if ("serviceWorker" in navigator) {
     });
   });
 }
+
+
+
+function v73CustomNoteFocusFix() {
+  document.addEventListener("pointerdown", event => {
+    const customInput = event.target.closest?.(".item-note-custom.is-visible");
+    if (!customInput) return;
+    customInput.removeAttribute("disabled");
+    customInput.readOnly = false;
+    setTimeout(() => customInput.focus(), 0);
+  }, { passive: true });
+
+  document.addEventListener("change", event => {
+    const select = event.target.closest?.(".item-note-select");
+    if (!select || select.value !== "__custom__") return;
+
+    const key = select.dataset.key || select.dataset.id;
+    const customInput = document.querySelector(
+      select.dataset.key
+        ? `.item-note-custom[data-key="${CSS.escape(key)}"]`
+        : `.item-note-custom[data-id="${CSS.escape(String(key))}"]`
+    );
+
+    if (!customInput) return;
+    customInput.classList.add("is-visible");
+    customInput.removeAttribute("disabled");
+    customInput.readOnly = false;
+    setTimeout(() => customInput.focus(), 80);
+  });
+}
+
+v73CustomNoteFocusFix();
