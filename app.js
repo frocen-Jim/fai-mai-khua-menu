@@ -1,3 +1,4 @@
+// v77 dropdown + direct note + food thumbnail in order
 // v76 every add creates separate order line + direct special note
 // v75 custom note appears immediately for first item
 // v73 mobile custom note typing + hide popup header on pc
@@ -1365,13 +1366,19 @@ function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-co
     const safeKey = escapeHtml(key);
     const safeDomKey = String(key).replace(/[^a-zA-Z0-9_-]/g, "-");
     const noteId = `item-special-note-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
+    const noteSelectId = `item-note-select-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
     const noteValue = escapeHtml(state.itemNotes[key] || "");
+    const selectedNote = state.noteSelect?.[key] || noteSelectValue(state.itemNotes[key] || "");
+    const imageSrc = line.item?.image || "images/logo-fai-mai-khua-small.png";
 
     return `
       <div class="${rowClass} is-separated-line">
-        <div class="order-line-top">
-          <strong>${escapeHtml(line.name)}</strong>
-          <em>#${index + 1}</em>
+        <div class="order-line-top has-order-thumb">
+          <img class="order-line-thumb" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(line.name)}" loading="lazy">
+          <div class="order-line-title">
+            <strong>${escapeHtml(line.name)}</strong>
+            <em>#${index + 1}</em>
+          </div>
         </div>
         <div class="${controlsClass}">
           <button data-action="minus" data-key="${safeKey}" type="button">−</button>
@@ -1381,12 +1388,19 @@ function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-co
         <span>${money(subtotal)}</span>
         <label class="item-note-box direct-note-box" for="${noteId}">
           <span>ຄຳຂໍພິເສດ</span>
+          <select
+            id="${noteSelectId}"
+            class="item-note-select quick-note-select"
+            data-key="${safeKey}"
+          >
+            ${noteOptionsTemplate(selectedNote)}
+          </select>
           <textarea
             id="${noteId}"
             class="item-note-custom is-visible direct-note-input"
             data-key="${safeKey}"
             rows="2"
-            placeholder="ເຊັ່ນ ບໍ່ໃສ່ພິກ, ເຜັດນ້ອຍ, ແຍກນ້ຳຈິ້ມ..."
+            placeholder="ເລືອກຈາກ dropdown ຫຼື ຂຽນເພີ່ມໄດ້..."
             autocomplete="off"
           >${noteValue}</textarea>
         </label>
@@ -2417,6 +2431,38 @@ function syncCustomNoteInputs() {
 }
 
 function bindItemNoteInputs() {
+  document.querySelectorAll(".item-note-select").forEach(select => {
+    if (select.dataset.boundItemNote === "true") return;
+    select.dataset.boundItemNote = "true";
+
+    select.addEventListener("change", () => {
+      const key = select.dataset.key || select.dataset.id;
+      const textarea = document.querySelector(`.item-note-custom[data-key="${CSS.escape(key)}"]`);
+      const value = select.value;
+
+      if (state.noteSelect) state.noteSelect[key] = value;
+
+      if (textarea) {
+        textarea.classList.add("is-visible");
+        textarea.removeAttribute("disabled");
+        textarea.readOnly = false;
+        textarea.tabIndex = 0;
+
+        if (value === "__custom__") {
+          if (!textarea.value.trim()) setItemNoteValue(key, "");
+          setTimeout(() => textarea.focus(), 60);
+        } else {
+          textarea.value = value;
+          setItemNoteValue(key, value);
+        }
+      } else if (value !== "__custom__") {
+        setItemNoteValue(key, value);
+      }
+
+      refreshOrderLinksOnly();
+    });
+  });
+
   document.querySelectorAll(".item-note-custom").forEach(input => {
     input.classList.add("is-visible");
     input.removeAttribute("disabled");
@@ -2428,14 +2474,13 @@ function bindItemNoteInputs() {
 
     input.addEventListener("input", () => {
       const key = input.dataset.key || input.dataset.id;
+      const select = document.querySelector(`.item-note-select[data-key="${CSS.escape(key)}"]`);
+      if (state.noteSelect && select) {
+        const exact = quickNoteOptions.find(option => option.value === input.value.trim());
+        state.noteSelect[key] = exact ? exact.value : "__custom__";
+        select.value = state.noteSelect[key];
+      }
       setItemNoteValue(key, input.value);
-
-      document.querySelectorAll(`.item-note-custom[data-key="${CSS.escape(key)}"]`).forEach(otherInput => {
-        if (otherInput !== input && otherInput.value !== input.value) {
-          otherInput.value = input.value;
-        }
-      });
-
       refreshOrderLinksOnly();
     });
 
