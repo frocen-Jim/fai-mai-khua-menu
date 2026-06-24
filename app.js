@@ -1,3 +1,4 @@
+// v76 every add creates separate order line + direct special note
 // v75 custom note appears immediately for first item
 // v73 mobile custom note typing + hide popup header on pc
 // v72 other option keeps custom typing, label only other
@@ -170,6 +171,7 @@ const state = {
   cart: {},
   itemNotes: {},
   noteSelect: {},
+  lineSeq: 0,
   selectedVariants: {},
   featuredIndex: 0,
   soundEnabled: true,
@@ -420,14 +422,21 @@ function stockValidationMessages() {
   if (isStoreClosed()) return [state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว"];
   if (!state.stock.enabled) return [];
 
-  return Object.keys(state.cart).map(Number).reduce((messages, id) => {
+  const orderedByMenu = Object.keys(state.cart).reduce((map, key) => {
+    const parsed = parseCartKey(key);
+    if (!parsed.id) return map;
+    map[parsed.id] = (map[parsed.id] || 0) + (state.cart[key] || 0);
+    return map;
+  }, {});
+
+  return Object.keys(orderedByMenu).map(Number).reduce((messages, id) => {
     const item = menuItems.find(menu => menu.id === id);
     const remaining = getRemainingStock(id);
     if (!item || remaining === null) return messages;
 
     if (remaining <= 0) {
       messages.push(`${item.name} ขายหมดแล้ว`);
-    } else if (state.cart[id] > remaining) {
+    } else if (orderedByMenu[id] > remaining) {
       messages.push(`${item.name} เหลือ ${remaining} ชุด กรุณาลดจำนวน`);
     }
 
@@ -664,7 +673,9 @@ function selectedVariantId(item) {
 }
 
 function cartKeyForItem(item) {
-  return `${item.id}::${selectedVariantId(item)}`;
+  state.lineSeq = (state.lineSeq || 0) + 1;
+  const uniqueLineId = `${Date.now().toString(36)}-${state.lineSeq}`;
+  return `${item.id}::${selectedVariantId(item)}::${uniqueLineId}`;
 }
 
 function parseCartKey(key) {
@@ -1346,48 +1357,38 @@ function updateFloatingValidationBox(validation) {
 }
 
 function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-controls") {
-  return keys.map(key => {
+  return keys.map((key, index) => {
     const line = cartLineFromKey(key);
     if (!line) return "";
 
     const subtotal = line.price * line.qty;
     const safeKey = escapeHtml(key);
     const safeDomKey = String(key).replace(/[^a-zA-Z0-9_-]/g, "-");
-    const noteId = `item-note-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
-    const customId = `item-note-custom-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
-    const currentNote = state.itemNotes[key] || "";
-    const selectedNote = state.noteSelect[key] || noteSelectValue(currentNote);
-    const isCustom = selectedNote === "__custom__";
-    const customValue = escapeHtml(isCustom ? currentNote : noteCustomValue(currentNote));
+    const noteId = `item-special-note-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
+    const noteValue = escapeHtml(state.itemNotes[key] || "");
 
     return `
-      <div class="${rowClass}">
-        <strong>${escapeHtml(line.name)}</strong>
+      <div class="${rowClass} is-separated-line">
+        <div class="order-line-top">
+          <strong>${escapeHtml(line.name)}</strong>
+          <em>#${index + 1}</em>
+        </div>
         <div class="${controlsClass}">
           <button data-action="minus" data-key="${safeKey}" type="button">−</button>
           <span>${line.qty}</span>
           <button data-action="plus" data-key="${safeKey}" type="button">+</button>
         </div>
         <span>${money(subtotal)}</span>
-        <label class="item-note-box" for="${noteId}">
-          <span>หมายเหตุเมนูนี้</span>
-          <select
+        <label class="item-note-box direct-note-box" for="${noteId}">
+          <span>ຄຳຂໍພິເສດ</span>
+          <textarea
             id="${noteId}"
-            class="item-note-select"
+            class="item-note-custom is-visible direct-note-input"
             data-key="${safeKey}"
-          >
-            ${noteOptionsTemplate(selectedNote === "__custom__" ? "__custom__" : currentNote)}
-          </select>
-          <input
-            id="${customId}"
-            class="item-note-custom ${isCustom ? "is-visible" : ""}"
-            data-key="${safeKey}"
-            type="text"
-            value="${customValue}"
-            placeholder="ຂຽນຄຳຂໍພິເສດ..."
+            rows="2"
+            placeholder="ເຊັ່ນ ບໍ່ໃສ່ພິກ, ເຜັດນ້ອຍ, ແຍກນ້ຳຈິ້ມ..."
             autocomplete="off"
-            ${isCustom ? "" : "disabled"}
-          />
+          >${noteValue}</textarea>
         </label>
       </div>
     `;
@@ -2416,67 +2417,25 @@ function syncCustomNoteInputs() {
 }
 
 function bindItemNoteInputs() {
-  document.querySelectorAll(".item-note-select").forEach(select => {
-    if (select.dataset.boundItemNote === "true") return;
-    select.dataset.boundItemNote = "true";
-
-    select.addEventListener("change", () => {
-      const key = select.dataset.key || select.dataset.id;
-      const customInput = document.querySelector(
-        select.dataset.key
-          ? `.item-note-custom[data-key="${CSS.escape(key)}"]`
-          : `.item-note-custom[data-id="${CSS.escape(String(key))}"]`
-      );
-      const value = select.value;
-
-      if (state.noteSelect) state.noteSelect[key] = value;
-
-      if (value === "__custom__") {
-        if (customInput) {
-          customInput.classList.add("is-visible");
-          customInput.removeAttribute("disabled");
-          customInput.readOnly = false;
-          customInput.tabIndex = 0;
-          customInput.style.display = "block";
-          customInput.style.pointerEvents = "auto";
-        }
-
-        setItemNoteValue(key, customInput?.value || "");
-        refreshOrderLinksOnly();
-
-        setTimeout(() => {
-          if (!customInput) return;
-          customInput.classList.add("is-visible");
-          customInput.removeAttribute("disabled");
-          customInput.readOnly = false;
-          customInput.focus();
-        }, 80);
-
-        return;
-      }
-
-      if (customInput) {
-        customInput.classList.remove("is-visible");
-        customInput.setAttribute("disabled", "disabled");
-        customInput.value = "";
-      }
-
-      setItemNoteValue(key, value);
-      refreshOrderLinksOnly();
-    });
-  });
-
   document.querySelectorAll(".item-note-custom").forEach(input => {
+    input.classList.add("is-visible");
+    input.removeAttribute("disabled");
+    input.readOnly = false;
+    input.tabIndex = 0;
+
     if (input.dataset.boundItemNote === "true") return;
     input.dataset.boundItemNote = "true";
 
     input.addEventListener("input", () => {
       const key = input.dataset.key || input.dataset.id;
-      if (state.noteSelect) state.noteSelect[key] = "__custom__";
-      input.classList.add("is-visible");
-      input.removeAttribute("disabled");
-      input.readOnly = false;
       setItemNoteValue(key, input.value);
+
+      document.querySelectorAll(`.item-note-custom[data-key="${CSS.escape(key)}"]`).forEach(otherInput => {
+        if (otherInput !== input && otherInput.value !== input.value) {
+          otherInput.value = input.value;
+        }
+      });
+
       refreshOrderLinksOnly();
     });
 
@@ -2660,6 +2619,7 @@ function clearCart() {
   state.cart = {};
   state.itemNotes = {};
   state.noteSelect = {};
+  state.lineSeq = 0;
   updateMenuQuantityBadges();
   renderCart();
 }
