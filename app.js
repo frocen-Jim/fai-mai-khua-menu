@@ -1,3 +1,4 @@
+// v69 store hours 10:00-5:00
 // v68 variant-specific cart + custom note fix
 // v67 fried rice egg label + note dropdown
 // v66 add Bacon option to Spaghetti Spicy
@@ -18,7 +19,7 @@ const restaurant = {
   googleMapName: "ຮ້ານ ໄຟໄໝ້ຄົວ",
   phone: "+8562099469995",
   whatsapp: "8562099469995",
-  openHours: "10:30 - 22:00",
+  openHours: "10:00 - 5:00",
   location: "Vientiane, Laos",
   storeLat: 17.9822450,
   storeLng: 102.6284250,
