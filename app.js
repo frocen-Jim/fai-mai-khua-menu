@@ -1,3 +1,4 @@
+// v80 store hours 10:00-17:00 and s'more cookie closed
 // v79 custom ingredient icon stickers
 // v78 menu ingredient stickers
 // v77 dropdown + direct note + food thumbnail in order
@@ -6,7 +7,7 @@
 // v73 mobile custom note typing + hide popup header on pc
 // v72 other option keeps custom typing, label only other
 // v70 note dropdown readable + clean order popup header
-// v69 store hours 10:00-5:00
+// v69 store hours 10:00-17:00
 // v68 variant-specific cart + custom note fix
 // v67 fried rice egg label + note dropdown
 // v66 add Bacon option to Spaghetti Spicy
@@ -27,7 +28,7 @@ const restaurant = {
   googleMapName: "ຮ້ານ ໄຟໄໝ້ຄົວ",
   phone: "+8562099469995",
   whatsapp: "8562099469995",
-  openHours: "10:00 - 5:00",
+  openHours: "10:00 - 17:00",
   location: "Vientiane, Laos",
   storeLat: 17.9822450,
   storeLng: 102.6284250,
@@ -162,7 +163,11 @@ const menuItems = [
     price: 35000,
     description: "คุกกี้บราวนี่เข้มข้น มาร์ชเมลโลว์ และบิสกิตกรอบ",
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",
-    tag: "SWEET",
+    tag: "ປິດຂາຍ",
+    available: false,
+    soldOut: true,
+    saleStatus: "ຍັງບໍ່ເປີດຂາຍ",
+    closedLabel: "ຍັງບໍ່ເປີດຂາຍ",
     ingredients: ["Chocolate", "Marshmallow", "Biscuit", "Butter"],
     theme: { accent: "#f5c7a9", fire: "#8b5e34", glow: "rgba(139,94,52,.28)", deep: "#130c08" }
   },
@@ -356,6 +361,8 @@ function getRemainingStock(id) {
 }
 
 function isItemSoldOut(id) {
+  const item = menuItems.find(menu => menu.id === Number(id));
+  if (item?.soldOut || item?.available === false) return true;
   if (!state.stock.enabled) return false;
   const remaining = getRemainingStock(id);
   if (remaining === null) return false;
@@ -588,6 +595,11 @@ function initRestaurantInfo() {
   $("#openHours").textContent = restaurant.openHours;
   $("#locationText").textContent = restaurant.location;
   $("#callBtn").href = `tel:${restaurant.phone}`;
+
+  const heroOpenTime = document.querySelector(".quick-stats div:first-child strong");
+  const heroOpenLabel = document.querySelector(".quick-stats div:first-child span");
+  if (heroOpenTime) heroOpenTime.textContent = "10:00";
+  if (heroOpenLabel) heroOpenLabel.textContent = "เปิดร้าน";
 }
 
 function featuredItems() {
@@ -808,11 +820,11 @@ function renderMenu() {
     const stockText = storeClosed
       ? "ร้านปิด"
       : soldOut
-      ? "ขายหมดแล้ว"
+      ? (item.closedLabel || item.saleStatus || "ขายหมดแล้ว")
       : remaining !== null
         ? `เหลือ ${remaining} ชุด`
         : "พร้อมขาย";
-    const tapText = storeClosed ? "ร้านปิดรับออเดอร์" : soldOut ? "ปิดขายอัตโนมัติ" : "แตะรูปเพื่อเลือก";
+    const tapText = storeClosed ? "ร้านปิดรับออเดอร์" : soldOut ? (item.closedLabel || "ปิดขายอัตโนมัติ") : "แตะรูปเพื่อเลือก";
     const disabledAttr = unavailable ? " disabled aria-disabled=\"true\"" : "";
 
     return `
@@ -875,7 +887,7 @@ function updateMenuQuantityBadges() {
     trigger.setAttribute("aria-disabled", String(soldOut));
     trigger.setAttribute("aria-label", quantity > 0
       ? `เลือกเพิ่ม ${quantity} ชิ้นแล้ว`
-      : soldOut ? "เมนูนี้ขายหมดแล้ว" : "เลือกเมนูนี้");
+      : soldOut ? (menuItems.find(menu => menu.id === id)?.closedLabel || "เมนูนี้ขายหมดแล้ว") : "เลือกเมนูนี้");
 
     if (!badge) return;
     badge.textContent = String(quantity);
@@ -893,7 +905,7 @@ function addToCart(id, sourceButton) {
 
   if (isItemSoldOut(id) || availableToAdd(id) <= 0) {
     const item = menuItems.find(menu => menu.id === id);
-    updateStockStatus(`${item?.name || "เมนูนี้"} ขายหมดแล้วหรือเหลือไม่พอ`, "error");
+    updateStockStatus(item?.closedLabel || `${item?.name || "เมนูนี้"} ขายหมดแล้วหรือเหลือไม่พอ`, "error");
     renderMenu();
     renderCart();
     return;

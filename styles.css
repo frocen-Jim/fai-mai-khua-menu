@@ -3442,3 +3442,23 @@ h3 {
     font-size: .8rem;
   }
 }
+
+
+/* v80: closed S'more Cookie status */
+.menu-card.is-sold-out .badge {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 118, 24, .28), transparent 58%),
+    rgba(80, 20, 10, .62);
+  color: rgba(255, 226, 176, .98);
+  border: 1px solid rgba(255, 118, 24, .32);
+}
+
+.menu-card.is-sold-out .image-add-trigger {
+  opacity: .72;
+  filter: grayscale(.18);
+}
+
+.menu-card.is-sold-out .tap-note {
+  color: rgba(255, 190, 130, .9);
+  font-weight: 900;
+}
