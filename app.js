@@ -1,3 +1,4 @@
+// v75 custom note appears immediately for first item
 // v73 mobile custom note typing + hide popup header on pc
 // v72 other option keeps custom typing, label only other
 // v70 note dropdown readable + clean order popup header
@@ -2420,25 +2421,47 @@ function bindItemNoteInputs() {
     select.dataset.boundItemNote = "true";
 
     select.addEventListener("change", () => {
-      const key = select.dataset.key;
-      const customInput = document.querySelector(`.item-note-custom[data-key="${CSS.escape(key)}"]`);
+      const key = select.dataset.key || select.dataset.id;
+      const customInput = document.querySelector(
+        select.dataset.key
+          ? `.item-note-custom[data-key="${CSS.escape(key)}"]`
+          : `.item-note-custom[data-id="${CSS.escape(String(key))}"]`
+      );
       const value = select.value;
 
-      state.noteSelect[key] = value;
+      if (state.noteSelect) state.noteSelect[key] = value;
 
       if (value === "__custom__") {
-        customInput?.classList.add("is-visible");
-        customInput?.removeAttribute("disabled");
-        state.noteSelect[key] = "__custom__";
+        if (customInput) {
+          customInput.classList.add("is-visible");
+          customInput.removeAttribute("disabled");
+          customInput.readOnly = false;
+          customInput.tabIndex = 0;
+          customInput.style.display = "block";
+          customInput.style.pointerEvents = "auto";
+        }
+
         setItemNoteValue(key, customInput?.value || "");
-        setTimeout(() => customInput?.focus(), 20);
-      } else {
-        customInput?.classList.remove("is-visible");
-        customInput?.setAttribute("disabled", "disabled");
-        if (customInput) customInput.value = "";
-        setItemNoteValue(key, value);
+        refreshOrderLinksOnly();
+
+        setTimeout(() => {
+          if (!customInput) return;
+          customInput.classList.add("is-visible");
+          customInput.removeAttribute("disabled");
+          customInput.readOnly = false;
+          customInput.focus();
+        }, 80);
+
+        return;
       }
 
+      if (customInput) {
+        customInput.classList.remove("is-visible");
+        customInput.setAttribute("disabled", "disabled");
+        customInput.value = "";
+      }
+
+      setItemNoteValue(key, value);
       refreshOrderLinksOnly();
     });
   });
@@ -2448,10 +2471,19 @@ function bindItemNoteInputs() {
     input.dataset.boundItemNote = "true";
 
     input.addEventListener("input", () => {
-      const key = input.dataset.key;
-      state.noteSelect[key] = "__custom__";
+      const key = input.dataset.key || input.dataset.id;
+      if (state.noteSelect) state.noteSelect[key] = "__custom__";
+      input.classList.add("is-visible");
+      input.removeAttribute("disabled");
+      input.readOnly = false;
       setItemNoteValue(key, input.value);
       refreshOrderLinksOnly();
+    });
+
+    input.addEventListener("focus", () => {
+      input.classList.add("is-visible");
+      input.removeAttribute("disabled");
+      input.readOnly = false;
     });
 
     input.addEventListener("blur", refreshOrderLinksOnly);
@@ -2905,3 +2937,31 @@ function v73CustomNoteFocusFix() {
 }
 
 v73CustomNoteFocusFix();
+
+
+function v75ImmediateCustomNoteFix() {
+  document.addEventListener("change", event => {
+    const select = event.target.closest?.(".item-note-select");
+    if (!select || select.value !== "__custom__") return;
+
+    const key = select.dataset.key || select.dataset.id;
+    const customInput = document.querySelector(
+      select.dataset.key
+        ? `.item-note-custom[data-key="${CSS.escape(key)}"]`
+        : `.item-note-custom[data-id="${CSS.escape(String(key))}"]`
+    );
+
+    if (!customInput) return;
+
+    customInput.classList.add("is-visible");
+    customInput.removeAttribute("disabled");
+    customInput.readOnly = false;
+    customInput.tabIndex = 0;
+    customInput.style.display = "block";
+    customInput.style.pointerEvents = "auto";
+
+    setTimeout(() => customInput.focus(), 100);
+  });
+}
+
+v75ImmediateCustomNoteFix();

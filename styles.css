@@ -3079,3 +3079,47 @@ h3 {
     -webkit-overflow-scrolling: touch;
   }
 }
+
+
+/* v75: ອື່ນໆ custom note appears immediately, even with one item */
+.item-note-custom {
+  display: none;
+  width: 100%;
+  min-height: 52px;
+  margin-top: 8px;
+  resize: vertical;
+  pointer-events: auto;
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: manipulation;
+  caret-color: #ffe3a4;
+  position: relative;
+  z-index: 30;
+}
+
+.item-note-custom.is-visible {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+.item-note-custom.is-visible[disabled] {
+  display: block !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.item-note-box {
+  position: relative;
+  z-index: 30;
+}
+
+@media (max-width: 720px) {
+  .item-note-custom,
+  .item-note-select {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: 100%;
+  }
+}
