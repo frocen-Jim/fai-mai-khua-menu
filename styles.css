@@ -2971,3 +2971,24 @@ h3 {
   opacity: .58;
   cursor: not-allowed;
 }
+
+
+/* v72: keep ອື່ນໆ option and make custom typing work */
+.item-note-custom {
+  display: none;
+}
+
+.item-note-custom.is-visible {
+  display: block !important;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.item-note-custom.is-visible[disabled] {
+  display: block !important;
+  opacity: 1;
+}
+
+.item-note-custom::placeholder {
+  color: rgba(255, 230, 185, .62);
+}

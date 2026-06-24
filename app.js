@@ -1,3 +1,4 @@
+// v72 other option keeps custom typing, label only other
 // v70 note dropdown readable + clean order popup header
 // v69 store hours 10:00-5:00
 // v68 variant-specific cart + custom note fix
@@ -1381,7 +1382,7 @@ function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-co
             data-key="${safeKey}"
             type="text"
             value="${customValue}"
-            placeholder="ພິມຄຳຂໍພິເສດບ່ອນນີ້..."
+            placeholder="ຂຽນຄຳຂໍພິເສດ..."
             autocomplete="off"
             ${isCustom ? "" : "disabled"}
           />
@@ -1445,6 +1446,7 @@ function updateFloatingCart(ids, total, validation) {
       itemsBox.innerHTML = orderRowsTemplate(ids, "floating-order-row", "floating-qty-controls");
       bindQuantityButtons(".floating-qty-controls button");
       bindItemNoteInputs();
+  syncCustomNoteInputs();
     }
   }
 
@@ -1475,6 +1477,7 @@ function renderCart() {
 
   bindQuantityButtons(".qty-controls button");
   bindItemNoteInputs();
+  syncCustomNoteInputs();
 
   updateValidationBox(validation);
   updateFloatingCart(ids, total, validation);
@@ -2333,7 +2336,7 @@ const quickNoteOptions = [
   { value: "ເຜັດຫຼາຍ", label: "ເຜັດຫຼາຍ" },
   { value: "ບໍ່ໃສ່ຜັກ", label: "ບໍ່ໃສ່ຜັກ" },
   { value: "ແຍກນ້ຳຈິ້ມ", label: "ແຍກນ້ຳຈິ້ມ" },
-  { value: "__custom__", label: "ອື່ນໆ / ພິມເອງ" }
+  { value: "__custom__", label: "ອື່ນໆ" }
 ];
 
 function noteSelectValue(note) {
@@ -2385,6 +2388,29 @@ function refreshOrderLinksOnly() {
   if (floatingSend) floatingSend.href = orderHref(total, validation);
 }
 
+
+function syncCustomNoteInputs() {
+  document.querySelectorAll(".item-note-select").forEach(select => {
+    const key = select.dataset.key || select.dataset.id;
+    const customInput = document.querySelector(
+      select.dataset.key
+        ? `.item-note-custom[data-key="${CSS.escape(key)}"]`
+        : `.item-note-custom[data-id="${CSS.escape(String(key))}"]`
+    );
+
+    if (!customInput) return;
+
+    if (select.value === "__custom__") {
+      customInput.classList.add("is-visible");
+      customInput.removeAttribute("disabled");
+    } else {
+      customInput.classList.remove("is-visible");
+      customInput.setAttribute("disabled", "disabled");
+    }
+  });
+}
+
+
 function bindItemNoteInputs() {
   document.querySelectorAll(".item-note-select").forEach(select => {
     if (select.dataset.boundItemNote === "true") return;
@@ -2400,6 +2426,7 @@ function bindItemNoteInputs() {
       if (value === "__custom__") {
         customInput?.classList.add("is-visible");
         customInput?.removeAttribute("disabled");
+        state.noteSelect[key] = "__custom__";
         setItemNoteValue(key, customInput?.value || "");
         setTimeout(() => customInput?.focus(), 20);
       } else {
