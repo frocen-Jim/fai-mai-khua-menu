@@ -1,3 +1,4 @@
+// v70 note dropdown readable + clean order popup header
 // v69 store hours 10:00-5:00
 // v68 variant-specific cart + custom note fix
 // v67 fried rice egg label + note dropdown
@@ -1380,8 +1381,9 @@ function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-co
             data-key="${safeKey}"
             type="text"
             value="${customValue}"
-            placeholder="ຂຽນເພີ່ມ..."
+            placeholder="ພິມຄຳຂໍພິເສດບ່ອນນີ້..."
             autocomplete="off"
+            ${isCustom ? "" : "disabled"}
           />
         </label>
       </div>
@@ -2331,7 +2333,7 @@ const quickNoteOptions = [
   { value: "ເຜັດຫຼາຍ", label: "ເຜັດຫຼາຍ" },
   { value: "ບໍ່ໃສ່ຜັກ", label: "ບໍ່ໃສ່ຜັກ" },
   { value: "ແຍກນ້ຳຈິ້ມ", label: "ແຍກນ້ຳຈິ້ມ" },
-  { value: "__custom__", label: "ອື່ນໆ" }
+  { value: "__custom__", label: "ອື່ນໆ / ພິມເອງ" }
 ];
 
 function noteSelectValue(note) {
@@ -2397,10 +2399,12 @@ function bindItemNoteInputs() {
 
       if (value === "__custom__") {
         customInput?.classList.add("is-visible");
+        customInput?.removeAttribute("disabled");
         setItemNoteValue(key, customInput?.value || "");
         setTimeout(() => customInput?.focus(), 20);
       } else {
         customInput?.classList.remove("is-visible");
+        customInput?.setAttribute("disabled", "disabled");
         if (customInput) customInput.value = "";
         setItemNoteValue(key, value);
       }

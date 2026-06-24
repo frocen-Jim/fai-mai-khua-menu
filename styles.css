@@ -2927,3 +2927,47 @@ h3 {
     font-size: 16px;
   }
 }
+
+
+/* v70: clean popup header and readable custom-note dropdown */
+.floating-cart-head > div {
+  display: none !important;
+}
+
+.floating-cart-head {
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.floating-cart-sheet {
+  padding-top: 14px;
+}
+
+.item-note-select {
+  color: #fff2d7;
+  background-color: rgba(45, 27, 18, .96);
+}
+
+.item-note-select option {
+  background: #2b1a11;
+  color: #fff2d7;
+}
+
+.item-note-select option:checked {
+  background: #ffb536;
+  color: #1c0b02;
+}
+
+.item-note-custom {
+  color: #fff2d7;
+  background-color: rgba(45, 27, 18, .96);
+}
+
+.item-note-custom::placeholder {
+  color: rgba(255, 230, 185, .56);
+}
+
+.item-note-custom[disabled] {
+  opacity: .58;
+  cursor: not-allowed;
+}
