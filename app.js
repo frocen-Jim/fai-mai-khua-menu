@@ -1,3 +1,5 @@
+// v79 custom ingredient icon stickers
+// v78 menu ingredient stickers
 // v77 dropdown + direct note + food thumbnail in order
 // v76 every add creates separate order line + direct special note
 // v75 custom note appears immediately for first item
@@ -77,7 +79,7 @@ const menuItems = [
     description: "กะเพราหมูรสจัด ผัดไฟแรง เสิร์ฟพร้อมข้าวหอมและไข่ดาว",
     image: "images/menu-v54-07-krapao-egg.jpg",
     tag: "ໄຟແຮງ",
-    ingredients: ["หมู", "พริก", "กระเทียม", "ใบกะเพรา", "ไข่ดาว"],
+    ingredients: ["ກະເພົາ", "ພິກ", "ພິກໄທ", "ກະທຽມ", "ເນື້ອ"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#ffb636", fire: "#e8431f", glow: "rgba(232,67,31,.30)", deep: "#130806" }
   },
@@ -89,7 +91,7 @@ const menuItems = [
     description: "ไก่นุ่ม ซอสเทอริยากิ หอมหวานเค็มกำลังดี",
     image: "images/menu-v54-01-rice-fire.jpg",
     tag: "ແສບຮ້ອນ",
-    ingredients: ["ไก่", "ซอสเทอริยากิ", "ข้าว", "แตงกวา"],
+    ingredients: ["ຫອມຫົວໃຫຍ່", "ຕົ້ນຫອມ", "ພິກ", "ພິກໄທ", "ພິກຢວກ", "ເນື້ອ"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#f6c85f", fire: "#2dc071", glow: "rgba(45,192,113,.28)", deep: "#06140d" }
   },
@@ -101,7 +103,7 @@ const menuItems = [
     description: "ไก่หมักมิโสะ ย่างหอม กินง่าย อิ่มพอดี",
     image: "images/menu-v54-03-fried-rice-egg.jpg",
     tag: "ຫອມກະທະ",
-    ingredients: ["ไก่", "มิโสะ", "ข้าว", "ผัก"],
+    ingredients: ["Carrot", "ຫອມຫົວໃຫຍ່", "ຜັກຄະນ້າ", "ໄຂ່ໄກ່", "ພິກໄທ", "ເນື້ອ"],
     variants: [{"id": "egg", "label": "ໄຂ່", "price": 50000}, {"id": "chicken", "label": "ໄກ່", "price": 50000}, {"id": "pork", "label": "ໝູ", "price": 50000}, {"id": "beef", "label": "ງົວ", "price": 55000}],
     theme: { accent: "#ffd166", fire: "#4cc9f0", glow: "rgba(76,201,240,.22)", deep: "#07101a" }
   },
@@ -113,7 +115,7 @@ const menuItems = [
     description: "เนื้อหอม ย่างฉ่ำ เสิร์ฟพร้อมน้ำจิ้มแจ่วสไตล์ไฟไหม้ครัว",
     image: "images/menu-v54-02-beef-rice.jpg",
     tag: "ເນື້ອນຸ້ມ",
-    ingredients: ["เนื้อ NZ", "น้ำจิ้มแจ่ว", "พริก", "ข้าวคั่ว"],
+    ingredients: ["Tomato", "ຫອມຫົວໃຫຍ່", "ຕົ້ນຫອມ", "ພິກ", "ພິກໄທ", "ເນື້ອ"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#ffb636", fire: "#a4161a", glow: "rgba(164,22,26,.34)", deep: "#120707" }
   },
@@ -125,7 +127,7 @@ const menuItems = [
     description: "แซลมอนย่างเกลือ หอมพริกไทย เสิร์ฟพร้อมข้าวและผักสด",
     image: "images/menu-v54-04-spaghetti-fire.jpg",
     tag: "ເຜັດຮ້ອນ",
-    ingredients: ["แซลมอน", "เกลือ", "พริกไทย", "ข้าว", "ผักสด"],
+    ingredients: ["ພິກ", "ພິກແຫ້ງ", "ໃບໂຫລະພາ", "ກະທຽມ", "ເນື້ອ", "Oregano", "Parmesan Powder"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}, {"id": "bacon", "label": "Bacon", "price": 65000}],
     theme: { accent: "#ffcf70", fire: "#ff6b35", glow: "rgba(255,107,53,.25)", deep: "#140b06" }
   },
@@ -137,7 +139,7 @@ const menuItems = [
     description: "ผักสด ไก่อบ ซอสเบา ๆ เหมาะกับคนรักสุขภาพ",
     image: "images/menu-v54-05-spaghetti-pork.jpg",
     tag: "ຈັດຈ້ານ",
-    ingredients: ["ไก่อบ", "ผักสด", "ซอสเบา", "แตงกวา"],
+    ingredients: ["Tomato", "ໃບກະເພົາ", "ພິກ", "ພິກໄທອ່ອນ", "ໃບໝາກກູດ", "ເນື້ອ"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}, {"id": "tiger", "label": "ເສືອຮ້ອງໃຫ້", "price": 65000}],
     theme: { accent: "#b7ef8a", fire: "#2dc071", glow: "rgba(45,192,113,.25)", deep: "#071407" }
   },
@@ -149,7 +151,7 @@ const menuItems = [
     description: "ผักกรอบ ซอสซีซาร์ ขนมปังกรอบ และโปรตีนแน่น",
     image: "images/menu-v54-06-noodle-fire.jpg",
     tag: "ຫອມໆ",
-    ingredients: ["ผักสลัด", "ซีซาร์ซอส", "ขนมปังกรอบ", "โปรตีน"],
+    ingredients: ["ຜັກຄະນ້າ", "ກະລໍ່າ", "ໄຂ່ໄກ່", "ເນື້ອ", "ພິກໄທ"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 50000}, {"id": "pork", "label": "ໝູ", "price": 50000}, {"id": "beef", "label": "ງົວ", "price": 55000}],
     theme: { accent: "#d9ed92", fire: "#76c893", glow: "rgba(118,200,147,.24)", deep: "#07150c" }
   },
@@ -161,7 +163,7 @@ const menuItems = [
     description: "คุกกี้บราวนี่เข้มข้น มาร์ชเมลโลว์ และบิสกิตกรอบ",
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",
     tag: "SWEET",
-    ingredients: ["ช็อกโกแลต", "มาร์ชเมลโลว์", "บิสกิต", "เนย"],
+    ingredients: ["Chocolate", "Marshmallow", "Biscuit", "Butter"],
     theme: { accent: "#f5c7a9", fire: "#8b5e34", glow: "rgba(139,94,52,.28)", deep: "#130c08" }
   },
 ];
@@ -742,11 +744,43 @@ function proteinOptionsTemplate(item) {
 }
 
 
+function ingredientStickerIcon(label) {
+  const iconMap = {
+    "ກະເພົາ": "🌿",
+    "ໃບກະເພົາ": "🌿",
+    "ໃບໂຫລະພາ": "🌿",
+    "ໃບໝາກກູດ": "🍃",
+    "ພິກ": "🌶️",
+    "ພິກແຫ້ງ": "🌶️",
+    "ພິກໄທ": "🧂",
+    "ພິກໄທດຳ": "🧂",
+    "ພິກໄທອ່ອນ": "🫛",
+    "ພິກຢວກ": "🫑",
+    "ກະທຽມ": "🧄",
+    "ເນື້ອ": "🥩",
+    "ຫອມຫົວໃຫຍ່": "🧅",
+    "ຕົ້ນຫອມ": "🌱",
+    "Carrot": "🥕",
+    "Tomato": "🍅",
+    "ຜັກຄະນ້າ": "🥬",
+    "ກະລໍ່າ": "🥬",
+    "ໄຂ່ໄກ່": "🥚",
+    "Oregano": "🍃",
+    "Parmesan Powder": "🧀"
+  };
+  return iconMap[label] || "✨";
+}
+
 function ingredientStickersTemplate(item) {
   if (!item.ingredients || !item.ingredients.length) return "";
   return `
     <div class="ingredient-stickers" aria-label="วัตถุดิบหลัก">
-      ${item.ingredients.map(ingredient => `<span class="ingredient-sticker">${escapeHtml(ingredient)}</span>`).join("")}
+      ${item.ingredients.map(ingredient => `
+        <span class="ingredient-sticker">
+          <span class="ingredient-sticker-icon" aria-hidden="true">${ingredientStickerIcon(ingredient)}</span>
+          <span class="ingredient-sticker-label">${escapeHtml(ingredient)}</span>
+        </span>
+      `).join("")}
     </div>
   `;
 }
@@ -763,7 +797,7 @@ function renderMenu() {
     const storeClosed = isStoreClosed();
     const imageSrc = optimizedImageUrl(item.image, index < 2 ? 520 : 420, index < 2 ? 62 : 58);
     const loading = index < 2 ? "eager" : "lazy";
-    const quantity = state.cart[item.id] || 0;
+    const quantity = typeof cartQtyForMenu === 'function' ? cartQtyForMenu(item.id) : (state.cart[item.id] || 0);
     const selectedClass = quantity ? " is-selected" : "";
     const quantityClass = quantity ? " is-visible" : "";
     const remaining = getRemainingStock(item.id);
@@ -793,6 +827,7 @@ function renderMenu() {
           <h3>${item.name}</h3>
           <p class="desc">${item.description}</p>
           ${proteinOptionsTemplate(item)}
+          ${ingredientStickersTemplate(item)}
         <div class="card-bottom">
             <span class="price">${money(itemEffectivePrice(item))}</span>
             <span class="tap-note">${tapText}</span>
