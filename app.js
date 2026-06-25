@@ -1,3 +1,4 @@
+// v86 fix new menu image paths to root + fallback
 // v85 repair CSS/app load + full menu restore
 // v83 safe restore menu render + add new menus
 // v80 store hours 10:00-17:00 and s'more cookie closed
@@ -164,7 +165,7 @@ const menuItems = [
     category: "ข้าวไฟแรง",
     price: 50000,
     description: "ຜັດຜັກຄະນ້າໄຟແຮງ ຫອມກະທຽມ ເລືອກເນື້ອໄດ້ຕາມຕ້ອງການ",
-    image: "images/menu-v81-pad-phuk-khana.jpg",
+    image: "menu-v81-pad-phuk-khana.jpg",
     tag: "ຫອມກະທຽມ",
     ingredients: ["ຜັກຄະນ້າ", "ເນື້ອ", "ກະທຽມ"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 50000}, {"id": "pork", "label": "ໝູ", "price": 50000}, {"id": "beef", "label": "ງົວ", "price": 55000}],
@@ -176,7 +177,7 @@ const menuItems = [
     category: "สุขภาพ",
     price: 55000,
     description: "ລາດໜ້າເສັ້ນໃຫຍ່ ນຸ່ມຫອມ ຊອດເຂັ້ມຂົ້ນ ເລືອກເນື້ອໄດ້ຕາມຕ້ອງການ",
-    image: "images/menu-v82-lardna-sen-yai.jpg",
+    image: "menu-v82-lardna-sen-yai.jpg",
     tag: "ນຸ່ມຫອມ",
     ingredients: ["ຄະນ້າ", "Carrot", "ກະລໍ່າປີ", "ກະທຽມ", "ໄຂ່ໄກ່"],
     variants: [{"id": "chicken", "label": "ໄກ່", "price": 55000}, {"id": "pork", "label": "ໝູ", "price": 55000}, {"id": "beef", "label": "ງົວ", "price": 60000}],
@@ -188,7 +189,7 @@ const menuItems = [
     category: "ข้าวไฟแรง",
     price: 50000,
     description: "ເຂົ້າໄຂ່ຈຽວຮ້ອນໆ ຫອມນຸ່ມ ເລືອກ topping ເນື້ອໄດ້",
-    image: "images/menu-v84-khao-khai-jiew.jpg",
+    image: "menu-v84-khao-khai-jiew.jpg",
     tag: "ຫອມນຸ່ມ",
     ingredients: ["ໄຂ່ໄກ່", "ເນື້ອ"],
     variants: [{"id": "plain", "label": "ໄຂ່ຈຽວທຳມະດາ", "price": 50000}, {"id": "pork-minced", "label": "ໄຂ່ຈຽວໝູສັບ", "price": 50000}, {"id": "chicken-minced", "label": "ໄຂ່ຈຽວໄກ່ສັບ", "price": 50000}, {"id": "beef-minced", "label": "ໄຂ່ຈຽວງົວສັບ", "price": 55000}],
@@ -312,6 +313,13 @@ function optimizedImageUrl(src, width = 520, quality = 62) {
     return src;
   }
 }
+
+function imageErrorFallbackAttribute(src) {
+  if (!src || /^https?:\/\//i.test(src) || !src.includes("/")) return "";
+  const fallback = src.split("/").pop();
+  return ` onerror="if(!this.dataset.fallbackTried){this.dataset.fallbackTried='1';this.src='${escapeHtml(fallback)}';}"`;
+}
+
 
 function appConfig() {
   return window.FAI_MAI_KHUA_CONFIG || {};
@@ -868,7 +876,7 @@ function renderMenu() {
     return `
       <article class="menu-card${stockClass}" style="transition-delay:${Math.min(index * 55, 330)}ms">
         <button type="button" class="menu-image image-add-trigger${selectedClass}" data-id="${item.id}" aria-label="${unavailable ? `${item.name} ปิดขายอยู่` : `เลือก ${item.name}`}"${disabledAttr}>
-          <img src="${imageSrc}" alt="${item.name}" width="520" height="300" loading="${loading}" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />
+          <img src="${imageSrc}" alt="${item.name}" width="520" height="300" loading="${loading}" decoding="async" fetchpriority="low" referrerpolicy="no-referrer"${imageErrorFallbackAttribute(item.image)} />
           <span class="badge">${item.tag}</span>
           <span class="stock-badge${stockClass}">${stockText}</span>
           <span class="menu-quantity-badge${quantityClass}" data-menu-qty="${item.id}" aria-label="จำนวนที่เลือก">${quantity}</span>
@@ -1459,7 +1467,7 @@ function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-co
     return `
       <div class="${rowClass} is-separated-line">
         <div class="order-line-top has-order-thumb">
-          <img class="order-line-thumb" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(line.name)}" loading="lazy">
+          <img class="order-line-thumb" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(line.name)}" loading="lazy"${imageErrorFallbackAttribute(imageSrc)}>
           <div class="order-line-title">
             <strong>${escapeHtml(line.name)}</strong>
             <em>#${index + 1}</em>
