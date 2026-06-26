@@ -1,3 +1,4 @@
+// v87 auto open note/order panel after add
 // v86 fix new menu image paths to root + fallback
 // v85 repair CSS/app load + full menu restore
 // v83 safe restore menu render + add new menus
@@ -942,6 +943,37 @@ function updateMenuQuantityBadges() {
   });
 }
 
+
+function openNotePanelForCartLine(key) {
+  if (!key) return;
+
+  setFloatingCartOpen(true);
+
+  setTimeout(() => {
+    const selectorKey = CSS.escape(String(key));
+    const noteInput = document.querySelector(`.item-note-custom[data-key="${selectorKey}"]`);
+    const noteSelect = document.querySelector(`.item-note-select[data-key="${selectorKey}"]`);
+    const target = noteInput || noteSelect;
+
+    if (!target) return;
+
+    target.classList?.add("is-visible");
+    target.removeAttribute?.("disabled");
+    if ("readOnly" in target) target.readOnly = false;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    // Focus after scroll so mobile keyboard has a better chance to open.
+    setTimeout(() => {
+      try {
+        target.focus({ preventScroll: true });
+      } catch (error) {
+        target.focus();
+      }
+    }, 120);
+  }, 180);
+}
+
+
 function addToCart(id, sourceButton) {
   if (isStoreClosed()) {
     updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
@@ -964,6 +996,7 @@ function addToCart(id, sourceButton) {
 
   updateMenuQuantityBadges();
   renderCart();
+  openNotePanelForCartLine(key);
   igniteAddEffect(sourceButton);
   playFireSound();
 }
@@ -1493,7 +1526,7 @@ function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-co
             class="item-note-custom is-visible direct-note-input"
             data-key="${safeKey}"
             rows="2"
-            placeholder="ເລືອກຈາກ dropdown ຫຼື ຂຽນເພີ່ມໄດ້..."
+            placeholder="ພິມໝາຍເຫດເມນູນີ້ໄດ້ເລີຍ..."
             autocomplete="off"
           >${noteValue}</textarea>
         </label>
@@ -1509,7 +1542,10 @@ function bindQuantityButtons(selector) {
       const id = Number(button.dataset.id);
       const change = button.dataset.action === "plus" ? 1 : -1;
       updateQty(key || id, change);
-      if (change > 0) igniteAddEffect(event.currentTarget);
+      if (change > 0) {
+        if (key) openNotePanelForCartLine(key);
+        igniteAddEffect(event.currentTarget);
+      }
     });
   });
 }
