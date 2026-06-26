@@ -1,3 +1,4 @@
+// v88 customize before add to order
 // v87 auto open note/order panel after add
 // v86 fix new menu image paths to root + fallback
 // v85 repair CSS/app load + full menu restore
@@ -254,7 +255,8 @@ const state = {
     isOpen: true,
     message: "ร้านเปิดรับออเดอร์แล้ว"
   },
-  orderSubmitting: false
+  orderSubmitting: false,
+  customizeDraft: null
 };
 
 function money(value) {
@@ -734,10 +736,15 @@ function selectedVariantId(item) {
   return getSelectedVariant(item)?.id || "base";
 }
 
-function cartKeyForItem(item) {
+
+function cartKeyForItemVariant(item, variantId = "base") {
   state.lineSeq = (state.lineSeq || 0) + 1;
   const uniqueLineId = `${Date.now().toString(36)}-${state.lineSeq}`;
-  return `${item.id}::${selectedVariantId(item)}::${uniqueLineId}`;
+  return `${item.id}::${variantId || "base"}::${uniqueLineId}`;
+}
+
+function cartKeyForItem(item) {
+  return cartKeyForItemVariant(item, selectedVariantId(item));
 }
 
 function parseCartKey(key) {
@@ -944,62 +951,231 @@ function updateMenuQuantityBadges() {
 }
 
 
-function openNotePanelForCartLine(key) {
-  if (!key) return;
 
-  setFloatingCartOpen(true);
+function ensureCustomizeModal() {
+  let modal = document.querySelector("#customizeModal");
+  if (modal) return modal;
 
-  setTimeout(() => {
-    const selectorKey = CSS.escape(String(key));
-    const noteInput = document.querySelector(`.item-note-custom[data-key="${selectorKey}"]`);
-    const noteSelect = document.querySelector(`.item-note-select[data-key="${selectorKey}"]`);
-    const target = noteInput || noteSelect;
-
-    if (!target) return;
-
-    target.classList?.add("is-visible");
-    target.removeAttribute?.("disabled");
-    if ("readOnly" in target) target.readOnly = false;
-    target.scrollIntoView({ behavior: "smooth", block: "center" });
-
-    // Focus after scroll so mobile keyboard has a better chance to open.
-    setTimeout(() => {
-      try {
-        target.focus({ preventScroll: true });
-      } catch (error) {
-        target.focus();
-      }
-    }, 120);
-  }, 180);
+  modal = document.createElement("div");
+  modal.id = "customizeModal";
+  modal.className = "customize-modal";
+  modal.hidden = true;
+  modal.innerHTML = `<div class="customize-backdrop" data-customize-close="true"></div><div class="customize-sheet" role="dialog" aria-modal="true" aria-label="Customize order"></div>`;
+  document.body.appendChild(modal);
+  return modal;
 }
 
+function closeCustomizeModal() {
+  const modal = document.querySelector("#customizeModal");
+  if (modal) modal.hidden = true;
+  document.body.classList.remove("customize-open");
+  state.customizeDraft = null;
+}
 
-function addToCart(id, sourceButton) {
+function openCustomizeModal(id, sourceButton = null) {
+  const item = menuItems.find(menu => menu.id === Number(id));
+  if (!item) return;
+
   if (isStoreClosed()) {
     updateStockStatus(state.store.message || "ร้านปิดรับออเดอร์ชั่วคราว", "error");
-    renderCart();
     return;
   }
 
-  if (isItemSoldOut(id) || availableToAdd(id) <= 0) {
-    const item = menuItems.find(menu => menu.id === id);
-    updateStockStatus(item?.closedLabel || `${item?.name || "เมนูนี้"} ขายหมดแล้วหรือเหลือไม่พอ`, "error");
-    renderMenu();
-    renderCart();
+  if (isItemSoldOut(item.id) || availableToAdd(item.id) <= 0) {
+    updateStockStatus(item.closedLabel || `${item.name} ขายหมดแล้วหรือเหลือไม่พอ`, "error");
     return;
   }
 
-  const item = menuItems.find(menu => menu.id === id);
-  if (!item) return;
-  const key = cartKeyForItem(item);
-  state.cart[key] = (state.cart[key] || 0) + 1;
+  const selectedVariant = getSelectedVariant(item);
+  state.customizeDraft = {
+    itemId: item.id,
+    variantId: selectedVariant?.id || "base",
+    qty: 1,
+    quickNote: "",
+    note: "",
+    sourceButton
+  };
+
+  renderCustomizeModal();
+
+  const modal = ensureCustomizeModal();
+  modal.hidden = false;
+  document.body.classList.add("customize-open");
+
+  setTimeout(() => {
+    const firstVariant = modal.querySelector(".customize-variant-btn.is-active") || modal.querySelector("#customizeAddBtn");
+    firstVariant?.focus?.();
+  }, 80);
+}
+
+function customizeDraftLine() {
+  const draft = state.customizeDraft;
+  if (!draft) return null;
+  const item = menuItems.find(menu => menu.id === Number(draft.itemId));
+  if (!item) return null;
+  const variant = itemVariantById(item, draft.variantId);
+  const price = variant?.price ?? item.price;
+  const name = variant ? `${item.name} (${variant.label})` : item.name;
+  return { draft, item, variant, price, name };
+}
+
+function renderCustomizeModal() {
+  const modal = ensureCustomizeModal();
+  const sheet = modal.querySelector(".customize-sheet");
+  const line = customizeDraftLine();
+  if (!sheet || !line) return;
+
+  const { draft, item, variant, price } = line;
+  const qty = Math.max(1, Number(draft.qty || 1));
+  draft.qty = qty;
+  const total = price * qty;
+  const imageSrc = optimizedImageUrl(item.image, 680, 70);
+  const noteValue = escapeHtml(draft.note || "");
+  const selectedNote = draft.quickNote || noteSelectValue(draft.note || "");
+
+  sheet.innerHTML = `
+    <div class="customize-hero">
+      <img src="${imageSrc}" alt="${escapeHtml(item.name)}" loading="eager" decoding="async"${imageErrorFallbackAttribute(item.image)}>
+      <button type="button" class="customize-close" data-customize-close="true" aria-label="ปิด">×</button>
+      <span class="customize-badge">${escapeHtml(item.tag || "ເລືອກລາຍລະອຽດ")}</span>
+    </div>
+    <div class="customize-body">
+      <p class="eyebrow">CUSTOMIZE ORDER</p>
+      <h2>${escapeHtml(item.name)}</h2>
+      <p class="customize-desc">${escapeHtml(item.description || "ເລືອກລາຍລະອຽດກ່ອນເພີ່ມລົງອໍເດີ")}</p>
+      ${ingredientStickersTemplate(item)}
+
+      ${item.variants?.length ? `
+        <div class="customize-section">
+          <div class="customize-section-title">
+            <strong>ເລືອກເນື້ອ</strong>
+            <span>Required</span>
+          </div>
+          <div class="customize-variant-grid">
+            ${item.variants.map(option => `
+              <button type="button" class="customize-variant-btn ${option.id === draft.variantId ? "is-active" : ""}" data-customize-variant="${escapeHtml(option.id)}">
+                <span>${escapeHtml(option.label)}</span>
+                <small>${money(option.price)}</small>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      ` : ""}
+
+      <div class="customize-section">
+        <div class="customize-section-title">
+          <strong>ຄຳຂໍພິເສດ</strong>
+          <span>Optional</span>
+        </div>
+        <select class="customize-note-select" id="customizeNoteSelect">
+          ${noteOptionsTemplate(selectedNote)}
+        </select>
+        <textarea class="customize-note-input" id="customizeNoteInput" rows="3" placeholder="ເຊັ່ນ ບໍ່ໃສ່ພິກ, ເຜັດນ້ອຍ, ແຍກນ້ຳຈິ້ມ...">${noteValue}</textarea>
+      </div>
+
+      <div class="customize-bottom">
+        <div class="customize-qty" aria-label="จำนวน">
+          <button type="button" data-customize-qty="minus">−</button>
+          <strong>${qty}</strong>
+          <button type="button" data-customize-qty="plus">+</button>
+        </div>
+        <button type="button" class="primary-btn shine customize-add" id="customizeAddBtn">
+          ເພີ່ມລົງອໍເດີ • ${money(total)}
+        </button>
+      </div>
+    </div>
+  `;
+
+  bindCustomizeModalEvents();
+}
+
+function bindCustomizeModalEvents() {
+  const modal = ensureCustomizeModal();
+  const draft = state.customizeDraft;
+  if (!draft) return;
+
+  modal.querySelectorAll("[data-customize-close]").forEach(element => {
+    element.addEventListener("click", closeCustomizeModal, { once: true });
+  });
+
+  modal.querySelectorAll("[data-customize-variant]").forEach(button => {
+    button.addEventListener("click", () => {
+      draft.variantId = button.dataset.customizeVariant;
+      state.selectedVariants[draft.itemId] = draft.variantId;
+      renderCustomizeModal();
+      renderMenu();
+    });
+  });
+
+  modal.querySelectorAll("[data-customize-qty]").forEach(button => {
+    button.addEventListener("click", () => {
+      const change = button.dataset.customizeQty === "plus" ? 1 : -1;
+      draft.qty = Math.max(1, Number(draft.qty || 1) + change);
+      renderCustomizeModal();
+    });
+  });
+
+  const noteSelect = modal.querySelector("#customizeNoteSelect");
+  const noteInput = modal.querySelector("#customizeNoteInput");
+
+  if (noteSelect) {
+    noteSelect.addEventListener("change", () => {
+      draft.quickNote = noteSelect.value;
+      if (noteSelect.value === "__custom__") {
+        if (quickNoteOptions.some(option => option.value === draft.note)) draft.note = "";
+        noteInput.value = draft.note || "";
+        setTimeout(() => noteInput?.focus(), 60);
+      } else {
+        draft.note = noteSelect.value;
+        noteInput.value = noteSelect.value;
+      }
+    });
+  }
+
+  if (noteInput) {
+    noteInput.addEventListener("input", () => {
+      draft.note = noteInput.value;
+      const exact = quickNoteOptions.find(option => option.value === noteInput.value.trim());
+      draft.quickNote = exact ? exact.value : "__custom__";
+      if (noteSelect) noteSelect.value = draft.quickNote;
+    });
+  }
+
+  const addButton = modal.querySelector("#customizeAddBtn");
+  if (addButton) {
+    addButton.addEventListener("click", commitCustomizeOrder, { once: true });
+  }
+}
+
+function commitCustomizeOrder(event) {
+  const line = customizeDraftLine();
+  if (!line) return;
+
+  const { draft, item, price, variant } = line;
+  const qty = Math.max(1, Number(draft.qty || 1));
+
+  if (availableToAdd(item.id) < qty) {
+    updateStockStatus(`${item.name} เหลือไม่พอสำหรับเพิ่ม ${qty} ชุด`, "error");
+    renderCustomizeModal();
+    return;
+  }
+
+  const key = cartKeyForItemVariant(item, variant?.id || "base");
+  state.cart[key] = qty;
+
+  const note = String(draft.note || "").trim();
+  if (note) setItemNoteValue(key, note);
+  if (state.noteSelect) state.noteSelect[key] = draft.quickNote || noteSelectValue(note);
 
   updateMenuQuantityBadges();
   renderCart();
-  openNotePanelForCartLine(key);
-  igniteAddEffect(sourceButton);
+  updateStockStatus(`เพิ่ม ${item.name} ลงออเดอร์แล้ว`, "ready");
+  igniteAddEffect(draft.sourceButton || event?.currentTarget);
   playFireSound();
+  closeCustomizeModal();
+  setFloatingCartOpen(true);
 }
+
 
 function igniteAddEffect(sourceButton) {
   if (!sourceButton) return;
@@ -2888,7 +3064,10 @@ const floatingSendOrderButton = $("#floatingSendOrderBtn");
 if (floatingSendOrderButton) floatingSendOrderButton.addEventListener("click", handleSendOrderClick);
 
 window.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setFloatingCartOpen(false);
+  if (event.key === "Escape") {
+    setFloatingCartOpen(false);
+    closeCustomizeModal();
+  }
 });
 
 window.addEventListener("pagehide", () => saveCustomerMemory({ force: true, silent: true }));
