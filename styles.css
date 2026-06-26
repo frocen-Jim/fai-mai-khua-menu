@@ -3766,3 +3766,27 @@ body.customize-open {
     justify-content: space-between;
   }
 }
+
+
+/* v89: keep order/customize buttons clickable */
+.customize-modal,
+.customize-sheet,
+.customize-popup,
+[data-customize-modal] {
+  z-index: 9999 !important;
+}
+
+.customize-modal button,
+.customize-sheet button,
+.customize-popup button,
+[data-customize-modal] button,
+.customize-modal textarea,
+.customize-sheet textarea,
+.customize-popup textarea,
+[data-customize-modal] textarea,
+.customize-modal select,
+.customize-sheet select,
+.customize-popup select,
+[data-customize-modal] select {
+  pointer-events: auto !important;
+}

@@ -1,3 +1,4 @@
+// v89 fix order/add button fallback
 // v88 customize before add to order
 // v87 auto open note/order panel after add
 // v86 fix new menu image paths to root + fallback
@@ -3278,3 +3279,105 @@ function v75ImmediateCustomNoteFix() {
 }
 
 v75ImmediateCustomNoteFix();
+
+
+
+
+/* v89 emergency ordering fallback */
+function v89SafeSelectedItemFromModal() {
+  const modal = document.querySelector(".customize-modal, .customize-sheet, .customize-popup, [data-customize-modal]");
+  const idFromModal = modal?.dataset?.id || modal?.dataset?.itemId || modal?.querySelector?.("[data-id]")?.dataset?.id;
+  const idFromState = state?.customizeItemId || state?.customizingItemId || state?.activeCustomizeId || state?.selectedCustomizeId;
+  const id = Number(idFromModal || idFromState || 0);
+  return menuItems.find(item => item.id === id) || null;
+}
+
+function v89DirectAddItem(item, qty = 1, note = "") {
+  if (!item) return false;
+
+  for (let i = 0; i < Math.max(1, qty); i += 1) {
+    const key = typeof cartKeyForItem === "function" ? cartKeyForItem(item) : `${item.id}::base::${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+    state.cart[key] = (state.cart[key] || 0) + 1;
+
+    if (note && typeof setItemNoteValue === "function") {
+      setItemNoteValue(key, note);
+    } else if (note) {
+      state.itemNotes[key] = note;
+    }
+  }
+
+  if (typeof updateMenuQuantityBadges === "function") updateMenuQuantityBadges();
+  if (typeof renderCart === "function") renderCart();
+  if (typeof setFloatingCartOpen === "function") setFloatingCartOpen(true);
+  return true;
+}
+
+function v89CloseCustomizeModal() {
+  document.querySelectorAll(".customize-modal, .customize-sheet, .customize-popup, [data-customize-modal]").forEach(el => {
+    el.classList.remove("is-open", "active", "show", "is-visible");
+    el.setAttribute("hidden", "hidden");
+    el.style.display = "none";
+  });
+  document.body.classList.remove("customize-open", "modal-open");
+}
+
+function v89ReadCustomizeQty() {
+  const qtyEl = document.querySelector(".customize-qty, [data-customize-qty], #customizeQty, #customizeQuantity");
+  const qty = Number(qtyEl?.textContent || qtyEl?.value || 1);
+  return Number.isFinite(qty) && qty > 0 ? qty : 1;
+}
+
+function v89ReadCustomizeNote() {
+  const parts = [];
+  const select = document.querySelector(".customize-modal select, .customize-sheet select, .customize-popup select, [data-customize-modal] select");
+  const textarea = document.querySelector(".customize-modal textarea, .customize-sheet textarea, .customize-popup textarea, [data-customize-modal] textarea");
+  if (select && select.value && select.value !== "__custom__") parts.push(select.value);
+  if (textarea && textarea.value.trim()) parts.push(textarea.value.trim());
+  return parts.join(" | ");
+}
+
+function v89InstallOrderFallback() {
+  if (window.__v89OrderFallbackInstalled) return;
+  window.__v89OrderFallbackInstalled = true;
+
+  document.addEventListener("click", event => {
+    const btn = event.target.closest?.(
+      "[data-customize-add], #customizeAddBtn, #addCustomizeBtn, .customize-add-btn, .add-to-order-btn, .confirm-customize-btn"
+    );
+    if (!btn) return;
+
+    const item = v89SafeSelectedItemFromModal();
+    if (!item) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const qty = v89ReadCustomizeQty();
+    const note = v89ReadCustomizeNote();
+
+    v89DirectAddItem(item, qty, note);
+    v89CloseCustomizeModal();
+  }, true);
+
+  // If the new customize system blocks old add buttons, this keeps menu cards usable.
+  document.addEventListener("click", event => {
+    const trigger = event.target.closest?.(".image-add-trigger, .add-btn[data-id], button[data-id][data-action='add']");
+    if (!trigger || trigger.closest(".order-items, .floating-order-items")) return;
+
+    const id = Number(trigger.dataset.id || trigger.closest("[data-id]")?.dataset?.id || 0);
+    const item = menuItems.find(menu => menu.id === id);
+    if (!item) return;
+
+    // Let the normal customize popup run first. If nothing changes after a moment, add directly.
+    const beforeCount = Object.keys(state.cart || {}).length;
+    setTimeout(() => {
+      const modalOpen = document.querySelector(".customize-modal.is-open, .customize-sheet.is-open, .customize-popup.is-open, [data-customize-modal]:not([hidden])");
+      const afterCount = Object.keys(state.cart || {}).length;
+      if (!modalOpen && beforeCount === afterCount) {
+        v89DirectAddItem(item, 1, "");
+      }
+    }, 350);
+  }, false);
+}
+
+v89InstallOrderFallback();
