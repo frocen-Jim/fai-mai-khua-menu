@@ -1,3 +1,5 @@
+// v94 restore cookie item image keep closed
+// v93 clean unrelated/overlapping images
 // v92 restore fire sound effects
 // v91 fix WhatsApp send order button only
 // v89 fix order/add button fallback
@@ -207,10 +209,10 @@ const menuItems = [
     price: 35000,
     description: "คุกกี้บราวนี่เข้มข้น มาร์ชเมลโลว์ และบิสกิตกรอบ",
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",
-    tag: "ປິດຂາຍ",
+    tag: "ຍັງບໍ່ເປີດຂາຍ",
     available: false,
     soldOut: true,
-    saleStatus: "ຍັງບໍ່ເປີດຂາຍ",
+    saleStatus: "closed",
     closedLabel: "ຍັງບໍ່ເປີດຂາຍ",
     ingredients: ["Chocolate", "Marshmallow", "Biscuit", "Butter"],
     theme: { accent: "#f5c7a9", fire: "#8b5e34", glow: "rgba(139,94,52,.28)", deep: "#130c08" }
@@ -304,20 +306,8 @@ const LEAFLET_ASSET_SOURCES = [
 ];
 
 function optimizedImageUrl(src, width = 520, quality = 62) {
-  if (!/^https?:\/\//i.test(src || "")) return src;
-
-  try {
-    const url = new URL(src);
-    if (url.hostname === "images.unsplash.com") {
-      url.searchParams.set("auto", "format");
-      url.searchParams.set("fit", "crop");
-      url.searchParams.set("w", String(width));
-      url.searchParams.set("q", String(quality));
-    }
-    return url.toString();
-  } catch (error) {
-    return src;
-  }
+  // v93: no external/old stock image optimization. Keep only the image path already set.
+  return src || "images/logo-fai-mai-khua-small.png";
 }
 
 function imageErrorFallbackAttribute(src) {
@@ -667,18 +657,19 @@ function applyHeroTheme(item) {
 }
 
 function renderHeroDish(item) {
+  // v93: keep hero clean. Do not load rotating food photos on top of the website.
   const image = $("#heroImage");
-  image.classList.add("is-changing");
-  setTimeout(() => {
-    image.src = optimizedImageUrl(item.image, 560, 65);
-    image.alt = item.name;
-    $("#heroDishName").textContent = item.name;
-    $("#heroDishDesc").textContent = item.description;
-    $("#heroDishPrice").textContent = money(item.price);
-    $("#heroAddBtn").dataset.id = item.id;
-    applyHeroTheme(item);
+  if (image) {
+    image.src = "images/logo-fai-mai-khua-small.png";
+    image.alt = "ໄຟໄໝ້ຄົວ";
     image.classList.remove("is-changing");
-  }, 260);
+  }
+
+  $("#heroDishName").textContent = item.name;
+  $("#heroDishDesc").textContent = item.description;
+  $("#heroDishPrice").textContent = money(itemEffectivePrice(item));
+  $("#heroAddBtn").dataset.id = item.id;
+  applyHeroTheme(item);
 }
 
 function startHeroSlider() {
@@ -1674,12 +1665,10 @@ function orderRowsTemplate(keys, rowClass = "order-row", controlsClass = "qty-co
     const noteSelectId = `item-note-select-${rowClass.replace(/\s+/g, "-")}-${safeDomKey}`;
     const noteValue = escapeHtml(state.itemNotes[key] || "");
     const selectedNote = state.noteSelect?.[key] || noteSelectValue(state.itemNotes[key] || "");
-    const imageSrc = line.item?.image || "images/logo-fai-mai-khua-small.png";
 
     return `
       <div class="${rowClass} is-separated-line">
         <div class="order-line-top has-order-thumb">
-          <img class="order-line-thumb" src="${escapeHtml(imageSrc)}" alt="${escapeHtml(line.name)}" loading="lazy"${imageErrorFallbackAttribute(imageSrc)}>
           <div class="order-line-title">
             <strong>${escapeHtml(line.name)}</strong>
             <em>#${index + 1}</em>
