@@ -1,3 +1,5 @@
+// v92 restore fire sound effects
+// v91 fix WhatsApp send order button only
 // v89 fix order/add button fallback
 // v88 customize before add to order
 // v87 auto open note/order panel after add
@@ -3381,3 +3383,248 @@ function v89InstallOrderFallback() {
 }
 
 v89InstallOrderFallback();
+
+
+
+
+/* v91: hard repair for WhatsApp send order button */
+function v91CartKeys() {
+  return Object.keys(state?.cart || {}).filter(key => (state.cart[key] || 0) > 0);
+}
+
+function v91BuildOrderText(total) {
+  if (typeof buildOrderText === "function") {
+    try {
+      return buildOrderText(total);
+    } catch (error) {
+      console.warn("buildOrderText failed, using v91 fallback:", error);
+    }
+  }
+
+  const customerName = document.querySelector("#customerName")?.value?.trim() || "-";
+  const customerPhone = document.querySelector("#customerPhone")?.value?.trim() || "-";
+  const orderType = document.querySelector('input[name="orderType"]:checked')?.value || "-";
+  const tableText = document.querySelector("#tableInput")?.value?.trim() || "-";
+  const deliveryAddress = document.querySelector("#deliveryAddress")?.value?.trim() || "-";
+  const mapLink = document.querySelector("#mapLink")?.value?.trim() || "-";
+  const customerNote = document.querySelector("#customerNote")?.value?.trim() || "";
+
+  const lines = [
+    `ສະບາຍດີ ຕ້ອງການສັ່ງອາຫານຈາກ ${restaurant?.name || "ໄຟໄໝ້ຄົວ"}`,
+    "",
+    "ຂໍ້ມູນລູກຄ້າ",
+    `ຊື່: ${customerName}`,
+    `ເບີໂທ: ${customerPhone}`,
+    `ຮູບແບບຮັບອາຫານ: ${orderType}`,
+    `ໂຕະ / ຈຸດຮັບ: ${tableText}`,
+    `ທີ່ຢູ່ຈັດສົ່ງ: ${deliveryAddress}`,
+    `Location: ${mapLink}`,
+    "",
+    "ລາຍການອາຫານ"
+  ];
+
+  v91CartKeys().forEach(key => {
+    const line = typeof cartLineFromKey === "function" ? cartLineFromKey(key) : null;
+    if (!line) return;
+    const note = typeof itemNoteValue === "function" ? itemNoteValue(key) : (state.itemNotes?.[key] || "");
+    const priceText = typeof money === "function" ? money(line.price * line.qty) : `${line.price * line.qty} Kip`;
+    lines.push(`- ${line.name} x ${line.qty} = ${priceText}`);
+    if (note) lines.push(`  ໝາຍເຫດ: ${note}`);
+  });
+
+  lines.push("");
+  lines.push(`ລວມໂດຍປະມານ: ${typeof money === "function" ? money(total) : `${total} Kip`}`);
+  if (customerNote) lines.push(`ໝາຍເຫດລວມ: ${customerNote}`);
+
+  return lines.join("\n");
+}
+
+function v91CartTotal(keys) {
+  if (typeof cartTotal === "function") {
+    try {
+      return cartTotal(keys);
+    } catch (error) {
+      console.warn("cartTotal failed, using v91 fallback:", error);
+    }
+  }
+
+  return keys.reduce((total, key) => {
+    const line = typeof cartLineFromKey === "function" ? cartLineFromKey(key) : null;
+    return total + (line ? line.price * line.qty : 0);
+  }, 0);
+}
+
+function v91WhatsAppUrl(text) {
+  const phone = String(restaurant?.whatsapp || restaurant?.phone || "8562099469995").replace(/[^\d]/g, "");
+  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+}
+
+function v91ForceEnableSendButtons() {
+  const keys = v91CartKeys();
+  const hasItems = keys.length > 0;
+
+  ["#sendOrderBtn", "#floatingSendOrderBtn"].forEach(selector => {
+    const btn = document.querySelector(selector);
+    if (!btn) return;
+
+    if (hasItems) {
+      btn.classList.remove("is-disabled");
+      btn.removeAttribute("aria-disabled");
+      btn.style.pointerEvents = "auto";
+      btn.style.opacity = "1";
+      if (!btn.textContent.trim() || btn.textContent.includes("กรอกข้อมูลให้ครบ")) {
+        btn.textContent = "ສົ່ງອໍເດີເຂົ້າ WhatsApp";
+      }
+    }
+  });
+}
+
+function v91SendOrderNow(event) {
+  const btn = event.target.closest?.("#sendOrderBtn, #floatingSendOrderBtn");
+  if (!btn) return;
+
+  const keys = v91CartKeys();
+  if (!keys.length) {
+    event.preventDefault();
+    alert("ກະລຸນາເລືອກເມນູກ່ອນ");
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const total = v91CartTotal(keys);
+  const text = v91BuildOrderText(total);
+  const url = v91WhatsAppUrl(text);
+
+  btn.href = url;
+  btn.classList.remove("is-disabled");
+  btn.removeAttribute("aria-disabled");
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function v91InstallSendButtonRepair() {
+  if (window.__v91SendRepairInstalled) return;
+  window.__v91SendRepairInstalled = true;
+
+  document.addEventListener("click", v91SendOrderNow, true);
+  document.addEventListener("touchend", event => {
+    const btn = event.target.closest?.("#sendOrderBtn, #floatingSendOrderBtn");
+    if (!btn) return;
+    v91SendOrderNow(event);
+  }, true);
+
+  setInterval(v91ForceEnableSendButtons, 700);
+  setTimeout(v91ForceEnableSendButtons, 500);
+}
+
+v91InstallSendButtonRepair();
+
+
+
+
+/* v92: restore fire + sound effect on add/send */
+function v92FireBurstAtElement(element, text = "🔥") {
+  const target = element || document.body;
+  const rect = target.getBoundingClientRect ? target.getBoundingClientRect() : {
+    left: window.innerWidth / 2,
+    top: window.innerHeight / 2,
+    width: 1,
+    height: 1
+  };
+
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  const burst = document.createElement("div");
+  burst.className = "v92-fire-burst";
+  burst.style.left = `${x}px`;
+  burst.style.top = `${y}px`;
+  burst.innerHTML = `
+    <span>${text}</span>
+    <i></i><i></i><i></i><i></i><i></i><i></i>
+  `;
+
+  document.body.appendChild(burst);
+  window.setTimeout(() => burst.remove(), 900);
+}
+
+function v92FireFlash() {
+  const flash = document.createElement("div");
+  flash.className = "v92-fire-screen-flash";
+  document.body.appendChild(flash);
+  window.setTimeout(() => flash.remove(), 520);
+}
+
+function v92PlayFireSound() {
+  try {
+    if (typeof playFireSound === "function") {
+      playFireSound();
+      return;
+    }
+
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    const context = new AudioContextClass();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+
+    oscillator.type = "sawtooth";
+    oscillator.frequency.setValueAtTime(110, context.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(42, context.currentTime + 0.16);
+
+    gain.gain.setValueAtTime(0.0001, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.12, context.currentTime + 0.025);
+    gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.20);
+
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start();
+    oscillator.stop(context.currentTime + 0.22);
+  } catch (error) {
+    console.warn("Fire sound blocked:", error);
+  }
+}
+
+function v92RunOrderEffect(element, label = "🔥") {
+  element?.classList?.add("v92-button-ignite");
+  window.setTimeout(() => element?.classList?.remove("v92-button-ignite"), 650);
+
+  v92FireBurstAtElement(element, label);
+  v92FireFlash();
+  v92PlayFireSound();
+}
+
+function v92InstallFireEffects() {
+  if (window.__v92FireEffectsInstalled) return;
+  window.__v92FireEffectsInstalled = true;
+
+  document.addEventListener("click", event => {
+    const addTarget = event.target.closest?.(
+      ".image-add-trigger, .add-btn, [data-action='add'], .customize-add-btn, .add-to-order-btn, .confirm-customize-btn"
+    );
+    if (addTarget && !addTarget.closest(".qty-controls, .floating-qty-controls")) {
+      v92RunOrderEffect(addTarget, "🔥");
+    }
+
+    const sendTarget = event.target.closest?.("#sendOrderBtn, #floatingSendOrderBtn");
+    if (sendTarget) {
+      v92RunOrderEffect(sendTarget, "🚀");
+    }
+  }, true);
+
+  document.addEventListener("touchstart", event => {
+    const target = event.target.closest?.("#sendOrderBtn, #floatingSendOrderBtn, .image-add-trigger, .add-btn");
+    if (!target) return;
+    target.classList.add("v92-touch-press");
+  }, { passive: true });
+
+  document.addEventListener("touchend", event => {
+    const target = event.target.closest?.("#sendOrderBtn, #floatingSendOrderBtn, .image-add-trigger, .add-btn");
+    if (!target) return;
+    window.setTimeout(() => target.classList.remove("v92-touch-press"), 220);
+  }, { passive: true });
+}
+
+v92InstallFireEffects();

@@ -3790,3 +3790,97 @@ body.customize-open {
 [data-customize-modal] select {
   pointer-events: auto !important;
 }
+
+
+/* v91: make WhatsApp send buttons clickable */
+#sendOrderBtn,
+#floatingSendOrderBtn {
+  pointer-events: auto !important;
+}
+
+#sendOrderBtn:not([aria-disabled="true"]),
+#floatingSendOrderBtn:not([aria-disabled="true"]) {
+  opacity: 1 !important;
+  cursor: pointer !important;
+}
+
+
+/* v92: fire + sound visual effects */
+.v92-fire-burst {
+  position: fixed;
+  z-index: 99999;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.v92-fire-burst span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%) scale(.72);
+  font-size: 2.35rem;
+  filter: drop-shadow(0 0 18px rgba(255, 90, 18, .92));
+  animation: v92MainFlame .72s cubic-bezier(.2,.9,.2,1) forwards;
+}
+
+.v92-fire-burst i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, #fff1a6 0 18%, #ffb536 32%, #ff4a19 58%, transparent 72%);
+  box-shadow: 0 0 16px rgba(255, 95, 24, .9);
+  animation: v92Spark .78s ease-out forwards;
+}
+
+.v92-fire-burst i:nth-child(2) { --x: -54px; --y: -38px; animation-delay: .02s; }
+.v92-fire-burst i:nth-child(3) { --x: 48px; --y: -42px; animation-delay: .04s; }
+.v92-fire-burst i:nth-child(4) { --x: -42px; --y: 36px; animation-delay: .06s; }
+.v92-fire-burst i:nth-child(5) { --x: 56px; --y: 30px; animation-delay: .08s; }
+.v92-fire-burst i:nth-child(6) { --x: 8px; --y: -64px; animation-delay: .03s; }
+.v92-fire-burst i:nth-child(7) { --x: -4px; --y: 58px; animation-delay: .07s; }
+
+@keyframes v92MainFlame {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.42) rotate(-8deg); }
+  24% { opacity: 1; transform: translate(-50%, -74%) scale(1.18) rotate(4deg); }
+  100% { opacity: 0; transform: translate(-50%, -118%) scale(.72) rotate(12deg); }
+}
+
+@keyframes v92Spark {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.35); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(.18); }
+}
+
+.v92-fire-screen-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 189, 73, .24), transparent 28%),
+    radial-gradient(circle at 50% 60%, rgba(255, 72, 24, .16), transparent 42%);
+  animation: v92ScreenFlash .5s ease-out forwards;
+}
+
+@keyframes v92ScreenFlash {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.v92-button-ignite,
+.v92-touch-press {
+  transform: translateY(-1px) scale(.985);
+  box-shadow:
+    0 0 0 3px rgba(255, 180, 54, .14),
+    0 0 30px rgba(255, 76, 24, .42) !important;
+  filter: saturate(1.18) brightness(1.08);
+}
